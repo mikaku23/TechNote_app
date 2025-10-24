@@ -28,6 +28,34 @@
     <!-- RTL Css -->
     <link rel="stylesheet" href="{{ asset('assets/css/rtl.min.css?v=5.0.0') }}">
 
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- Bootstrap Icons CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+    <style>
+        .alert-warning {
+            background-color: #fff3cd !important;
+            color: #856404 !important;
+            border-color: #ffeeba !important;
+        }
+
+        .input-group-text {
+            background-color: #e9ecef;
+            border-left: none;
+            border-radius: 0 0.375rem 0.375rem 0;
+        }
+
+        .input-group .form-control {
+            border-right: none;
+            border-radius: 0.375rem 0 0 0.375rem;
+            background-color: #f5f5f5;
+        }
+
+        .form-control {
+            background-color: #f5f5f5;
+        }
+    </style>
     @yield('css')
 
 </head>
@@ -36,7 +64,7 @@
     <!-- loader Start -->
     <div id="loading">
 
-        @include('template.loading')
+        @include('template_admin.loading')
 
     </div>
     <!-- loader END -->
@@ -83,7 +111,7 @@
         <div class="sidebar-body pt-0 data-scrollbar">
             <div class="sidebar-list">
                 <!-- Sidebar Menu Start -->
-                @include('template.sidebar')
+                @include('template_admin.sidebar')
                 <!-- Sidebar Menu End -->
             </div>
         </div>
@@ -93,7 +121,7 @@
         <div class="position-relative iq-banner">
             <!--Nav Start-->
             <nav class="nav navbar navbar-expand-xl navbar-light iq-navbar">
-                @include('template.navbar')
+                @include('template_admin.navbar')
             </nav> <!-- Nav Header Component Start -->
             <div class="iq-navbar-header" style="height: 50px;">
 
@@ -109,7 +137,7 @@
         <!-- Footer Section Start -->
         <footer class="footer">
             <div class="footer-body">
-                @include('template.footer')
+                @include('template_admin.footer')
             </div>
         </footer>
         <!-- Footer Section End -->
@@ -146,6 +174,7 @@
     <!-- App Script -->
     <script src="{{ asset('assets/js/hope-ui.js') }}" defer></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @yield('js')
 
 </body>

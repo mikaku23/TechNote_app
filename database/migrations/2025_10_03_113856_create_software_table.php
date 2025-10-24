@@ -11,13 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('teknisis', function (Blueprint $table) {
+        Schema::create('software', function (Blueprint $table) {
             $table->id();
-            $table->string('nama', 30);
-            $table->string('username', 50);
-            $table->string('password', 100);
-            $table->string('no_hp',13);
-            $table->string('bidang', 30);
+            $table->string('nama');
+            $table->string('versi');
+            $table->string('kategori');
+            $table->string('lisensi');
+            $table->string('developer');
+            $table->date('tgl_rilis');
+            $table->text('deskripsi')->nullable();
             $table->timestamps();
         });
     }
@@ -27,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('teknisis');
+        Schema::dropIfExists('software');
     }
 };

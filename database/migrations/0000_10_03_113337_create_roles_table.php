@@ -11,12 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pembayarans', function (Blueprint $table) {
+        Schema::create('roles', function (Blueprint $table) {
             $table->id();
-            $table->string('jumlah', 30);
-            $table->enum('status_bayar', ['dibayar', 'tidak bayar']);
-            $table->date('tanggal_bayar');
-            $table->foreignId('id_servis')->references('id')->on('services')->onDelete('cascade')->onUpdate('cascade');
+            $table->enum('status', ['admin', 'teknisi', 'mahasiswa', 'dosen']);
             $table->timestamps();
         });
     }
@@ -26,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pembayarans');
+        Schema::dropIfExists('roles');
     }
 };

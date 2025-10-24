@@ -11,11 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('roles', function (Blueprint $table) {
+        Schema::create('rekaps', function (Blueprint $table) {
             $table->id();
-            $table->string('username', 30);
-            $table->string('password', 100);
-            $table->enum('role', ['pengguna', 'teknisi']);
+            $table->foreignId('perbaikan_id')->references('id')->on('perbaikans')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('penginstalan_id')->references('id')->on('penginstalans')->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();
         });
     }
@@ -25,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('roles');
+        Schema::dropIfExists('rekaps');
     }
 };
