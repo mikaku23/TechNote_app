@@ -15,7 +15,7 @@
             </i>
             <span class="item-name">Dashboard</span>
         </a>
-        <!-- <li class="nav-item">
+    <li class="nav-item">
         <a class="nav-link ">
             <i class="icon">
                 <svg width="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="icon-20">
@@ -27,7 +27,7 @@
         </a>
     </li>
     <li class="nav-item">
-        <a class="nav-link ">
+        <a class="nav-link {{ in_array($menu ?? '', ['pengguna', 'role']) ? 'active' : '' }}" href="{{ route('pengguna.index') }}">
             <i class="icon">
                 <svg width="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="icon-20">
                     <path opacity="0.4" d="M12 12C15.3137 12 18 9.31371 18 6C18 2.68629 15.3137 0 12 0C8.68629 0 6 2.68629 6 6C6 9.31371 8.68629 12 12 12Z" fill="currentColor"></path>
@@ -36,7 +36,7 @@
             </i>
             <span class="item-name">Pengguna</span>
         </a>
-    </li> -->
+    </li>
 
     <li>
         <hr class="hr-horizontal">

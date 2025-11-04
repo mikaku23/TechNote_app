@@ -1,0 +1,28 @@
+/* Pop-up transparan bergaya kaca */
+.glass-popup {
+    background: rgba(255, 255, 255, 0.75) !important; /* lebih putih, sedikit transparan */
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 20px !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    color: #000 !important;
+    animation: popupMuncul 0.35s ease;
+}
+
+/* Animasi muncul popup */
+@keyframes popupMuncul {
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Efek blur pada background belakang popup */
+.swal2-backdrop-show {
+    background-color: rgba(0, 0, 0, 0.55) !important;
+    backdrop-filter: blur(4px);
+}

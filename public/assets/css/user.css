@@ -1,0 +1,89 @@
+/* Efek latar belakang pop-up */
+.modal-content.custom-modal {
+    background: rgba(255, 255, 255, 0.45); /* lebih transparan */
+    backdrop-filter: blur(12px); /* efek blur halus */
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    animation: muncul 0.4s ease;
+    color: #000; /* teks hitam */
+}
+
+/* Animasi muncul lembut */
+@keyframes muncul {
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Header modal */
+.modal-header {
+    border-bottom: none;
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Warna dan gaya judul */
+.modal-title {
+    color: #111;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    font-size: 1.1rem;
+}
+
+/* Tombol close (X) */
+.btn-close {
+    filter: invert(0%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(40%) contrast(90%);
+    opacity: 0.7;
+    transition: all 0.3s ease;
+}
+
+.btn-close:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+/* Tombol transparan bergaya kaca */
+.btn-glass {
+    background: rgba(255, 255, 255, 0.35);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    color: #000 !important;
+    backdrop-filter: blur(6px);
+    transition: all 0.3s ease-in-out;
+    font-weight: 500;
+}
+
+.btn-glass:hover {
+    background: rgba(255, 255, 255, 0.55);
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Warna lembut per tombol */
+.btn-glass.btn-primary { background: rgba(173, 216, 230, 0.4); } /* biru muda */
+.btn-glass.btn-success { background: rgba(144, 238, 144, 0.4); } /* hijau muda */
+.btn-glass.btn-secondary { background: rgba(211, 211, 211, 0.4); } /* abu lembut */
+
+/* Tombol batal */
+.btn-outline-danger {
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-danger:hover {
+    transform: scale(1.05);
+}
+
+/* Background belakang modal */
+.modal-backdrop.show {
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+}

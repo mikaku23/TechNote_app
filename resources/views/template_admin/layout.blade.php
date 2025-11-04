@@ -176,6 +176,24 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @yield('js')
+    @section('js')
+    <script>
+        $(document).ready(function() {
+            if ($.fn.DataTable.isDataTable('#datatable')) {
+                $('#datatable').DataTable().destroy();
+            }
+
+            $('#datatable').DataTable({
+                "lengthChange": false,
+                "searching": true,
+                "paging": true,
+                "info": true,
+                "errorMode": "none" // ⬅️ ini penting!
+            });
+        });
+    </script>
+    @endsection
+
 
 </body>
 
