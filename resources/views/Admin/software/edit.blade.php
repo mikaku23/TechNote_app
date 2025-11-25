@@ -1,26 +1,25 @@
 @extends('template_admin.layout')
-@section('title', 'Edit Pengguna')
+@section('title', 'Edit Software')
 @section('css')
-<link rel="stylesheet" href="{{ asset('assets/css/edit.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/admin/pengguna/edit.css') }}">
 @endsection
 @section('konten')
 <div class="card mt-3">
     <div class="card-header d-flex justify-content-between">
         <div class="header-title">
-            <h4 class="card-title">Edit Data Pengguna</h4>
+            <h4 class="card-title">Edit Data software</h4>
         </div>
     </div>
     <div class="card-body">
         <p>Disarankan untuk tidak mengubah data yang sudah ada termasuk Password.</p>
 
         <form class="needs-validation"
-            action="{{ route('pengguna.update', $user->id) }}"
+            action="{{ route('software.update', $software->id) }}"
             method="POST"
-            data-redirect="{{ route('pengguna.index') }}">
-
-
+            data-redirect="{{ route('software.index') }}">
             @csrf
             @method('PUT')
+
 
             @if ($errors->any())
             <div class="alert alert-danger">
@@ -34,55 +33,54 @@
 
             <div class="row mb-3">
                 <div class="col-md-4">
-                    <label class="form-label" for="nim">NIM</label>
-                    <input type="text" class="form-control" id="nim" name="nim"
-                        value="{{ $user->nim ?? 'tidak ada data' }}">
-                </div>
-
-                <div class="col-md-4">
-                    <label class="form-label" for="nip">NIP</label>
-                    <input type="text" class="form-control" id="nip" name="nip"
-                        value="{{ $user->nip ?? 'tidak ada data' }}">
-                </div>
-
-                <div class="col-md-4">
                     <label class="form-label" for="nama">Nama</label>
                     <input type="text" class="form-control" id="nama" name="nama"
-                        value="{{$user->nama}}">
+                        value="{{ $software->nama ?? '' }}">
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label" for="versi">Versi</label>
+                    <input type="text" class="form-control" id="versi" name="versi"
+                        value="{{ $software->versi ?? '' }}">
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label" for="kategori">Kategori</label>
+                    <input type="text" class="form-control" id="kategori" name="kategori"
+                        value="{{ $software->kategori ?? '' }}">
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label class="form-label" for="lisensi">Lisensi</label>
+                    <input type="text" class="form-control" id="lisensi" name="lisensi"
+                        value="{{ $software->lisensi ?? '' }}">
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label" for="developer">Developer</label>
+                    <input type="text" class="form-control" id="developer" name="developer"
+                        value="{{ $software->developer ?? '' }}">
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label" for="tgl_rilis">Tanggal Rilis</label>
+                    <input type="date" class="form-control" id="tgl_rilis" name="tgl_rilis"
+                        value="{{ $software->tgl_rilis ? \Carbon\Carbon::parse($software->tgl_rilis)->format('Y-m-d') : '' }}">
+
                 </div>
             </div>
 
             <div class="form-group mb-3">
-                <label class="form-label" for="username">Username</label>
-                <input type="text" class="form-control" id="username" name="username"
-                    value="{{$user->username}}">
-            </div>
-
-            <div class="form-group mb-3">
-                <label class="form-label" for="password">Password</label>
-                <div class="input-group">
-                    <input type="password" class="form-control" id="password" name="password"
-                        placeholder="Masukkan password baru jika ingin mengganti password">
-                    <span class="input-group-text" id="togglePassword" style="cursor:pointer;">
-                        <i class="fas fa-eye"></i>
-                    </span>
-                </div>
-            </div>
-
-            <div class="form-group mb-3">
-                <label class="form-label" for="role_id">Role</label>
-                <select class="form-control" id="role_id" name="role_id" required>
-                    <option value="" disabled selected>Ganti Role</option>
-                    @foreach($roles as $j)
-                    <option value="{{$j['id']}}" {{ $user->role_id == $j['id'] ? 'selected' : '' }}>{{$j['status']}}</option>
-                    @endforeach
-
-                </select>
+                <label class="form-label" for="deskripsi">Deskripsi</label>
+                <textarea class="form-control" id="deskripsi" name="deskripsi" rows="4"
+                    placeholder="Masukkan deskripsi lengkap">{{ $software->deskripsi ?? '' }}</textarea>
             </div>
 
 
             <div class="text-start">
-                <a href="{{route('pengguna.index')}}" class="btn btn-outline-primary">
+                <a href="{{route('software.index')}}" class="btn btn-outline-primary">
                     <i class="bi bi-arrow-left"></i> Kembali
                 </a>
                 <button type="reset" class="btn btn-outline-warning">
@@ -128,5 +126,5 @@
     });
 </script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="{{ asset('assets/js/edit.js') }}"></script>
+<script src="{{ asset('assets/js/admin/pengguna/edit.js') }}"></script>
 @endsection

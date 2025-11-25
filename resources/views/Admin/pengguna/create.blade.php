@@ -1,7 +1,27 @@
 @extends('template_admin.layout')
 @section('title', 'Tambah Pengguna')
 @section('css')
-<link rel="stylesheet" href="{{ asset('assets/css/save.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/admin/pengguna/save.css') }}">
+<style>
+    /* Gaya validasi */
+    .form-control.is-valid {
+        border-color: #198754 !important;
+        padding-right: 2.5rem;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23198754' viewBox='0 0 16 16'%3E%3Cpath d='M16 2L6 12l-4-4 1.5-1.5L6 9l8.5-8.5z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 0.75rem center;
+        background-size: 1rem 1rem;
+    }
+
+    .form-control.is-invalid {
+        border-color: #dc3545 !important;
+        padding-right: 2.5rem;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23dc3545' viewBox='0 0 16 16'%3E%3Cpath d='M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 0.75rem center;
+        background-size: 1rem 1rem;
+    }
+</style>
 @endsection
 @section('konten')
 <div class="card mt-3">
@@ -19,7 +39,7 @@
             data-redirect="{{ route('pengguna.index') }}">
             @csrf
             @if ($errors->any())
-            <div class="alert alert-danger">
+            <div class="alert alert-danger" style="display:none;">
                 <ul class="mb-0">
                     @foreach ($errors->all() as $err)
                     <li>{{ $err }}</li>
@@ -28,36 +48,55 @@
             </div>
             @endif
 
+            @if (session('success'))
+            <div data-success="{{ session('success') }}"></div>
+            @endif
+
+
             <div class="row mb-3">
                 <div class="col-md-4">
                     <label class="form-label" for="nim">NIM</label>
-                    <input type="text" class="form-control" id="nim" name="nim"
+                    <input type="text"
+                        class="form-control {{ $errors->has('nim') ? 'is-invalid' : (old('nim') ? 'is-valid' : '') }}"
+                        id="nim" name="nim"
+                        value="{{ old('nim') }}"
                         placeholder="Masukkan NIM">
                 </div>
 
                 <div class="col-md-4">
                     <label class="form-label" for="nip">NIP</label>
-                    <input type="number" class="form-control" id="nip" name="nip"
+                    <input type="number"
+                        class="form-control {{ $errors->has('nip') ? 'is-invalid' : (old('nip') ? 'is-valid' : '') }}"
+                        id="nip" name="nip"
+                        value="{{ old('nip') }}"
                         placeholder="Masukkan NIP">
                 </div>
 
                 <div class="col-md-4">
                     <label class="form-label" for="nama">Nama</label>
-                    <input type="text" class="form-control" id="nama" name="nama"
-                        placeholder="Masukkan nama" required maxlength="100">
+                    <input type="text"
+                        class="form-control {{ $errors->has('nama') ? 'is-invalid' : (old('nama') ? 'is-valid' : '') }}"
+                        id="nama" name="nama"
+                        value="{{ old('nama') }}"
+                        placeholder="Masukkan nama">
                 </div>
             </div>
 
             <div class="form-group mb-3">
                 <label class="form-label" for="username">Username</label>
-                <input type="text" class="form-control" id="username" name="username"
-                    placeholder="Masukkan username" required>
+                <input type="text"
+                    class="form-control {{ $errors->has('username') ? 'is-invalid' : (old('username') ? 'is-valid' : '') }}"
+                    id="username" name="username"
+                    value="{{ old('username') }}"
+                    placeholder="Masukkan username">
             </div>
 
             <div class="form-group mb-3">
                 <label class="form-label" for="password">Password</label>
                 <div class="input-group">
-                    <input type="password" class="form-control" id="password" name="password" required
+                    <input type="password"
+                        class="form-control {{ $errors->has('password') ? 'is-invalid' : (old('password') ? 'is-valid' : '') }}"
+                        id="password" name="password"
                         placeholder="Masukkan password">
                     <span class="input-group-text" id="togglePassword" style="cursor:pointer;">
                         <i class="fas fa-eye"></i>
@@ -72,10 +111,8 @@
                     @foreach($roles as $j)
                     <option value="{{$j['id']}}">{{$j['status']}}</option>
                     @endforeach
-
                 </select>
             </div>
-
 
             <div class="text-start">
                 <a href="{{route('pengguna.index')}}" class="btn btn-outline-primary">
@@ -124,5 +161,6 @@
     });
 </script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="{{ asset('assets/js/save.js') }}"></script>
+<script src="{{ asset('assets/js/admin/pengguna/save.js') }}"></script>
+
 @endsection

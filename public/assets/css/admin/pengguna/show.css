@@ -1,0 +1,171 @@
+/* === BACKDROP BLUR KHUSUS MODAL DETAIL === */
+.show-modal-glass + .modal-backdrop {
+    background-color: rgba(0, 0, 0, 0.45) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+}
+
+/* === MODAL GLASS POPUP === */
+.show-modal-glass .glass-popup {
+    background: rgba(255, 255, 255, 0.75); /* semi-transparent */
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 20px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+    color: #000; /* teks hitam */
+    font-weight: 400;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow: hidden;
+    transform: scale(0.95);
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.show-modal-glass.show .glass-popup {
+    transform: scale(1);
+    opacity: 1;
+}
+
+/* Animasi smooth saat modal muncul */
+.show-modal-glass.fade .modal-dialog {
+    transform: translateY(-40px);
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    opacity: 0;
+}
+
+.show-modal-glass.show .modal-dialog {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* Modal header */
+.modal-header {
+    border-bottom: none;
+    padding: 1rem 1.5rem;
+}
+
+/* Modal title */
+.modal-title {
+    font-size: 1.25rem;
+    font-weight: 500;
+}
+
+/* Tombol X */
+.modal-header .btn-close {
+    width: 1.5rem;
+    height: 1.5rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s, color 0.2s;
+}
+
+.modal-header .btn-close:hover {
+    color: #0d6efd;
+    transform: rotate(90deg);
+}
+
+/* Modal body */
+.modal-body {
+    padding: 1.5rem;
+    max-height: 60vh;
+    overflow-y: auto;
+    font-size: 0.95rem;
+    color: #000;
+    font-weight: 400;
+}
+
+/* Input & select */
+.modal-body input,
+.modal-body select {
+    background-color: rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    padding: 0.5rem 0.75rem;
+    color: #000;
+    font-weight: 400;
+}
+
+/* Label */
+.modal-body label {
+    font-weight: 400;
+    color: #000;
+}
+
+/* Modal footer */
+.modal-footer {
+    border-top: none;
+    justify-content: center;
+    padding: 1rem 1.5rem;
+}
+
+/* Tombol "Tutup" - awalnya outline */
+.btn-primary.close-modal {
+    background-color: transparent !important; /* awalnya transparan */
+    color: #0d6efd !important; /* teks biru */
+    border: 2px solid #0d6efd !important;
+    border-radius: 12px;
+    padding: 10px 25px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+/* Hover efek: tombol jadi penuh, teks hitam */
+.btn-primary.close-modal:hover {
+    background-color: #0d6efd !important; /* penuh */
+    color: #000 !important; /* teks hitam */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+/* Klik/fokus: tetap biru penuh dan teks hitam */
+.btn-primary.close-modal:active,
+.btn-primary.close-modal:focus,
+.btn-primary.close-modal:focus-visible {
+    background-color: #0d6efd !important;
+    color: #000 !important;
+    border-color: #0d6efd !important;
+    transform: translateY(0);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+}
+
+/* Scrollbar cantik */
+.modal-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+/* Loading Spinner */
+#modalContent .spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 150px;
+}
+
+#modalContent .spinner div {
+    width: 18px;
+    height: 18px;
+    margin: 3px;
+    background-color: #0d6efd;
+    border-radius: 50%;
+    display: inline-block;
+    animation: bounce 1.4s infinite ease-in-out both;
+}
+
+#modalContent .spinner div:nth-child(1) { animation-delay: -0.32s; }
+#modalContent .spinner div:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes bounce {
+    0%, 80%, 100% { transform: scale(0); }
+    40% { transform: scale(1); }
+}

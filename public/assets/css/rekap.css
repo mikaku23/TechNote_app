@@ -1,0 +1,29 @@
+/* Kolom yang datanya sudah soft delete */
+.soft-delete {
+    background-color: rgba(255, 0, 0, 0.12);   /* merah sangat lembut */
+    color: #b30000;                           /* teks merah tua agar terlihat */
+    font-style: italic;
+}
+
+/* Jika ingin warna lebih lembut lagi: */
+/* .soft-delete { background-color: #ffe6e6; } */
+
+/* Badge status tetap */
+.status-badge {
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-block;
+    text-transform: capitalize;
+}
+
+.status-badge.dihapus {
+    background-color: #dc3545;
+    color: white;
+}
+
+.status-badge.tersedia {
+    background-color: #28a745;
+    color: white;
+}

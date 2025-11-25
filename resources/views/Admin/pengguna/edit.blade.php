@@ -1,7 +1,7 @@
 @extends('template_admin.layout')
 @section('title', 'Edit Pengguna')
 @section('css')
-<link rel="stylesheet" href="{{ asset('assets/css/edit.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/admin/pengguna/edit.css') }}">
 @endsection
 @section('konten')
 <div class="card mt-3">
@@ -128,5 +128,5 @@
     });
 </script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="{{ asset('assets/js/edit.js') }}"></script>
+<script src="{{ asset('assets/js/admin/pengguna/edit.js') }}"></script>
 @endsection

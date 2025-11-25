@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('rekaps', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('perbaikan_id')->references('id')->on('perbaikans')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreignId('penginstalan_id')->references('id')->on('penginstalans')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('perbaikan_id')->nullable()->references('id')->on('perbaikans')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('penginstalan_id')->nullable()->references('id')->on('penginstalans')->onDelete('cascade')->onUpdate('cascade');
+            $table->enum('status', ['dihapus', 'tersedia']);
             $table->timestamps();
         });
     }

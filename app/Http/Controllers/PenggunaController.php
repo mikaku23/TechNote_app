@@ -2,21 +2,56 @@
 
 namespace App\Http\Controllers;
 
+
 use App\Models\role;
 use App\Models\User;
 use Illuminate\Http\Request;
 
 class PenggunaController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $datauser = User::all();
+        $search = $request->input('search');
+        $roleId = $request->input('role');
+        $tanggal = $request->input('tanggal'); // pastikan name input di blade: name="tanggal"
+
+        $query = User::with('role');
+
+        // Filter pencarian nama / username
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where('nama', 'like', '%' . $search . '%')
+                    ->orWhere('username', 'like', '%' . $search . '%');
+            });
+        }
+
+        // Filter role
+        if (!empty($roleId)) {
+            $query->where('role_id', $roleId);
+        }
+
+        // Filter berdasarkan tanggal created_at (single date)
+        if (!empty($tanggal)) {
+            // pastikan $tanggal bentuk YYYY-MM-DD, input type="date" menghasilkan format ini
+            $query->whereDate('created_at', '=', $tanggal);
+        }
+
+        // pake withQueryString() biar query params (search, role, tanggal) tetap saat paginate link diklik
+        $datauser = $query->orderBy('created_at', 'desc')->paginate(10)->withQueryString();
+
+        $roles = Role::all();
+
         return view('admin.pengguna.index', [
+            'datauser' => $datauser,
+            'roles' => $roles,
             'menu' => 'pengguna',
-            'title' => 'Data user',
-            'datauser' => $datauser
+            'title' => 'Data Pengguna',
+            
         ]);
     }
+
+
+
     public function create()
     {
         // Ambil semua role
@@ -227,12 +262,18 @@ class PenggunaController extends Controller
     public function show($id)
     {
         $user = User::findOrFail($id);
-        $roles = Role::all();
         return view('admin.pengguna.show', [
-            'menu' => 'pengguna',
-            'title' => 'Show Pengguna',
-            'user' => $user,
-            'roles' => $roles,
+            'user' => $user
         ]);
+    }
+
+    public function hapusSemua()
+    {
+        try {
+            User::query()->delete();
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
     }
 }

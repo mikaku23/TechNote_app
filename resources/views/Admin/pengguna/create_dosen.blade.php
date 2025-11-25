@@ -1,7 +1,7 @@
 @extends('template_admin.layout')
 @section('title', 'Create Dosen')
 @section('css')
-<link rel="stylesheet" href="{{ asset('assets/css/save.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/admin/pengguna/save.css') }}">
 @endsection
 @section('konten')
 <div class="card mt-3">
@@ -105,5 +105,5 @@
     });
 </script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="{{ asset('assets/js/save.js') }}"></script>
+<script src="{{ asset('assets/js/admin/pengguna/save.js') }}"></script>
 @endsection

@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('penginstalans', function (Blueprint $table) {
             $table->id();
-            $table->date('tgl_hapus');
-            $table->date('tgl_instalasi');
-            $table->enum('status', ['berhasil', 'gagal']);
+            $table->date('tgl_hapus')->nullable();
+            $table->date('tgl_instalasi')->nullable();
+            $table->enum('status', ['berhasil', 'gagal','dihapus','dipulihkan','diupdate','dihapus_permanen']);
             $table->foreignId('software_id')->references('id')->on('software')->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();

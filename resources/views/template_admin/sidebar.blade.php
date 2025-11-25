@@ -16,14 +16,15 @@
             <span class="item-name">Dashboard</span>
         </a>
     <li class="nav-item">
-        <a class="nav-link ">
+        <a class="nav-link {{ ($menu ?? '') == 'software' ? 'active' : '' }}" aria-current="page" href="{{ route('software.index') }}">
             <i class="icon">
                 <svg width="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="icon-20">
-                    <path opacity="0.4" d="M4 7V19C4 20.1046 4.89543 21 6 21H18C19.1046 21 20 20.1046 20 19V7" fill="currentColor"></path>
-                    <path d="M12 3L2 7H22L12 3Z" fill="currentColor"></path>
+                    <rect x="2" y="4" width="20" height="12" rx="1.5" opacity="0.4" fill="currentColor" />
+                    <path d="M2 18h20v1.5c0 .828-.672 1.5-1.5 1.5h-17C2.672 21 2 20.328 2 19.5V18z" fill="currentColor" />
+                    <path d="M9.5 10.5L8 12l1.5 1.5M14.5 10.5L16 12l-1.5 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
                 </svg>
             </i>
-            <span class="item-name">Barang</span>
+            <span class="item-name">Software</span>
         </a>
     </li>
     <li class="nav-item">
@@ -37,7 +38,48 @@
             <span class="item-name">Pengguna</span>
         </a>
     </li>
+    <li class="nav-item">
+        <a class="nav-link {{ ($menu ?? '') == 'penginstalan' ? 'active' : '' }}" aria-current="page" href="{{ route('penginstalan.index') }}">
+            <i class="icon">
+                <svg width="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="icon-20">
+                    <rect x="3" y="4" width="18" height="12" rx="1.5" opacity="0.4" fill="currentColor" />
+                    <path d="M8 12l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M12 8v8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M3 18h18v1.5c0 .828-.672 1.5-1.5 1.5h-15C3.672 21 3 20.328 3 19.5V18z" fill="currentColor" />
+                </svg>
+            </i>
+            <span class="item-name">Instalasi</span>
+        </a>
+    </li>
 
+    <li class="nav-item">
+        <a class="nav-link {{ ($menu ?? '') == 'perbaikan' ? 'active' : '' }}" aria-current="page" href="{{ route('perbaikan.index') }}">
+            <i class="icon">
+                <svg width="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="icon-20">
+                    <path opacity="0.4" d="M21 16v-6a1 1 0 0 0-.553-.895l-8-4.5a1 1 0 0 0-.894 0l-8 4.5A1 1 0 0 0 3 10v6a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2z" fill="currentColor" />
+                    <path d="M12 2v6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M3.5 9.5L12 14l8.5-4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M12 14v6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </i>
+            <span class="item-name">Perbaikan</span>
+        </a>
+    </li>
+
+
+    <li class="nav-item">
+        <a class="nav-link {{ ($menu ?? '') == 'rekap' ? 'active' : '' }}" aria-current="page" href="{{ route('rekap.index') }}">
+            <i class="icon">
+                <svg width="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="icon-20">
+                    <path opacity="0.4" d="M7 2h6l2 2h3v17a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z" fill="currentColor"/>
+                    <path d="M12 7v2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M8.5 11h7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M8.5 14h7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </i>
+            <span class="item-name">Rekap</span>
+        </a>
+    </li>
     <li>
         <hr class="hr-horizontal">
     </li>

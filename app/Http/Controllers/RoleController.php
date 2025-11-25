@@ -59,4 +59,5 @@ class RoleController extends Controller
 
         return redirect()->route('role.index')->with('success', 'Role berhasil ditambahkan.');
     }
+    
 }

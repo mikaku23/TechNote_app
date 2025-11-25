@@ -3,12 +3,19 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class penginstalan extends Model
 {
+    use SoftDeletes;
+
     protected $table = 'penginstalans';
+
+    const DELETED_AT = 'tgl_hapus';
+
+    protected $dates = ['tgl_instalasi', 'tgl_hapus'];
 
     protected $fillable = [
         'tgl_hapus',

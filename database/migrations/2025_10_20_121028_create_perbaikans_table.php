@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('nama');
             $table->string('kategori');
             $table->string('lokasi');
-            $table->enum('status', ['sedang diperbaiki', 'rusak', 'selesai', 'bagus']);
+            $table->enum('status', ['sedang diperbaiki', 'rusak', 'selesai', 'bagus', 'dihapus']);
             $table->text('keterangan')->nullable();
             $table->date('tgl_perbaikan');
             $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');

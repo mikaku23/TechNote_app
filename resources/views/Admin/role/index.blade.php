@@ -1,7 +1,7 @@
 @extends('template_admin.layout')
 @section('title', 'Data Role Pengguna')
 @section('css')
-<link rel="stylesheet" href="{{ asset('assets/css/role.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/admin/pengguna/role.css') }}">
 @endsection
 @section('konten')
 <div class="container-fluid">
@@ -52,19 +52,19 @@
                         <table id="datatable" class="table table-striped table-bordered">
                             <thead>
                                 <tr class="text-center">
-                                    
+
                                     <th>Id</th>
                                     <th>Role</th>
-                                    
+
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse($datarole as $role)
                                 <tr class="text-center">
-                                   
+
                                     <td>{{ $role->id ?? '-' }}</td>
                                     <td>{{ $role->status ?? '-' }}</td>
-                                    
+
                                 </tr>
                                 @empty
                                 <tr>

@@ -15,10 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('nama');
             $table->string('versi');
-            $table->string('kategori');
-            $table->string('lisensi');
-            $table->string('developer');
-            $table->date('tgl_rilis');
+            $table->string('kategori')->nullable();
+            $table->string('lisensi')->nullable();
+            $table->string('developer')->nullable();
+            $table->date('tgl_rilis')->nullable();
             $table->text('deskripsi')->nullable();
             $table->timestamps();
         });

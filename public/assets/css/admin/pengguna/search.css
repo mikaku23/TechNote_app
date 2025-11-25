@@ -1,0 +1,72 @@
+.search-filter-wrapper {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    .search-filter-wrapper .left-tools,
+    .search-filter-wrapper .right-tools {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .search-filter-wrapper input,
+    .search-filter-wrapper select {
+        border-radius: 8px;
+        padding: 6px 10px;
+    }
+
+    .search-filter-wrapper button.btn-outline-secondary {
+        border-radius: 8px;
+    }
+
+    /* === Toolbar Search dan Filter === */
+    .left-tools button,
+    .left-tools a {
+        border-radius: 8px !important;
+    }
+
+    .right-tools form {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .right-tools input,
+    .right-tools select {
+        min-width: 170px;
+        border-radius: 8px;
+    }
+
+    .right-tools button,
+    .right-tools a {
+        border-radius: 8px;
+        padding: 4px 10px;
+        font-size: 13px;
+    }
+
+    .right-tools .btn i {
+        margin-right: 4px;
+    }
+
+    @media (max-width: 768px) {
+        .pt-3.pb-1.px-4.d-flex {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .right-tools form {
+            width: 100%;
+            flex-wrap: wrap;
+        }
+
+        .right-tools input,
+        .right-tools select {
+            flex: 1 1 45%;
+        }
+    }

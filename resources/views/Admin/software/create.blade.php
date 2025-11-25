@@ -1,25 +1,45 @@
 @extends('template_admin.layout')
-@section('title', 'Tambah Pengguna')
+@section('title', 'Tambah Software')
 @section('css')
-<link rel="stylesheet" href="{{ asset('assets/css/save.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/admin/pengguna/save.css') }}">
+<style>
+    /* Gaya validasi */
+    .form-control.is-valid {
+        border-color: #198754 !important;
+        padding-right: 2.5rem;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23198754' viewBox='0 0 16 16'%3E%3Cpath d='M16 2L6 12l-4-4 1.5-1.5L6 9l8.5-8.5z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 0.75rem center;
+        background-size: 1rem 1rem;
+    }
+
+    .form-control.is-invalid {
+        border-color: #dc3545 !important;
+        padding-right: 2.5rem;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23dc3545' viewBox='0 0 16 16'%3E%3Cpath d='M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 0.75rem center;
+        background-size: 1rem 1rem;
+    }
+</style>
 @endsection
 @section('konten')
 <div class="card mt-3">
     <div class="card-header d-flex justify-content-between">
         <div class="header-title">
-            <h4 class="card-title">Tambah Data Pengguna</h4>
+            <h4 class="card-title">Tambah Data software</h4>
         </div>
     </div>
     <div class="card-body">
-        <p>Isi data pengguna pada form di bawah. Pastikan username, nim, nik bersifat unik dan password minimal 4 karakter.</p>
+        <p>Pastikan semua data terisi dengan benar, dan isilah deskripsi untuk menambahkan keterangan lebih lanjut.</p>
 
         <form class="needs-validation"
-            action="{{ route('pengguna.store') }}"
+            action="{{ route('software.store') }}"
             method="POST"
-            data-redirect="{{ route('pengguna.index') }}">
+            data-redirect="{{ route('software.index') }}">
             @csrf
             @if ($errors->any())
-            <div class="alert alert-danger">
+            <div class="alert alert-danger" style="display:none;">
                 <ul class="mb-0">
                     @foreach ($errors->all() as $err)
                     <li>{{ $err }}</li>
@@ -28,57 +48,79 @@
             </div>
             @endif
 
+            @if (session('success'))
+            <div data-success="{{ session('success') }}"></div>
+            @endif
+
+
             <div class="row mb-3">
                 <div class="col-md-4">
-                    <label class="form-label" for="nim">NIM</label>
-                    <input type="text" class="form-control" id="nim" name="nim"
-                        placeholder="Masukkan NIM">
-                </div>
-
-                <div class="col-md-4">
-                    <label class="form-label" for="nip">NIP</label>
-                    <input type="number" class="form-control" id="nip" name="nip"
-                        placeholder="Masukkan NIP">
-                </div>
-
-                <div class="col-md-4">
                     <label class="form-label" for="nama">Nama</label>
-                    <input type="text" class="form-control" id="nama" name="nama"
-                        placeholder="Masukkan nama" required maxlength="100">
+                    <input type="text"
+                        class="form-control {{ $errors->has('nama') ? 'is-invalid' : (old('nama') ? 'is-valid' : '') }}"
+                        id="nama" name="nama"
+                        value="{{ old('nama') }}"
+                        placeholder="Masukkan nama" required>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label" for="versi">Versi</label>
+                    <input type="text"
+                        class="form-control {{ $errors->has('versi') ? 'is-invalid' : (old('versi') ? 'is-valid' : '') }}"
+                        id="versi" name="versi"
+                        value="{{ old('versi') }}"
+                        placeholder="Masukkan versi" required>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label" for="kategori">Kategori</label>
+                    <input type="text"
+                        class="form-control {{ $errors->has('kategori') ? 'is-invalid' : (old('kategori') ? 'is-valid' : '') }}"
+                        id="kategori" name="kategori"
+                        value="{{ old('kategori') }}"
+                        placeholder="Masukkan / Kosongkan jika tidak ada data">
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label class="form-label" for="lisensi">Lisensi</label>
+                    <input type="text"
+                        class="form-control {{ $errors->has('lisensi') ? 'is-invalid' : (old('lisensi') ? 'is-valid' : '') }}"
+                        id="lisensi" name="lisensi"
+                        value="{{ old('lisensi') }}"
+                        placeholder="Masukkan / Kosongkan jika tidak ada data">
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label" for="developer">Developer</label>
+                    <input type="text"
+                        class="form-control {{ $errors->has('developer') ? 'is-invalid' : (old('developer') ? 'is-valid' : '') }}"
+                        id="developer" name="developer"
+                        value="{{ old('developer') }}"
+                        placeholder="Masukkan / Kosongkan jika tidak ada data">
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label" for="tgl_rilis">Tanggal Rilis</label>
+                    <input type="date"
+                        class="form-control {{ $errors->has('tgl_rilis') ? 'is-invalid' : (old('tgl_rilis') ? 'is-valid' : '') }}"
+                        id="tgl_rilis" name="tgl_rilis"
+                        value="{{ old('tgl_rilis') }}">
                 </div>
             </div>
 
             <div class="form-group mb-3">
-                <label class="form-label" for="username">Username</label>
-                <input type="text" class="form-control" id="username" name="username"
-                    placeholder="Masukkan username" required>
-            </div>
-
-            <div class="form-group mb-3">
-                <label class="form-label" for="password">Password</label>
-                <div class="input-group">
-                    <input type="password" class="form-control" id="password" name="password" required
-                        placeholder="Masukkan password">
-                    <span class="input-group-text" id="togglePassword" style="cursor:pointer;">
-                        <i class="fas fa-eye"></i>
-                    </span>
-                </div>
-            </div>
-
-            <div class="form-group mb-3">
-                <label class="form-label" for="role_id">Role</label>
-                <select class="form-control" id="role_id" name="role_id" required>
-                    <option value="" disabled selected>-- Pilih Role --</option>
-                    @foreach($roles as $j)
-                    <option value="{{$j['id']}}">{{$j['status']}}</option>
-                    @endforeach
-
-                </select>
+                <label class="form-label" for="deskripsi">Deskripsi</label>
+                <textarea
+                    class="form-control {{ $errors->has('deskripsi') ? 'is-invalid' : (old('deskripsi') ? 'is-valid' : '') }}"
+                    id="deskripsi" name="deskripsi"
+                    placeholder="Masukkan / Kosongkan jika tidak ada data" rows="4">{{ old('deskripsi') }}</textarea>
             </div>
 
 
             <div class="text-start">
-                <a href="{{route('pengguna.index')}}" class="btn btn-outline-primary">
+                <a href="{{route('software.index')}}" class="btn btn-outline-primary">
                     <i class="bi bi-arrow-left"></i> Kembali
                 </a>
                 <button type="reset" class="btn btn-outline-warning">
@@ -124,5 +166,6 @@
     });
 </script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="{{ asset('assets/js/save.js') }}"></script>
+<script src="{{ asset('assets/js/admin/pengguna/save.js') }}"></script>
+
 @endsection
