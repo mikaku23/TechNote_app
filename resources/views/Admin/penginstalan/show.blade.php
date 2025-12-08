@@ -14,6 +14,12 @@
         <input type="text" class="form-control" value="{{ $penginstalan->status ?? 'tidak ada data' }}" disabled>
     </div>
 </div>
+<div class="mb-3">
+    <label class="form-label">Estimasi Selesai</label>
+    <input type="text" class="form-control"
+        value="{{ $penginstalan->estimasi ? \Carbon\Carbon::parse($penginstalan->estimasi)->format('G \J\a\m i \M\e\n\i\t') : 'tidak ada data' }}"
+        disabled>
+</div>
 
 <div class="mb-3">
     <label class="form-label">Tanggal Instalasi</label>

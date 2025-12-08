@@ -135,6 +135,19 @@
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
+
+                <div class="col-md-6 mt-3">
+                    <label for="estimasi" class="form-label">Estimasi Selesai</label>
+                    <input
+                        type="time"
+                        id="estimasi"
+                        name="estimasi"
+                        class="form-control {{ $errors->has('estimasi') ? 'is-invalid' : (old('estimasi') ? 'is-valid' : '') }}"
+                        value="{{ old('estimasi') }}" required>
+                    @error('estimasi')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
             </div>
 
             <div class="text-start">

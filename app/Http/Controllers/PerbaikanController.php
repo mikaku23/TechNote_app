@@ -72,12 +72,15 @@ class PerbaikanController extends Controller
             'kategori' => 'required|string|max:255',
             'lokasi' => 'required|string|max:255',
             'keterangan' => 'required|string',
+            'estimasi' => 'required|date_format:H:i',
             'user_id' => 'required|exists:users,id',
         ], [
             'nama.required' => 'Nama harus diisi.',
             'kategori.required' => 'Kategori harus diisi.',
             'lokasi.required' => 'Lokasi harus diisi.',
             'keterangan.required' => 'Keterangan harus diisi.',
+            'estimasi.required' => 'Estimasi harus diisi.',
+            'estimasi.date_format' => 'Format estimasi harus HH:MM.',
             'user_id.required' => 'Pengguna harus dipilih.',
             'user_id.exists' => 'Pengguna tidak ditemukan.',
         ]);
@@ -90,6 +93,7 @@ class PerbaikanController extends Controller
         $perbaikan->status = 'sedang diperbaiki';
         $perbaikan->keterangan = $validated['keterangan'];
         $perbaikan->tgl_perbaikan = now()->toDateString();
+        $perbaikan->estimasi = $validated['estimasi'];
         $perbaikan->user_id = $validated['user_id'];
         $perbaikan->save();
 

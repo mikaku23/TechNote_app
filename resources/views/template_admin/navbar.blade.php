@@ -1,80 +1,352 @@
- <div class="container-fluid navbar-inner">
+<!-- ===== CSS (taruh di head / file CSS utama) ===== -->
+<style>
+    /* tampilan navbar modern */
+    .navbar-modern {
+        backdrop-filter: blur(6px);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(250, 250, 250, 0.6));
+        border-bottom: 1px solid rgba(30, 40, 60, 0.06);
+        box-shadow: 0 6px 18px rgba(20, 30, 60, 0.03);
+    }
 
-     <div class="sidebar-toggle" data-toggle="sidebar" data-active="true">
-         <i class="icon">
-             <svg width="20px" class="icon-20" viewBox="0 0 24 24">
-                 <path fill="currentColor" d="M4,11V13H16L10.5,18.5L11.92,19.92L19.84,12L11.92,4.08L10.5,5.5L16,11H4Z" />
-             </svg>
-         </i>
-     </div>
+    /* spacing item */
+    .navbar-modern .navbar-list .nav-item {
+        margin-left: 6px;
+        margin-right: 2px;
+    }
 
-     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-         <span class="navbar-toggler-icon">
-             <span class="mt-2 navbar-toggler-bar bar1"></span>
-             <span class="navbar-toggler-bar bar2"></span>
-             <span class="navbar-toggler-bar bar3"></span>
-         </span>
-     </button>
-     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-         <ul class="mb-2 navbar-nav ms-auto align-items-center navbar-list mb-lg-0">
+    /* link look */
+    .navbar-modern .nav-link {
+        color: #333;
+        padding: .45rem .7rem;
+        border-radius: 10px;
+        transition: all .18s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: .55rem;
+    }
 
-             </li>
-             <li class="nav-item dropdown">
+    /* hover halus */
+    .navbar-modern .nav-link:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(15, 30, 80, 0.05);
+        background: rgba(18, 92, 255, 0.04);
+    }
 
-             </li>
+    /* marquee */
+    .navbar-marquee {
+        width: 360px;
+        overflow: hidden;
+        position: relative;
+        height: 38px;
+        display: flex;
+        align-items: center;
+        padding: 0 .35rem;
+        border-radius: 8px;
+        background: rgba(250, 250, 250, 0.45);
+        border: 1px solid rgba(200, 200, 200, 0.12);
+    }
 
-             <li class="nav-item dropdown">
+    .navbar-marquee .marquee-content {
+        display: inline-block;
+        white-space: nowrap;
+        will-change: transform;
+        animation: marquee 14s linear infinite;
+        font-weight: 600;
+        color: #244;
+        letter-spacing: .2px;
+    }
 
-             </li>
-             <li class="nav-item dropdown">
-                 <a href="#" class="nav-link" id="notification-drop" data-bs-toggle="dropdown">
-                     <svg class="icon-24" width="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                         <path d="M19.7695 11.6453C19.039 10.7923 18.7071 10.0531 18.7071 8.79716V8.37013C18.7071 6.73354 18.3304 5.67907 17.5115 4.62459C16.2493 2.98699 14.1244 2 12.0442 2H11.9558C9.91935 2 7.86106 2.94167 6.577 4.5128C5.71333 5.58842 5.29293 6.68822 5.29293 8.37013V8.79716C5.29293 10.0531 4.98284 10.7923 4.23049 11.6453C3.67691 12.2738 3.5 13.0815 3.5 13.9557C3.5 14.8309 3.78723 15.6598 4.36367 16.3336C5.11602 17.1413 6.17846 17.6569 7.26375 17.7466C8.83505 17.9258 10.4063 17.9933 12.0005 17.9933C13.5937 17.9933 15.165 17.8805 16.7372 17.7466C17.8215 17.6569 18.884 17.1413 19.6363 16.3336C20.2118 15.6598 20.5 14.8309 20.5 13.9557C20.5 13.0815 20.3231 12.2738 19.7695 11.6453Z" fill="currentColor"></path>
-                         <path opacity="0.4" d="M14.0088 19.2283C13.5088 19.1215 10.4627 19.1215 9.96275 19.2283C9.53539 19.327 9.07324 19.5566 9.07324 20.0602C9.09809 20.5406 9.37935 20.9646 9.76895 21.2335L9.76795 21.2345C10.2718 21.6273 10.8632 21.877 11.4824 21.9667C11.8123 22.012 12.1482 22.01 12.4901 21.9667C13.1083 21.877 13.6997 21.6273 14.2036 21.2345L14.2026 21.2335C14.5922 20.9646 14.8734 20.5406 14.8983 20.0602C14.8983 19.5566 14.4361 19.327 14.0088 19.2283Z" fill="currentColor"></path>
-                     </svg>
-                     <span class="bg-danger dots"></span>
-                 </a>
-                 <div class="p-0 sub-drop dropdown-menu dropdown-menu-end" aria-labelledby="mail-drop">
-                     <div class="m-0 shadow-none card">
-                         <div class="py-3 card-header d-flex justify-content-between bg-primary rounded-top">
-                             <div class="header-title">
-                                 <h5 class="mb-0 text-white">All Notifications</h5>
-                             </div>
-                         </div>
-                         <div class="p-0 card-body ">
-                             <a href="#" class="iq-sub-card">
-                                 <div class="d-flex align-items-center">
-                                     <div class="">
-                                         <img class="p-1 avatar-40 rounded-pill bg-primary-subtle" src="../assets/images/shapes/01.png" alt="">
-                                     </div>
-                                     <div class="ms-3">
-                                         <h6 class="mb-0 ">Contoh</h6>
-                                         <small class="float-start font-size-12">13 Jun</small>
-                                     </div>
-                                 </div>
-                             </a>
-                         </div>
-                     </div>
-                 </div>
-             </li>
-             <li class="nav-item dropdown custom-drop">
-                 <a class="py-0 nav-link d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                     <img src="{{ asset('assets/images/avatars/01.png') }}" alt="User-Profile" class="theme-color-default-img img-fluid avatar avatar-50 avatar-rounded">
+    .navbar-marquee:hover .marquee-content {
+        animation-play-state: paused;
+    }
 
-                     <div class="caption ms-3 d-none d-md-block ">
-                         <h6 class="mb-0 caption-title">Austin Robertson</h6>
-                         <p class="mb-0 caption-sub-title">Marketing Administrator</p>
-                     </div>
-                 </a>
-                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                     <li><a class="dropdown-item" href="../dashboard/app/user-profile.html">Profile</a></li>
-                     <li><a class="dropdown-item" href="../dashboard/app/user-privacy-setting.html">Privacy Setting</a></li>
-                     <li>
-                         <hr class="dropdown-divider">
-                     </li>
-                     <li><a class="dropdown-item" href="../dashboard/auth/sign-in.html">Logout</a></li>
-                 </ul>
-             </li>
-         </ul>
-     </div>
- </div>
+    @keyframes marquee {
+        0% {
+            transform: translateX(100%);
+        }
+
+        100% {
+            transform: translateX(-100%);
+        }
+    }
+
+    /* notifikasi dot */
+    .navbar-modern .dots {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, .12);
+    }
+
+    /* jam */
+    #navbarSupportedContent #waktuWIB {
+        min-width: 180px;
+        text-align: right;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: .95rem;
+        color: #5b6770;
+    }
+
+    /* profil avatar */
+    .navbar-modern .avatar {
+        width: 40px;
+        height: 40px;
+        object-fit: cover;
+    }
+
+    /* responsive */
+    @media (max-width: 991px) {
+        .navbar-marquee {
+            display: none;
+        }
+
+        #navbarSupportedContent #waktuWIB {
+            min-width: 140px;
+        }
+    }
+
+    @media (max-width: 575px) {
+        .caption {
+            display: none !important;
+        }
+    }
+
+    .btn-detail-pesan {
+        background: #ffffff;
+        border: 1px solid #007bff;
+        padding: 4px 10px;
+        font-size: 12px;
+        border-radius: 8px;
+        color: #007bff;
+        transition: 0.25s ease;
+    }
+
+    .btn-detail-pesan:hover {
+        background: #007bff;
+        color: white;
+        box-shadow: 0 3px 10px rgba(0, 123, 255, 0.35);
+        transform: translateY(-1px);
+    }
+
+    .btn-detail-pesan:active {
+        background: #005fcc;
+        color: white;
+        transform: scale(0.97);
+    }
+
+    .btn-tutup-dropdown {
+        width: 70%;
+        background: #ffffff;
+        border: 1px solid #007bff;
+        color: #007bff;
+        padding: 6px 10px;
+        border-radius: 10px;
+        font-size: 13px;
+        transition: .25s ease;
+    }
+
+    .btn-tutup-dropdown:hover {
+        background: #007bff;
+        color: #fff;
+        box-shadow: 0 3px 10px rgba(0, 123, 255, 0.35);
+        transform: translateY(-1px);
+    }
+
+    .btn-tutup-dropdown:active {
+        background: #005fcc;
+        color: white;
+        transform: scale(.97);
+    }
+</style>
+
+<!-- ===== Ganti bagian collapse navbar-collapse dengan ini ===== -->
+<div class="collapse navbar-collapse navbar-modern" id="navbarSupportedContent">
+    <ul class="mb-2 navbar-nav ms-auto align-items-center navbar-list mb-lg-0">
+
+        <!-- Judul bergerak (marquee) -->
+        <li class="nav-item d-none d-lg-flex me-3 align-items-center">
+            <div class="navbar-marquee" aria-hidden="true">
+                <div class="marquee-content">
+                    {{ $title ?? config('app.name', 'TechNote') }} • Sistem Layanan Instalasi & Perbaikan — STMIK Triguna Dharma
+                </div>
+            </div>
+        </li>
+
+        <!-- Quick Add (ikon +) - di kiri collapse (tidak menggantikan toggle yang sudah ada) -->
+        <li class="nav-item dropdown me-2">
+            <a class="nav-link" href="#" id="quickAdd" role="button" data-bs-toggle="dropdown" aria-expanded="false" title="Tambah cepat">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                </svg>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="quickAdd">
+
+                <li><a class="dropdown-item d-flex align-items-center gap-2" href="{{ route('dashboard-admin') }}"><i class="bi bi-house"></i> Home</a></li>
+                <li><a class="dropdown-item d-flex align-items-center gap-2" href="{{ route('penginstalan.create') }}"><i class="bi bi-download"></i> Tambah Instalasi</a></li>
+                <li><a class="dropdown-item d-flex align-items-center gap-2" href="{{ route('perbaikan.create') }}"><i class="bi bi-tools"></i> Tambah Perbaikan</a></li>
+                <li><a class="dropdown-item d-flex align-items-center gap-2" href="{{ route('software.create') }}"><i class="bi bi-hdd-stack"></i> Tambah Software</a></li>
+            </ul>
+        </li>
+
+        <!-- Notifikasi (SVG lengkap agar pasti tampil) -->
+        <li class="nav-item dropdown me-2 position-relative">
+            <a href="#" class="nav-link position-relative" id="notification-drop"
+                data-bs-toggle="dropdown" aria-expanded="false" aria-label="Pesan Masuk">
+
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                    <path d="M2 6.5L12 13L22 6.5V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6.5Z"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M2 6L12 12.5L22 6" stroke="currentColor" stroke-width="2" />
+                </svg>
+
+                @if($recentMessages->count() > 0)
+                <span class="bg-danger dots"></span>
+                @endif
+            </a>
+
+            <div class="p-0 sub-drop dropdown-menu dropdown-menu-end" aria-labelledby="notification-drop">
+                <div class="m-0 shadow-none card">
+                    <div class="py-3 card-header d-flex justify-content-between bg-primary rounded-top">
+                        <h6 class="mb-0 text-white">Pesan Masuk</h6>
+                    </div>
+
+                    <div class="p-0 card-body" style="max-height: 330px; overflow-y: auto">
+
+                        @forelse($recentMessages as $msg)
+                        @php
+                        $nama = htmlspecialchars($msg->nama ?? '-', ENT_QUOTES);
+                        $email = htmlspecialchars($msg->email ?? '-', ENT_QUOTES);
+                        $pesan = htmlspecialchars($msg->pesan ?? '-', ENT_QUOTES);
+                        $tgl = \Carbon\Carbon::parse($msg->created_at)->translatedFormat('d M Y H:i');
+                        @endphp
+
+                        <div class="iq-sub-card px-3 py-2">
+
+                            <div class="d-flex justify-content-between align-items-start">
+
+                                <div>
+                                    <h6 class="mb-0">{{ $msg->nama }}</h6>
+                                    <small class="text-muted">
+                                        {{ \Illuminate\Support\Str::limit($msg->pesan, 40) }}
+                                    </small><br>
+                                    <small class="font-size-12">
+                                        {{ \Carbon\Carbon::parse($msg->created_at)->diffForHumans() }}
+                                    </small>
+                                </div>
+
+                                <!-- Tombol Detail -->
+                                <button
+                                    class="btn-detail-pesan"
+                                    onclick="event.stopPropagation(); showDetailPesan('{{ $nama }}','{{ $email }}','{{ $pesan }}','{{ $tgl }}')">
+                                    Detail
+                                </button>
+
+                            </div>
+                            <div class="p-2 border-top text-center">
+                                <button onclick="closeDropdownNotif()"
+                                    class="btn-tutup-dropdown">
+                                    Tutup Menu
+                                </button>
+                            </div>
+
+                        </div>
+
+                        @empty
+                        <p class="text-center text-muted py-3">Tidak ada pesan baru</p>
+                        @endforelse
+
+                    </div>
+                </div>
+            </div>
+        </li>
+
+
+
+        <!-- Jam WIB -->
+        <li class="nav-item d-flex align-items-center me-3">
+            <span id="waktuWIB" class="nav-link text-muted"></span>
+        </li>
+
+        <!-- Profil -->
+        @if(Auth::check())
+        <li class="nav-item dropdown custom-drop d-flex align-items-center">
+            @php
+            $foto = Auth::user()->foto && file_exists(public_path('foto/' . Auth::user()->foto))
+            ? asset('foto/' . Auth::user()->foto)
+            : asset('assets/images/default.png');
+            @endphp
+
+            <a class="py-0 nav-link d-flex align-items-center" href="#" id="navbarDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <img src="{{ $foto }}" class="avatar rounded-circle me-2" alt="profile">
+                <div class="caption d-none d-md-block">
+                    <h6 class="mb-0 caption-title">{{ Auth::user()->username }}</h6>
+                    <p class="mb-0 caption-sub-title text-muted">{{ Auth::user()->role->status ?? '-' }}</p>
+                </div>
+            </a>
+
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li>
+                    <a class="dropdown-item d-flex align-items-center gap-1 my-profile-btn" href="#" data-bs-toggle="modal" data-bs-target="#myProfileModal">
+                        <i class="bi bi-person"></i> My Profile
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item d-flex align-items-center gap-1" href="#" data-bs-toggle="modal" data-bs-target="#accountSettingsModal">
+                        <i class="bi bi-gear"></i> Account Settings
+                    </a>
+                </li>
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
+                <form action="{{ route('logout') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="dropdown-item d-flex align-items-center gap-1">
+                        <i class="bi bi-box-arrow-right"></i> Sign Out
+                    </button>
+                </form>
+            </ul>
+        </li>
+        @endif
+
+    </ul>
+</div>
+
+
+<script>
+    function showDetailPesan(nama, email, pesan, tanggal) {
+        document.getElementById('detail-nama').innerText = nama;
+        document.getElementById('detail-email').innerText = email;
+        document.getElementById('detail-pesan').innerText = pesan;
+        document.getElementById('detail-tanggal').innerText = tanggal;
+
+        var modal = new bootstrap.Modal(document.getElementById('modalDetailPesan'));
+        modal.show();
+    }
+</script>
+
+<!-- ===== JS: jam WIB (sebelum </body>) ===== -->
+<script>
+    function updateWaktuWIB() {
+        const now = new Date();
+        const options = {
+            timeZone: 'Asia/Jakarta',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false,
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric'
+        };
+        const formatter = new Intl.DateTimeFormat('id-ID', options);
+        const teks = formatter.format(now).replace(',', ' •');
+        const el = document.getElementById('waktuWIB');
+        if (el) el.textContent = teks;
+    }
+    updateWaktuWIB();
+    setInterval(updateWaktuWIB, 1000);
+</script>

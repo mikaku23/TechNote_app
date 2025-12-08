@@ -16,7 +16,8 @@
         <form class="needs-validation"
             action="{{ route('pengguna.storeMahasiswa') }}"
             method="POST"
-            data-redirect="{{ route('pengguna.index') }}">
+            data-redirect="{{ route('pengguna.index') }}"
+            enctype="multipart/form-data">
             @csrf
             @if ($errors->any())
             <div class="alert alert-danger">
@@ -56,7 +57,39 @@
                     </span>
                 </div>
             </div>
+            <div class="form-group mb-3">
+                <label class="form-label" for="security_question">Security Question</label>
+                <input type="text"
+                    class="form-control"
+                    id="security_question"
+                    name="security_question"
+                    value="{{ $randomQuestion }}"
+                    readonly>
+            </div>
 
+            <div class="form-group mb-3">
+                <label class="form-label" for="security_answer">Security Answer</label>
+                <input type="text"
+                    class="form-control {{ $errors->has('security_answer') ? 'is-invalid' : (old('security_answer') ? 'is-valid' : '') }}"
+                    id="security_answer" name="security_answer"
+                    value="{{ old('security_answer') }}"
+                    placeholder="Masukkan jawaban keamanan  (berfungsi untuk pemulihan akun)">
+            </div>
+            <div class="form-group mb-3">
+                <div class="row">
+                    <div class="col-12">
+                        <label for="foto" class="form-label">Foto</label>
+                        <input type="file"
+                            class="form-control {{ $errors->has('foto') ? 'is-invalid' : (old('foto') ? 'is-valid' : '') }}"
+                            id="foto" name="foto" accept="image/*" required>
+                        @if ($errors->has('foto'))
+                        <div class="invalid-feedback">
+                            {{ $errors->first('foto') }}
+                        </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
 
             <div class="text-start">
                 <a href="{{route('pengguna.index')}}" class="btn btn-outline-primary">

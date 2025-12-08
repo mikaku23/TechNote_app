@@ -60,6 +60,19 @@
                         <option value="gagal" {{ (old('status', $penginstalan->status ?? '') == 'gagal') ? 'selected' : '' }}>Gagal</option>
                     </select>
                 </div>
+
+                <div class="col-md-6 mt-3">
+                    <label for="estimasi" class="form-label">Estimasi</label>
+                    <input
+                        type="time"
+                        id="estimasi"
+                        name="estimasi"
+                        class="form-control {{ $errors->has('estimasi') ? 'is-invalid' : (old('estimasi') ? 'is-valid' : '') }}"
+                        value="{{ old('estimasi', $penginstalan->estimasi) }}">
+                    @error('estimasi')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
             </div>
             <div class="text-start">
                 <a href="{{route('penginstalan.index')}}" class="btn btn-outline-primary">

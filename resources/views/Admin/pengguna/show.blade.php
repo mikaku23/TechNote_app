@@ -24,3 +24,20 @@
     <label class="form-label">Role</label>
     <input type="text" class="form-control" value="{{ $user->role->status ?? '-' }}" disabled>
 </div>
+
+<div class="mb-3">
+    <label class="form-label">Security Question</label>
+    <input type="text" class="form-control" value="{{ $user->security_question ?? '-' }}" disabled>
+</div>
+
+<div class="mb-3">
+    <label class="form-label">Foto</label>
+    @if(!empty($user->foto))
+    <div>
+        <img src="{{ asset('foto/' . $user->foto) }}" alt="Foto {{ $user->nama }}" class="img-thumbnail" style="max-height:200px;">
+        <div class="form-text mt-1">{{ $user->foto }}</div>
+    </div>
+    @else
+    <input type="text" class="form-control" value="Tidak ada foto" disabled>
+    @endif
+</div>

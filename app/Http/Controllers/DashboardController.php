@@ -9,12 +9,12 @@ use App\Models\software;
 use App\Models\perbaikan;
 use App\Models\penginstalan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
     public function dashboardAdmin(Request $request)
     {
-        // 🔹 Summary progress bar
         $totalUser = User::count();
         $targetUser = 50;
         $persentaseUser = min(100, round(($totalUser / $targetUser) * 100));
@@ -123,6 +123,168 @@ class DashboardController extends Controller
             'dataPerbaikanTahun' => $dataSemuaTahun[$thisYear]['perbaikan'] ?? [],
             'tahunTersedia' => $labelTahun,
             'selectedYear' => $thisYear,
+        ]);
+    }
+
+    public function dashboardMahasiswa()
+    {
+        $userId = Auth::id();
+
+        // batas waktu 3 hari yang lalu (zona Asia/Jakarta)
+        $threeDaysAgo = Carbon::now('Asia/Jakarta')->subDays(3);
+
+        $penginstalans = Penginstalan::with(['software', 'user'])
+            ->where('user_id', $userId)
+            ->where(function ($q) use ($threeDaysAgo) {
+                // tampilkan yang belum berhasil, atau yang berhasil tapi belum lebih dari 3 hari sejak updated_at
+                $q->where('status', '!=', 'berhasil')
+                    ->orWhere(function ($q2) use ($threeDaysAgo) {
+                        $q2->where('status', 'berhasil')
+                            ->where('updated_at', '>=', $threeDaysAgo);
+                    });
+            })
+            ->orderBy('updated_at', 'desc') // tampilkan data terbaru berdasarkan aktivitas terakhir
+            ->paginate(10)
+            ->through(function ($item) {
+
+                if (empty($item->estimasi)) {
+                    $item->estimasi_hitung  = 'tidak ada estimasi';
+                    $item->estimasi_selesai = null;
+                    return $item;
+                }
+
+                $mulai = $item->created_at instanceof Carbon
+                    ? $item->created_at->copy()
+                    : Carbon::parse($item->created_at)->setTimezone('Asia/Jakarta');
+
+                $parts = explode(':', $item->estimasi);
+                $hour = isset($parts[0]) ? (int)$parts[0] : 0;
+                $minute = isset($parts[1]) ? (int)$parts[1] : 0;
+                $second = isset($parts[2]) ? (int)$parts[2] : 0;
+                $estimasiDetik = $hour * 3600 + $minute * 60 + $second;
+
+                $target = $mulai->copy()->addSeconds($estimasiDetik);
+                $sekarang = Carbon::now('Asia/Jakarta');
+
+                // JIKA SUDAH SELESAI
+                if ($sekarang->greaterThanOrEqualTo($target)) {
+                    $item->estimasi_hitung = 'penginstalan selesai';
+
+                    // 🔹 Update status hanya jika masih 'pending'
+                    if ($item->status === 'pending') {
+                        Penginstalan::where('id', $item->id)->update([
+                            'status' => 'berhasil',
+                        ]);
+
+                        // juga update objek item supaya view langsung konsisten
+                        $item->status = 'berhasil';
+                        $item->updated_at = Carbon::now('Asia/Jakarta');
+                    }
+                } else {
+                    // MASIH PROSES → Hitung sisa waktu
+                    $diff = $sekarang->diff($target);
+                    $item->estimasi_hitung = sprintf(
+                        'sisa: %02d jam %02d menit %02d detik',
+                        $diff->h + ($diff->d * 24),
+                        $diff->i,
+                        $diff->s
+                    );
+                }
+
+                // simpan target ke tampilan
+                $item->estimasi_selesai = $target->format('d-m-Y H:i:s');
+
+                return $item;
+            });
+
+        return view('mahasiswa.index', [
+            'menu' => 'dashboard',
+            'title' => 'Dashboard Mahasiswa',
+            'penginstalans' => $penginstalans
+        ]);
+    }
+
+    public function dashboardDosen()
+    {
+        $userId = Auth::id();
+
+        // batas waktu 3 hari yang lalu (zona Asia/Jakarta)
+        $threeDaysAgo = Carbon::now('Asia/Jakarta')->subDays(3);
+
+        $perbaikans = perbaikan::with(['user'])
+            ->where('user_id', $userId)
+            ->where(function ($q) use ($threeDaysAgo) {
+                // tampilkan yang belum selesai, atau yang selesai tapi belum lebih dari 3 hari sejak updated_at
+                $q->where('status', '!=', 'selesai')
+                    ->orWhere(function ($q2) use ($threeDaysAgo) {
+                        $q2->where('status', 'selesai')
+                            ->where('updated_at', '>=', $threeDaysAgo);
+                    });
+            })
+            ->orderBy('updated_at', 'desc')
+            ->paginate(10)
+            ->through(function ($item) {
+                // jika tidak ada estimasi
+                if (empty($item->estimasi)) {
+                    $item->estimasi_hitung  = 'tidak ada estimasi';
+                    $item->estimasi_selesai = null;
+                } else {
+                    // gunakan created_at sebagai titik mulai (konsisten dengan penginstalan)
+                    $mulai = $item->created_at instanceof Carbon
+                        ? $item->created_at->copy()
+                        : Carbon::parse($item->created_at)->setTimezone('Asia/Jakarta');
+
+                    // estimasi disimpan sebagai time "HH:MM:SS"
+                    $parts = explode(':', $item->estimasi);
+                    $hour = isset($parts[0]) ? (int)$parts[0] : 0;
+                    $minute = isset($parts[1]) ? (int)$parts[1] : 0;
+                    $second = isset($parts[2]) ? (int)$parts[2] : 0;
+                    $estimasiDetik = $hour * 3600 + $minute * 60 + $second;
+
+                    $target = $mulai->copy()->addSeconds($estimasiDetik);
+                    $sekarang = Carbon::now('Asia/Jakarta');
+
+                    // JIKA SUDAH SELESAI
+                    if ($sekarang->greaterThanOrEqualTo($target)) {
+                        $item->estimasi_hitung = 'perbaikan selesai';
+
+                        // Update status hanya jika masih 'sedang diperbaiki'
+                        if (strtolower($item->status) === 'sedang diperbaiki') {
+                            perbaikan::where('id', $item->id)->update([
+                                'status' => 'selesai',
+                            ]);
+
+                            // sync objek agar view konsisten
+                            $item->status = 'selesai';
+                            $item->updated_at = Carbon::now('Asia/Jakarta');
+                        }
+                    } else {
+                        // MASIH PROSES → Hitung sisa waktu
+                        $diff = $sekarang->diff($target);
+                        $item->estimasi_hitung = sprintf(
+                            'sisa: %02d jam %02d menit %02d detik',
+                            $diff->h + ($diff->d * 24),
+                            $diff->i,
+                            $diff->s
+                        );
+                    }
+
+                    // simpan target ke tampilan
+                    $item->estimasi_selesai = $target->format('d-m-Y H:i:s');
+                }
+
+                // format tanggal perbaikan untuk tampilan
+                $item->tgl_perbaikan_formatted = $item->tgl_perbaikan
+                    ? Carbon::parse($item->tgl_perbaikan)->setTimezone('Asia/Jakarta')->format('d-m-Y')
+                    : 'tidak ada data';
+
+                return $item;
+            });
+
+        return view('dosen.index', [
+            'menu' => 'dashboard',
+            'title' => 'Dashboard Dosen',
+            'perbaikans' => $perbaikans,
         ]);
     }
 }

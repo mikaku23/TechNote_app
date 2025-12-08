@@ -1,5 +1,5 @@
 @extends('template_admin.layout')
-@section('title', 'Halaman Index')
+@section('title', 'Dashboard Admin')
 @section('css')
 <style>
     .circle-progress-wrapper {

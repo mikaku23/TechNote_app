@@ -1,0 +1,42 @@
+ .typing-container {
+        font-size: 28px;
+        font-weight: 700;
+        text-align: center;
+        margin-top: 10px;
+        min-height: 50px;
+    }
+
+    .cursor {
+        display: inline-block;
+        margin-left: 4px;
+        animation: blink 0.8s infinite;
+    }
+
+    @keyframes blink {
+
+        0%,
+        50% {
+            opacity: 1;
+        }
+
+        51%,
+        100% {
+            opacity: 0;
+        }
+    }
+
+    /* Warna dinamis setiap kalimat */
+    .text-welcome {
+        color: rgb(var(--accent-1));
+        /* teal terang elegan */
+    }
+
+    .text-status {
+        color: rgb(var(--accent-2));
+        /* coral lembut */
+    }
+
+    .text-help {
+        color: #6ee7b7;
+        /* teal soft (mint elegan) */
+    }

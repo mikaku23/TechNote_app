@@ -2,7 +2,6 @@
     <li class="nav-item static-item">
         <a class="nav-link static-item disabled" href="#" tabindex="-1">
             <span class="default-icon">Home</span>
-            <span class="mini-icon">-</span>
         </a>
     </li>
     <li class="nav-item">
@@ -15,6 +14,38 @@
             </i>
             <span class="item-name">Dashboard</span>
         </a>
+    </li>
+
+    <li>
+        <hr class="hr-horizontal">
+    </li>
+    <li class="nav-item static-item">
+        <a class="nav-link static-item disabled" href="#" tabindex="-1">
+            <span class="default-icon">Users</span>
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link {{ in_array($menu ?? '', ['pengguna', 'role']) ? 'active' : '' }}" href="{{ route('pengguna.index') }}">
+            <i class="icon">
+                <svg width="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="icon-20">
+                    <path opacity="0.4" d="M12 12C15.3137 12 18 9.31371 18 6C18 2.68629 15.3137 0 12 0C8.68629 0 6 2.68629 6 6C6 9.31371 8.68629 12 12 12Z" fill="currentColor"></path>
+                    <path d="M2 22C2 17.5817 6.02944 14 12 14C17.9706 14 22 17.5817 22 22H2Z" fill="currentColor"></path>
+                </svg>
+            </i>
+            <span class="item-name">Users</span>
+        </a>
+    </li>
+
+    <li>
+        <hr class="hr-horizontal">
+    </li>
+    <li class="nav-item static-item" style="margin-bottom:0;">
+        <a class=" nav-link static-item disabled" href="#" tabindex="-1">
+            <span class="default-icon">Layanan</span>
+        </a>
+    </li>
+
     <li class="nav-item">
         <a class="nav-link {{ ($menu ?? '') == 'software' ? 'active' : '' }}" aria-current="page" href="{{ route('software.index') }}">
             <i class="icon">
@@ -25,17 +56,6 @@
                 </svg>
             </i>
             <span class="item-name">Software</span>
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link {{ in_array($menu ?? '', ['pengguna', 'role']) ? 'active' : '' }}" href="{{ route('pengguna.index') }}">
-            <i class="icon">
-                <svg width="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="icon-20">
-                    <path opacity="0.4" d="M12 12C15.3137 12 18 9.31371 18 6C18 2.68629 15.3137 0 12 0C8.68629 0 6 2.68629 6 6C6 9.31371 8.68629 12 12 12Z" fill="currentColor"></path>
-                    <path d="M2 22C2 17.5817 6.02944 14 12 14C17.9706 14 22 17.5817 22 22H2Z" fill="currentColor"></path>
-                </svg>
-            </i>
-            <span class="item-name">Pengguna</span>
         </a>
     </li>
     <li class="nav-item">
@@ -71,10 +91,10 @@
         <a class="nav-link {{ ($menu ?? '') == 'rekap' ? 'active' : '' }}" aria-current="page" href="{{ route('rekap.index') }}">
             <i class="icon">
                 <svg width="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="icon-20">
-                    <path opacity="0.4" d="M7 2h6l2 2h3v17a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z" fill="currentColor"/>
-                    <path d="M12 7v2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M8.5 11h7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M8.5 14h7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path opacity="0.4" d="M7 2h6l2 2h3v17a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z" fill="currentColor" />
+                    <path d="M12 7v2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M8.5 11h7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M8.5 14h7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
                 </svg>
             </i>
             <span class="item-name">Rekap</span>

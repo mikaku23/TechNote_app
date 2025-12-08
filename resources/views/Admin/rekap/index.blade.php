@@ -44,9 +44,17 @@
     <div class="row">
         <div class="col-sm-12">
             <div class="card mt-3">
-                <div class="card-header d-flex justify-content-between">
-                    <h4 class="card-title">Data Rekap</h4>
+                <div class="card-header">
+                    <h4 class="card-title mb-3">Data Rekap</h4>
+
+                    <div class="text-start mb-1">
+                        <a href="{{ route('rekap.export.pdf') }}" class="btn btn-outline-danger btn-sm me-2">Export PDF</a>
+                        <a href="{{ route('rekap.export.excel') }}" class="btn btn-outline-success btn-sm me-2">Export Excel</a>
+                        <a href="{{ route('rekap.print') }}" target="_blank" class="btn btn-outline-primary btn-sm">Print</a>
+                    </div>
                 </div>
+
+
 
                 <div class="d-flex justify-content-between align-items-center px-4 pt-3 pb-1">
                     <form method="GET" action="{{ route('rekap.index') }}" class="d-flex gap-2 align-items-center">

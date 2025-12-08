@@ -1,0 +1,99 @@
+/* === BACKDROP BLUR === */
+.show-modal-glass + .modal-backdrop {
+    background-color: rgba(0, 0, 0, 0.45) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+}
+
+/* === GLASS POPUP === */
+.show-modal-glass .glass-popup {
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 20px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+    color: #000;
+    overflow: hidden;
+    transform: scale(0.95);
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+/* Animasi buka */
+.show-modal-glass.show .glass-popup {
+    transform: scale(1);
+    opacity: 1;
+}
+
+/* Modal wrapper */
+.profile-wrapper {
+    padding: 10px 5px;
+}
+
+/* === BIO DATA STYLE === */
+.profile-info-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 10px;
+    border: 1px solid rgba(0,0,0,0.08);
+}
+
+.profile-info-item label {
+    flex: 0 0 140px;       /* lebar stabil biar rapi */
+    font-weight: 500;
+    color: #333;
+    text-align: left;
+}
+
+.profile-info-item .value {
+    flex: 1;
+    text-align: left;     /* ini yang bikin tidak mentok kanan */
+    padding-left: 15px;   /* jarak dari label */
+    color: #000;
+}
+
+/* Scroll jika konten tinggi */
+.modal-body {
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+/* Footer tombol */
+.btn-primary.close-modal {
+    background-color: transparent !important;
+    color: #0d6efd !important;
+    border: 2px solid #0d6efd !important;
+    border-radius: 12px;
+    padding: 10px 25px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-primary.close-modal:hover {
+    background-color: #0d6efd !important;
+    color: #000 !important;
+}
+
+/* Scrollbar cantik */
+.modal-body::-webkit-scrollbar {
+    width: 8px;
+}
+.modal-body::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+}
+/* === PROFILE IMAGE STYLE === */
+.profile-wrapper img {
+    width: 130px;                /* ukuran sedikit lebih besar */
+    height: 130px;
+    object-fit: cover;           /* agar tidak gepeng */
+    border-radius: 50%;          /* membuat bulat */
+    display: block;             
+    margin: 0 auto 20px auto;    /* posisi di tengah + jarak bawah */
+    border: 3px solid rgba(255,255,255,0.7); 
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15); 
+}

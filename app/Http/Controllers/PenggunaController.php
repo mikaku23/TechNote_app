@@ -46,7 +46,7 @@ class PenggunaController extends Controller
             'roles' => $roles,
             'menu' => 'pengguna',
             'title' => 'Data Pengguna',
-            
+
         ]);
     }
 
@@ -54,6 +54,8 @@ class PenggunaController extends Controller
 
     public function create()
     {
+        $questions = config('secure.security_questions');
+        $randomQuestion = $questions[array_rand($questions)];
         // Ambil semua role
         $roles = role::all();
 
@@ -76,12 +78,17 @@ class PenggunaController extends Controller
             'menu' => 'pengguna',
             'title' => 'Tambah User',
             'roles' => $roles,
+            'randomQuestion' => $randomQuestion,
         ]);
     }
 
 
     public function store(Request $request)
     {
+
+        $nm = $request->foto;
+        $namaFile = $nm->getClientOriginalName();
+
         // Validasi input
         $validated = $request->validate([
             'nama' => 'required|string|max:100',
@@ -89,6 +96,9 @@ class PenggunaController extends Controller
             'nip' => 'nullable|string|unique:users,nip',
             'username' => 'required|string|unique:users,username',
             'password' => 'required|string|min:4',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'security_question' => 'nullable|string|max:255',
+            'security_answer' => 'nullable|string|max:255',
             'role_id' => 'required|exists:roles,id',
         ], [
             'nama.required' => 'Nama pengguna harus diisi.',
@@ -111,7 +121,12 @@ class PenggunaController extends Controller
         $user->nip = $validated['nip'] ?? null;
         $user->username = $validated['username'];
         $user->password = bcrypt($validated['password']);
+        $user->security_question = $validated['security_question'];
+        $user->security_answer = bcrypt($validated['security_answer']);
+        $user->foto = $namaFile;
         $user->role_id = $validated['role_id'];
+
+        $nm->move(public_path() . '/foto', $namaFile);
         $user->save();
 
         if ($request->wantsJson() || $request->ajax()) {
@@ -121,22 +136,31 @@ class PenggunaController extends Controller
         return redirect()->route('pengguna.index');
     }
 
+
     public function createMahasiswa()
     {
+        $questions = config('secure.security_questions');
+        $randomQuestion = $questions[array_rand($questions)];
         return view('admin.pengguna.create_mahasiswa', [
             'menu' => 'pengguna',
             'title' => 'Tambah Mahasiswa',
+            'randomQuestion' => $randomQuestion,
         ]);
     }
 
     public function storeMahasiswa(Request $request)
     {
+        $nm = $request->foto;
+        $namaFile = $nm->getClientOriginalName();
         // Validasi input
         $validated = $request->validate([
             'nama' => 'required|string|max:100',
             'nim' => 'required|string|unique:users,nim',
             'username' => 'required|string|unique:users,username',
             'password' => 'required|string|min:4',
+            'security_question' => 'required|string',
+            'security_answer' => 'required|string',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ], [
             'nama.required' => 'Nama pengguna harus diisi.',
             'nim.required' => 'NIM harus diisi.',
@@ -153,7 +177,12 @@ class PenggunaController extends Controller
         $user->nim = $validated['nim'] ?? null;
         $user->username = $validated['username'];
         $user->password = bcrypt($validated['password']);
+        $user->security_question = $validated['security_question'];
+        $user->security_answer = bcrypt($validated['security_answer']);
+        $user->foto = $namaFile;
         $user->role_id = 3; // role_id otomatis mahasiswa
+
+        $nm->move(public_path() . '/foto', $namaFile);
         $user->save();
 
         if ($request->wantsJson() || $request->ajax()) {
@@ -166,20 +195,28 @@ class PenggunaController extends Controller
 
     public function createDosen()
     {
+        $questions = config('secure.security_questions');
+        $randomQuestion = $questions[array_rand($questions)];
         return view('admin.pengguna.create_dosen', [
             'menu' => 'pengguna',
             'title' => 'Tambah Dosen',
+            'randomQuestion' => $randomQuestion,
         ]);
     }
 
     public function storeDosen(Request $request)
     {
+        $nm = $request->foto;
+        $namaFile = $nm->getClientOriginalName();
         // Validasi input
         $validated = $request->validate([
             'nama' => 'required|string|max:100',
             'nip' => 'required|string|unique:users,nip',
             'username' => 'required|string|unique:users,username',
             'password' => 'required|string|min:4',
+            'security_question' => 'required|string',
+            'security_answer' => 'required|string',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ], [
             'nama.required' => 'Nama pengguna harus diisi.',
             'nip.required' => 'NIP harus diisi.',
@@ -196,7 +233,12 @@ class PenggunaController extends Controller
         $user->nip = $validated['nip'] ?? null;
         $user->username = $validated['username'];
         $user->password = bcrypt($validated['password']);
+        $user->security_question = $validated['security_question'];
+        $user->security_answer = bcrypt($validated['security_answer']);
+        $user->foto = $namaFile;
         $user->role_id = 2; // role_id otomatis dosen
+
+        $nm->move(public_path() . '/foto', $namaFile);
         $user->save();
 
         if ($request->wantsJson() || $request->ajax()) {
@@ -221,6 +263,8 @@ class PenggunaController extends Controller
 
     public function update(Request $request, $id)
     {
+        $user = User::findOrFail($id);
+
         // Validasi input
         $validated = $request->validate([
             'nama' => 'nullable',
@@ -228,36 +272,50 @@ class PenggunaController extends Controller
             'nip' => 'nullable',
             'username' => 'nullable',
             'password' => 'nullable',
-            'role_id' => 'nullable',
+            'security_question' => 'nullable',
+            'security_answer' => 'nullable',
+            'role_id' => 'nullable|exists:roles,id',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         // Update data di database
-        $user = User::findOrFail($id);
         $user->nama = $validated['nama'];
         $user->nim = $validated['nim'] ?? null;
         $user->nip = $validated['nip'] ?? null;
         $user->username = $validated['username'];
+
         if (!empty($validated['password'])) {
             $user->password = bcrypt($validated['password']);
         }
+
+        $user->security_question = $validated['security_question'];
+        if (!empty($validated['security_answer'])) {
+            $user->security_answer = bcrypt($validated['security_answer']);
+        }
+
+        // Handle foto upload
+        if ($request->hasFile('foto')) {
+            $nm = $request->foto;
+            $namaFile = $nm->getClientOriginalName();
+            $nm->move(public_path() . '/foto', $namaFile);
+            $user->foto = $namaFile;
+        }
+
         $user->role_id = $validated['role_id'];
         $user->save();
 
-        if ($request->wantsJson() || $request->ajax()) {
-            return response()->json(['success' => true]);
-        }
-
-        return redirect()->route('pengguna.index');
+        return redirect()->route('pengguna.index')->with('success', 'Data pengguna berhasil diperbarui.');
     }
 
     public function destroy($id)
     {
         $user = User::findOrFail($id);
-        $user->delete();
+        $user->forceDelete(); // hapus permanen
 
         return redirect()
             ->route('pengguna.index');
     }
+
 
     public function show($id)
     {
@@ -270,7 +328,7 @@ class PenggunaController extends Controller
     public function hapusSemua()
     {
         try {
-            User::query()->delete();
+            User::withTrashed()->forceDelete(); // hapus permanen semua
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);

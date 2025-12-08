@@ -16,7 +16,8 @@
         <form class="needs-validation"
             action="{{ route('pengguna.update', $user->id) }}"
             method="POST"
-            data-redirect="{{ route('pengguna.index') }}">
+            data-redirect="{{ route('pengguna.index') }}"
+            enctype="multipart/form-data">
 
 
             @csrf
@@ -70,14 +71,59 @@
             </div>
 
             <div class="form-group mb-3">
+                <label class="form-label" for="security_question">Security Question (tidak bisa diedit)</label>
+                <input type="text"
+                    class="form-control"
+                    id="security_question"
+                    name="security_question"
+                    value="{{ $user->security_question }}"
+                    readonly disabled>
+            </div>
+
+            <div class="form-group mb-3">
+                <label class="form-label" for="security_answer">Security Answer</label>
+                <input type="text"
+                    class="form-control {{ $errors->has('security_answer') ? 'is-invalid' : (old('security_answer') ? 'is-valid' : '') }}"
+                    id="security_answer" name="security_answer"
+                    value="{{ old('security_answer') }}"
+                    placeholder="Masukkan jawaban keamanan  (berfungsi untuk pemulihan akun)">
+            </div>
+
+            <div class="form-group mb-3">
                 <label class="form-label" for="role_id">Role</label>
-                <select class="form-control" id="role_id" name="role_id" required>
+                <select class="form-control" id="role_id" name="role_id">
                     <option value="" disabled selected>Ganti Role</option>
                     @foreach($roles as $j)
                     <option value="{{$j['id']}}" {{ $user->role_id == $j['id'] ? 'selected' : '' }}>{{$j['status']}}</option>
                     @endforeach
 
                 </select>
+            </div>
+
+            <div class="form-group mb-3">
+                <div class="row">
+                    <div class="col-12">
+                        <label for="foto" class="form-label">Foto</label>
+
+                        @if(!empty($user->foto))
+                        <div class="mb-2">
+                            <p class="mb-1 small text-muted">Foto saat ini:</p>
+                            <img src="{{asset('foto/' . $user->foto) }}" alt="Foto {{ $user->nama }}" class="img-thumbnail" style="max-height:150px;">
+                            <div class="form-text">{{ $user->foto }}</div>
+                            <input type="hidden" name="existing_foto" value="{{ $user->foto }}">
+                        </div>
+                        @endif
+
+                        <input type="file"
+                            class="form-control {{ $errors->has('foto') ? 'is-invalid' : (old('foto') ? 'is-valid' : '') }}"
+                            id="foto" name="foto" accept="image/*">
+                        @if ($errors->has('foto'))
+                        <div class="invalid-feedback">
+                            {{ $errors->first('foto') }}
+                        </div>
+                        @endif
+                    </div>
+                </div>
             </div>
 
 

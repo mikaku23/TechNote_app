@@ -73,9 +73,11 @@ class PenginstalanController extends Controller
     {
         // Validasi input
         $validated = $request->validate([
+            'estimasi' => 'nullable|date_format:H:i',
             'software_id' => 'required|exists:software,id',
             'user_id' => 'required|exists:users,id',
         ], [
+            'estimasi.date_format' => 'Estimasi harus dalam format jam:menit.',
             'software_id.required' => 'Software harus dipilih.',
             'user_id.required' => 'Pengguna harus dipilih.',
         ]);
@@ -85,7 +87,8 @@ class PenginstalanController extends Controller
         $penginstalan = new penginstalan();
         $penginstalan->tgl_instalasi = now()->toDateString();
         $penginstalan->tgl_hapus = null;
-        $penginstalan->status = 'berhasil';
+        $penginstalan->status = 'pending';
+        $penginstalan->estimasi = $validated['estimasi'] ?? null;
         $penginstalan->software_id = $validated['software_id'];
         $penginstalan->user_id = $validated['user_id'];
         $penginstalan->save();
@@ -121,6 +124,7 @@ class PenginstalanController extends Controller
         // Validasi input
         $validated = $request->validate([
             'status' => 'nullable|in:berhasil,gagal',
+            'estimasi' => 'nullable',
             'software_id' => 'nullable|exists:software,id',
             'user_id' => 'nullable|exists:users,id',
         ]);
@@ -128,11 +132,19 @@ class PenginstalanController extends Controller
         // Update di database
         $penginstalan = penginstalan::findOrFail($id);
         $penginstalan->status = $validated['status'] ?? null;
+        $penginstalan->estimasi = $validated['estimasi'] ?? null;
         $penginstalan->software_id = $validated['software_id'] ?? null;
         $penginstalan->user_id = $validated['user_id'] ?? null;
         $penginstalan->save();
 
-        return response()->json(['success' => true]);
+        // jika request AJAX/kirim JSON — kembalikan JSON
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json(['success' => true]);
+        }
+
+        // untuk normal form submit — redirect agar user melihat perubahan
+        return redirect()->route('penginstalan.index')->with('success', 'Data berhasil diperbarui');
+        
     }
 
     public function show($id)
@@ -226,5 +238,18 @@ class PenginstalanController extends Controller
                 ->back()
                 ->with('error', 'Gagal memulihkan data: ' . $e->getMessage());
         }
+    }
+
+    public function updateStatus(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|in:berhasil,gagal,pending',
+        ]);
+
+        $penginstalan = Penginstalan::findOrFail($id);
+        $penginstalan->status = $request->status;
+        $penginstalan->save();
+
+        return back()->with('message', 'Status berhasil diperbarui');
     }
 }

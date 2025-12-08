@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->date('tgl_hapus')->nullable();
             $table->date('tgl_instalasi')->nullable();
-            $table->enum('status', ['berhasil', 'gagal','dihapus','dipulihkan','diupdate','dihapus_permanen']);
+            $table->enum('status', ['berhasil', 'gagal','dihapus','dipulihkan','diupdate','dihapus_permanen','pending']);
+            $table->time('estimasi')->nullable();
             $table->foreignId('software_id')->references('id')->on('software')->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();

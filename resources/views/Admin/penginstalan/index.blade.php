@@ -30,6 +30,11 @@
         color: white;
     }
 
+    .status-badge.pending {
+        background-color: #dc8e35ff;
+        color: white;
+    }
+
     /* Abu atau netral */
     .status-badge.dihapus {
         background-color: #6c757d;
@@ -73,6 +78,7 @@
                         <select name="status" class="form-select form-select-sm" style="width: 130px;">
                             <option value="" disabled selected>Status</option>
                             <option value="berhasil" {{ request('status')=='berhasil' ? 'selected' : '' }}>Berhasil</option>
+                            <option value="pending" {{ request('status')=='pending' ? 'selected' : '' }}>Pending</option>
                             <option value="gagal" {{ request('status')=='gagal' ? 'selected' : '' }}>Gagal</option>
                         </select>
 
@@ -119,7 +125,7 @@
                                     <th>Nama Pengguna</th>
                                     <th>Software</th>
                                     <th>Status</th>
-                                    <th>Tanggal Instalasi</th>
+                                    <th>Update Status</th>
 
                                     <th>Aksi</th>
                                 </tr>
@@ -136,8 +142,31 @@
                                         </span>
                                     </td>
 
-                                    <td>{{ $soft->tgl_instalasi ? $soft->tgl_instalasi->format('d F Y') : '-' }}</td>
+                                    <td>
 
+                                        <div class="mt-2">
+                                            <form action="{{ route('penginstalan.updateStatus', $soft->id) }}" method="POST" style="display:inline;">
+                                                @csrf
+                                                @method('PATCH')
+                                                <input type="hidden" name="status" value="gagal">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger">Gagal</button>
+                                            </form>
+
+                                            <form action="{{ route('penginstalan.updateStatus', $soft->id) }}" method="POST" style="display:inline;">
+                                                @csrf
+                                                @method('PATCH')
+                                                <input type="hidden" name="status" value="pending">
+                                                <button type="submit" class="btn btn-sm btn-outline-warning">Pending</button>
+                                            </form>
+
+                                            <form action="{{ route('penginstalan.updateStatus', $soft->id) }}" method="POST" style="display:inline;">
+                                                @csrf
+                                                @method('PATCH')
+                                                <input type="hidden" name="status" value="berhasil">
+                                                <button type="submit" class="btn btn-sm btn-outline-success">Berhasil</button>
+                                            </form>
+                                        </div>
+                                    </td>
 
                                     <td>
                                         <button type="button" class="btn btn-outline-info btn-sm show-btn" data-id="{{ $soft->id }}">

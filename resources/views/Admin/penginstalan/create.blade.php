@@ -40,11 +40,11 @@
             @csrf
             @if ($errors->any())
             <div class="alert alert-danger" style="display:none;">
-            <ul class="mb-0">
-                @foreach ($errors->all() as $err)
-                <li>{{ $err }}</li>
-                @endforeach
-            </ul>
+                <ul class="mb-0">
+                    @foreach ($errors->all() as $err)
+                    <li>{{ $err }}</li>
+                    @endforeach
+                </ul>
             </div>
             @endif
 
@@ -90,21 +90,35 @@
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
+
+                <div class="col-md-6 mt-3">
+                    <label for="estimasi" class="form-label">Estimasi Selesai</label>
+                    <input
+                        type="time"
+                        id="estimasi"
+                        name="estimasi"
+                        class="form-control {{ $errors->has('estimasi') ? 'is-invalid' : (old('estimasi') ? 'is-valid' : '') }}"
+                        value="{{ old('estimasi') }}" required>
+                    @error('estimasi')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
             </div>
 
-    <div class="text-start">
-        <a href="{{route('penginstalan.index')}}" class="btn btn-outline-primary">
-            <i class="bi bi-arrow-left"></i> Kembali
-        </a>
-        <button type="reset" class="btn btn-outline-warning">
-            <i class="bi bi-arrow-clockwise"></i> Reset
-        </button>
-        <button type="submit" class="btn btn-outline-success">
-            <i class="fa fa-save"></i> Simpan
-        </button>
+
+            <div class="text-start">
+                <a href="{{route('penginstalan.index')}}" class="btn btn-outline-primary">
+                    <i class="bi bi-arrow-left"></i> Kembali
+                </a>
+                <button type="reset" class="btn btn-outline-warning">
+                    <i class="bi bi-arrow-clockwise"></i> Reset
+                </button>
+                <button type="submit" class="btn btn-outline-success">
+                    <i class="fa fa-save"></i> Simpan
+                </button>
+            </div>
+        </form>
     </div>
-    </form>
-</div>
 </div>
 @endsection
 

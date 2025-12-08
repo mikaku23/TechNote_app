@@ -18,6 +18,7 @@ class perbaikan extends Model
         'status',
         'keterangan',
         'tgl_perbaikan',
+        'estimasi',
         'user_id',
     ];
     use SoftDeletes;

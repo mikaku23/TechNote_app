@@ -2,10 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Rekap;
+use App\Models\perbaikan;
+use App\Exports\RekapExport;
+use App\Models\penginstalan;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
+
 use Illuminate\Support\Facades\DB;
+
+use Maatwebsite\Excel\Facades\Excel;
+use Maatwebsite\Excel\Concerns\FromArray;
+use Maatwebsite\Excel\Concerns\WithHeadings;
 use Illuminate\Pagination\LengthAwarePaginator;
+
 
 class RekapController extends Controller
 {
@@ -138,5 +149,48 @@ class RekapController extends Controller
             'totalData' => count($items),
             'tahunLain' => $tahunLain,
         ]);
+    }
+
+    public function exportPdf()
+    {
+        $perbaikan = Rekap::with(['perbaikan.user'])
+            ->whereNotNull('perbaikan_id')
+            ->get();
+
+        $penginstalan = Rekap::with(['penginstalan.software', 'penginstalan.user'])
+            ->whereNotNull('penginstalan_id')
+            ->get();
+
+        $isPdf = true; // penting untuk load gambar via public_path
+
+        $pdf = Pdf::loadView('admin.rekap.export-pdf', [
+            'perbaikan' => $perbaikan,
+            'penginstalan' => $penginstalan,
+            'isPdf' => $isPdf,
+        ])->setPaper('a4', 'portrait');
+
+        return $pdf->download('rekap-lengkap.pdf');
+    }
+
+
+    public function exportExcel()
+    {
+        return Excel::download(new \App\Exports\RekapExport, 'rekap-lengkap.xlsx');
+    }
+
+
+    public function print()
+    {
+        $perbaikan = Rekap::with(['perbaikan.user'])
+            ->whereNotNull('perbaikan_id')
+            ->get();
+
+        $penginstalan = Rekap::with(['penginstalan.software', 'penginstalan.user'])
+            ->whereNotNull('penginstalan_id')
+            ->get();
+
+        $isPdf = false; // untuk view print memakai asset()
+
+        return view('admin.rekap.print', compact('perbaikan', 'penginstalan', 'isPdf'));
     }
 }

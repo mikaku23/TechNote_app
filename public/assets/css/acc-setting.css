@@ -1,0 +1,22 @@
+
+    .account-photo-wrapper {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .account-photo-wrapper img {
+        width: 130px;
+        height: 130px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 3px solid #ddd;
+        padding: 3px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        margin-bottom: 10px;
+    }
+
+    /* Untuk memberi jarak antara foto dengan form di bawahnya */
+    .account-form-section {
+        margin-top: 15px;
+    }
+

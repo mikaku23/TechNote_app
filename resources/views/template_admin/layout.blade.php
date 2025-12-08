@@ -8,7 +8,7 @@
     <title>@yield('title')</title>
 
     <!-- Favicon -->
-    <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico') }}">
+    <link rel="shortcut icon" href="{{ asset('assets/images/icon.png') }}">
 
     <!-- Library / Plugin Css Build -->
     <link rel="stylesheet" href="{{ asset('assets/css/core/libs.min.css') }}">
@@ -33,127 +33,15 @@
     <!-- Bootstrap Icons CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
-    <style>
-        .alert-warning {
-            background-color: #fff3cd !important;
-            color: #856404 !important;
-            border-color: #ffeeba !important;
-        }
+    <link rel="stylesheet" href="{{ asset('assets/css/layout.css') }}">
 
-        .input-group-text {
-            background-color: #e9ecef;
-            border-left: none;
-            border-radius: 0 0.375rem 0.375rem 0;
-        }
+    <link rel="stylesheet" href="{{ asset('assets/css/my-profile.css') }}">
 
-        .input-group .form-control {
-            border-right: none;
-            border-radius: 0.375rem 0 0 0.375rem;
-            background-color: #f5f5f5;
-        }
+    <link rel="stylesheet" href="{{ asset('assets/css/acc-setting.css') }}">
 
-        .form-control {
-            background-color: #f5f5f5;
-        }
+    <link rel="stylesheet" href="{{ asset('assets/css/mail.css') }}">
 
 
-        /* Fullscreen loader */
-        .loader-fullscreen {
-            position: fixed;
-            inset: 0;
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-
-            /* Efek kaca transparan */
-            background: rgba(255, 255, 255, 0.28);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-
-            /* Fade-in cepat dan halus */
-            animation: fadeInLoaderBlur 0.000001s ease-out;
-        }
-
-        @keyframes fadeInLoaderBlur {
-            from {
-                opacity: 0;
-                filter: blur(6px);
-                /* langsung mulai dari blur */
-                transform: scale(1.015);
-            }
-
-            to {
-                opacity: 1;
-                filter: blur(0px);
-                /* blur menghilang halus */
-                transform: scale(1);
-            }
-        }
-
-
-        /* titik loader */
-        .loader-dots {
-            display: flex;
-            gap: 8px;
-        }
-
-        .loader-dots .dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background-color: var(--bs-primary);
-            animation: pulse 0.28s ease-in-out 2 alternate;
-        }
-
-        .loader-dots .dot:nth-child(1) {
-            animation-delay: 0s;
-        }
-
-        .loader-dots .dot:nth-child(2) {
-            animation-delay: 0.05s;
-        }
-
-        .loader-dots .dot:nth-child(3) {
-            animation-delay: 0.1s;
-        }
-
-        @keyframes pulse {
-            from {
-                transform: scale(0.75);
-                opacity: 0.3;
-            }
-
-            to {
-                transform: scale(1.1);
-                opacity: 1;
-            }
-        }
-
-
-        /* efek fade-out halus dengan blur */
-        .loader-fullscreen.fade-out {
-            animation: fadeOutLoaderBlur 0.38s ease-in forwards;
-        }
-
-        @keyframes fadeOutLoaderBlur {
-            from {
-                opacity: 1;
-                transform: scale(1);
-                filter: blur(0px);
-            }
-
-            to {
-                opacity: 0;
-                transform: scale(1.03);
-                filter: blur(4px);
-                visibility: hidden;
-            }
-        }
-    </style>
 
     @yield('css')
 
@@ -172,25 +60,15 @@
 
     <aside class="sidebar sidebar-default sidebar-white sidebar-base navs-rounded-all ">
         <div class="sidebar-header d-flex align-items-center justify-content-start">
-            <a href="../dashboard/index.html" class="navbar-brand">
+            <a class="navbar-brand" style="cursor: default;">
 
                 <!--Logo start-->
                 <div class="logo-main">
                     <div class="logo-normal">
-                        <svg class=" icon-30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect x="-0.757324" y="19.2427" width="28" height="4" rx="2" transform="rotate(-45 -0.757324 19.2427)" fill="currentColor" />
-                            <rect x="7.72803" y="27.728" width="28" height="4" rx="2" transform="rotate(-45 7.72803 27.728)" fill="currentColor" />
-                            <rect x="10.5366" y="16.3945" width="16" height="4" rx="2" transform="rotate(45 10.5366 16.3945)" fill="currentColor" />
-                            <rect x="10.5562" y="-0.556152" width="28" height="4" rx="2" transform="rotate(45 10.5562 -0.556152)" fill="currentColor" />
-                        </svg>
+                        <img src="{{ asset('assets/images/icon.png') }}" style="height: 30px;" alt="logo">
                     </div>
                     <div class="logo-mini">
-                        <svg class=" icon-30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect x="-0.757324" y="19.2427" width="28" height="4" rx="2" transform="rotate(-45 -0.757324 19.2427)" fill="currentColor" />
-                            <rect x="7.72803" y="27.728" width="28" height="4" rx="2" transform="rotate(-45 7.72803 27.728)" fill="currentColor" />
-                            <rect x="10.5366" y="16.3945" width="16" height="4" rx="2" transform="rotate(45 10.5366 16.3945)" fill="currentColor" />
-                            <rect x="10.5562" y="-0.556152" width="28" height="4" rx="2" transform="rotate(45 10.5562 -0.556152)" fill="currentColor" />
-                        </svg>
+                        <img src="{{ asset('assets/images/icon.png') }}" style="height: 30px;" alt="logo">
                     </div>
                 </div>
                 <!--logo End-->
@@ -198,7 +76,7 @@
 
 
 
-                <h4 class="logo-title">Hope UI</h4>
+                <h4 class="logo-title">TechNote</h4>
             </a>
             <div class="sidebar-toggle" data-toggle="sidebar" data-active="true">
                 <i class="icon">
@@ -212,7 +90,7 @@
         <div class="sidebar-body pt-0 data-scrollbar">
             <div class="sidebar-list">
                 <!-- Sidebar Menu Start -->
-                @include('template_admin.sidebar')
+                @include('template_admin.barside')
                 <!-- Sidebar Menu End -->
             </div>
         </div>
@@ -224,6 +102,129 @@
             <nav class="nav navbar navbar-expand-xl navbar-light iq-navbar">
                 @include('template_admin.navbar')
             </nav> <!-- Nav Header Component Start -->
+
+            <div class="modal fade show-modal-glass my-profile-modal" id="myProfileModal" tabindex="-1">
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+                    <div class="modal-content glass-popup">
+                        <div class="modal-header">
+                            <h5 class="modal-title">My Profile</h5>
+                            <button type="button" class="btn-close close-modal" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body" id="myProfileContent">
+                            <!-- Konten AJAX akan dimuat di sini -->
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary close-modal" data-bs-dismiss="modal">Tutup</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="modal fade" id="accountSettingsModal" tabindex="-1" aria-labelledby="accountSettingsLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+                    <div class="modal-content glass-popup">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Account Settings</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+
+                        <form action="{{ route('account.update') }}" method="POST" enctype="multipart/form-data">
+                            @csrf
+                            @method('PUT')
+                            @php
+                            $foto = Auth::user()->foto && file_exists(public_path('foto/' . Auth::user()->foto))
+                            ? asset('foto/' . Auth::user()->foto)
+                            : asset('assets/images/default.png');
+                            @endphp
+                            <div class="modal-body">
+                                <div class="row mb-3 text-center">
+                                    <div class="account-photo-wrapper">
+                                        <img src="{{ $foto }}" alt="User Profile">
+                                    </div>
+
+                                    <div>
+                                        <label class="form-label">Ganti Photo</label>
+                                        <input type="file" name="foto" class="form-control form-control-sm w-50 mx-auto">
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Username</label>
+                                    <input type="text" name="username" value="{{ Auth::user()->username }}" class="form-control">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Password Baru</label>
+                                    <input type="password" name="password" class="form-control" placeholder="Kosongkan jika tidak ingin mengubah">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Konfirmasi Password</label>
+                                    <input type="password" name="password_confirmation" class="form-control" placeholder="Ulangi password baru">
+                                    <small id="pw-not-match" style="color: red; display:none; font-size: 12px;">
+                                        Password tidak sama
+                                    </small>
+
+                                </div>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Batal</button>
+                                <button type="submit" class="btn btn-primary btn-sm" id="btn-submit">Simpan</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Detail Pesan -->
+            <div class="modal fade" id="modalDetailPesan" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content glass-popup">
+
+                        <div class="modal-header border-0">
+                            <h6 class="modal-title glass-title">Detail Pesan</h6>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+
+                        <div class="modal-body">
+
+                            <div class="detail-row">
+                                <span class="detail-label">Nama:</span>
+                                <span class="detail-value" id="detail-nama"></span>
+                            </div>
+
+                            <div class="detail-row">
+                                <span class="detail-label">Email:</span>
+                                <span class="detail-value" id="detail-email"></span>
+                            </div>
+
+                            <div class="detail-row">
+                                <span class="detail-label">Pesan:</span>
+                                <span class="detail-value" id="detail-pesan"></span>
+                            </div>
+
+                            <div class="detail-row">
+                                <span class="detail-label">Dikirim:</span>
+                                <span class="detail-value" id="detail-tanggal"></span>
+                            </div>
+
+                        </div>
+
+                        <div class="modal-footer border-0">
+                            <button class="btn btn-glass-blue" data-bs-dismiss="modal">
+                                Tutup
+                            </button>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+
+
+
             <div class="iq-navbar-header" style="height: 50px;">
 
             </div> <!-- Nav Header Component End -->
@@ -277,34 +278,95 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+    <script src="{{ asset('assets/js/layout.js') }}"></script>
+
     <script>
-        // pastikan loader terhapus setelah semua asset selesai load
-        window.addEventListener('load', function() {
-            const loader = document.getElementById('loaderWrapper');
-            if (!loader) return;
+        document.addEventListener('DOMContentLoaded', function() {
 
-            // tampilkan minimal 300ms agar animasi terlihat singkat tapi tidak blinking
-            const MIN_SHOW = 300;
-            const shownAt = performance.now();
+            const dropToggle = document.getElementById('notification-drop');
+            const btnClose = document.querySelector('.btn-tutup-dropdown');
+            let allowClose = false;
 
-            // berikan sedikit delay agar terlihat halus
-            const hide = () => {
-                loader.style.transition = 'opacity 0.25s ease, filter 0.25s ease';
-                loader.style.filter = 'blur(2px)'; // efek kabur ringan saat memudar
-                loader.style.opacity = '0'; // tetap mempertahankan fade-out
-                setTimeout(() => {
-                    loader.style.display = 'none';
-                }, 260);
-            };
+            // --- tombol "Tutup Menu" ---
+            if (btnClose) {
+                btnClose.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    allowClose = true;
+                    const inst = bootstrap.Dropdown.getOrCreateInstance(dropToggle);
+                    inst.hide();
+                    setTimeout(() => allowClose = false, 150);
+                });
+            }
 
-            const elapsed = performance.now() - shownAt;
-            const remaining = Math.max(0, MIN_SHOW - elapsed);
-            setTimeout(hide, remaining);
+            // --- cegah dropdown menutup otomatis ---
+            document.addEventListener('hide.bs.dropdown', function(e) {
+                if (!allowClose && e.target.id === 'notification-drop') {
+                    e.preventDefault();
+                }
+            });
+
+            // --- saat klik "Detail" tetap buka dropdown ---
+            document.querySelectorAll('.btn-detail-pesan').forEach(function(btn) {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const inst = bootstrap.Dropdown.getOrCreateInstance(dropToggle);
+                    inst.show();
+                });
+            });
+
+            // --- modal muncul → dropdown tetap buka ---
+            const modal = document.getElementById('modalDetailPesan');
+            if (modal) {
+                modal.addEventListener('shown.bs.modal', function() {
+                    const inst = bootstrap.Dropdown.getOrCreateInstance(dropToggle);
+                    inst.show();
+                });
+            }
         });
     </script>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const pw = document.querySelector("input[name='password']");
+            const confirm = document.querySelector("input[name='password_confirmation']");
+            const warning = document.getElementById("pw-not-match");
+            const submitBtn = document.getElementById("btn-submit");
 
+            function checkMatch() {
+                if (confirm.value.length > 0 || pw.value.length > 0) {
+                    if (pw.value !== confirm.value) {
+                        warning.style.display = "block";
+                        submitBtn.disabled = true; // tombol tidak bisa diklik
+                    } else {
+                        warning.style.display = "none";
+                        submitBtn.disabled = false; // tombol aktif kembali
+                    }
+                } else {
+                    warning.style.display = "none";
+                    submitBtn.disabled = false;
+                }
+            }
 
+            pw.addEventListener("input", checkMatch);
+            confirm.addEventListener("input", checkMatch);
+        });
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            $('.my-profile-btn').click(function(e) {
+                e.preventDefault();
+                $('#myProfileContent').html('<div class="spinner"><div></div><div></div><div></div></div>'); // loading
+                $.get("{{ route('my-profile') }}", function(data) {
+                    $('#myProfileContent').html(data);
+                });
+            });
+
+            $('.close-modal').click(function() {
+                $('.show-modal-glass').modal('hide');
+            });
+        });
+    </script>
     @yield('js')
 
 

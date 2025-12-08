@@ -30,6 +30,11 @@ class User extends Authenticatable
         'nip',
         'username',
         'password',
+        'foto',
+        'security_question',
+        'security_answer',
+        'old_password',
+        'last_password_changed_at',
         'role_id',
     ];
 
@@ -45,13 +50,14 @@ class User extends Authenticatable
 
     protected $casts = [
         'password' => 'hashed',
+        'security_answer' => 'hashed',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
 
     public function role(): BelongsTo
     {
-        return $this->belongsTo(Role::class, 'role_id');
+        return $this->belongsTo(role::class, 'role_id');
     }
 
     /**
@@ -79,13 +85,7 @@ class User extends Authenticatable
      *
      * @return array<string, string>
      */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
-    }
+
 
     
 }
