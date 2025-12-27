@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RekapController;
+use App\Http\Controllers\ChatbotController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\SoftwareController;
@@ -50,6 +51,9 @@ Route::get('/forgot-password/question/{id}', [LoginController::class, 'forgotQue
 
 
 Route::middleware('auth')->group(function () {
+
+    Route::post('/chatbot', [ChatbotController::class, 'handle'])->name('chatbot.handle');
+
     Route::get('/my-profile', [LoginController::class, 'myProfile'])->middleware('auth')->name('my-profile');
     Route::put('/account/update', [LoginController::class, 'updateAccount'])->name('account.update');
 

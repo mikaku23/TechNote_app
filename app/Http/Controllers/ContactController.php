@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\contact;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ContactController extends Controller
 {
@@ -16,10 +17,12 @@ class ContactController extends Controller
             'pesan' => 'required|string',
         ]);
 
-        // Simpan data kontak ke database
-        contact::create($validatedData);
+        // Ambil id user yang login
+        $validatedData['user_id'] = Auth::user()->id;
 
-        // Redirect kembali dengan pesan sukses
+        // Simpan data
+        Contact::create($validatedData);
+        // Redirect kembali
         return redirect()->back()->with([
             'message' => 'Pesan Anda telah terkirim. Terima kasih!',
             'alert' => 'success'
