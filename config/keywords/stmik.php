@@ -9,7 +9,8 @@ return [
     | Intent ini khusus untuk informasi kampus STMIK Triguna Dharma
     | Semua detail akan diambil dari config('jenis.datastmik')
     */
-
+    'type' => 'intent',
+    'priority' => 100,
     'trigger' => [
         'stmik',
         'kampus',

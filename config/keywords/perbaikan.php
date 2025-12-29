@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'intent' => 'perbaikan',
+    'priority' => 100,
     'trigger' => [
         'perbaikan',
         'servis',

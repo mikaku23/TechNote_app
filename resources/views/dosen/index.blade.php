@@ -38,7 +38,7 @@
                     @endphp
                     <tr>
                         <td data-label="No">{{ $loop->iteration + ($perbaikans->currentPage() - 1) * $perbaikans->perPage() }}</td>
-                        <td data-label="Tanggal">{{ $item->tgl_perbaikan_formatted }}</td>
+                        <td data-label="Tanggal">{{ $item->tgl_perbaikan ? $item->tgl_perbaikan->format('d M Y') : 'tidak ada data' }}</td>
                         <td data-label="Nama">{{ $item->nama ?? 'tidak ada data' }}</td>
                         <td data-label="Kategori">{{ $item->kategori ?? 'tidak ada data' }}</td>
                        

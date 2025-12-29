@@ -36,7 +36,7 @@
                     @endphp
                     <tr>
                         <td data-label="No">{{ $loop->iteration + ($penginstalans->currentPage() - 1) * $penginstalans->perPage() }}</td>
-                        <td data-label="Tanggal Instalasi">{{ $item->tgl_instalasi ? $item->tgl_instalasi->format('d-m-Y') : 'tidak ada data' }}</td>
+                        <td data-label="Tanggal Instalasi">{{ $item->tgl_instalasi ? $item->tgl_instalasi->format('d F Y') : 'tidak ada data' }}</td>
                         <td data-label="Software">{{ $item->software->nama ?? 'tidak ada data' }}</td>
                         <td data-label="Status">
                             <span class="badge {{ $badgeClass }}">{{ $item->status }}</span>

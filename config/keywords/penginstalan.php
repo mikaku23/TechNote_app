@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'intent' => 'penginstalan',
+    'priority' => 100,
     'trigger' => [
         'instal',
         'instalasi',
@@ -16,3 +18,4 @@ return [
 
     'response' => 'untuk penginstalan, silakan cek menu penginstalan atau tanyakan status instalasi terakhir.',
 ];
+

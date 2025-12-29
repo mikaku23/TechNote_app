@@ -14,5 +14,5 @@ return [
         'send message',
     ],
 
-    'response' => 'silakan sampaikan pesan melalui menu contact yang tersedia.',
+    'response' => 'pesan anda telah terkirim dan diterima oleh pihak kampus.',
 ];
