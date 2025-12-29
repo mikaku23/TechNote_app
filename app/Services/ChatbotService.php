@@ -164,8 +164,8 @@ class ChatbotService
 
 
 
-            // 4) jika tidak ketemu via rule -> fallback ke AI untuk klasifikasi / jawaban
-            $aiIntent = $this->classifyIntentWithAI($message);
+        // 4) jika tidak ketemu via rule -> fallback ke AI untuk klasifikasi / jawaban
+        $aiIntent = $this->classifyIntentWithAI($message);
 
         if ($aiIntent && $this->intentExists($aiIntent)) {
             // cek izin berdasarkan role user
@@ -282,7 +282,7 @@ class ChatbotService
 
         return null;
     }
-    
+
 
 
     // deteksi apakah user menanyakan tentang bot
@@ -677,7 +677,7 @@ class ChatbotService
                     return 'data tersebut belum tersedia.';
                 }
 
-                
+
                 $roleNorm = mb_strtolower(optional($user->role)->status ?? '');
 
                 if ($roleNorm === 'mahasiswa') {
@@ -1047,7 +1047,7 @@ Jawab sesuai aturan di atas.
             return ['__FUTURE__', '__FUTURE__'];
         }
 
-       
+
         $now = Carbon::now('Asia/Jakarta');
 
         // X hari yang lalu
