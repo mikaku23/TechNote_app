@@ -85,6 +85,18 @@ class User extends Authenticatable
     {
         return $this->hasMany(Notification::class, 'user_id');
     }
+
+    // dalam User model
+    public function conversationsAsUser()
+    {
+        return $this->hasMany(Conversation::class, 'user_id');
+    }
+
+    public function conversationsAsAdmin()
+    {
+        return $this->hasMany(Conversation::class, 'admin_id');
+    }
+
     /**
      * Get the attributes that should be cast.
      *

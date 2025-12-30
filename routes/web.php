@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RekapController;
@@ -51,6 +52,13 @@ Route::get('/forgot-password/question/{id}', [LoginController::class, 'forgotQue
 
 
 Route::middleware('auth')->group(function () {
+
+    Route::get('/chat/contacts', [ChatController::class, 'contacts']);
+    Route::get('/chat/messages/{conversation}', [ChatController::class, 'messages']);
+    Route::post('/chat/send', [ChatController::class, 'send']);
+    Route::post('/chat/mark-delivered/{message}', [ChatController::class, 'markDelivered']);
+    Route::post('/chat/mark-read/{conversation}', [ChatController::class, 'markRead']);
+    Route::post('/chat/start', [ChatController::class, 'startConversation']);
 
     Route::post('/chatbot', [ChatbotController::class, 'handle'])->name('chatbot.handle');
 

@@ -14,6 +14,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('assets/css/dash-mhs.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/chatbot.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/chat.css') }}">
 
 
 
@@ -52,7 +53,7 @@
     <div id="chat-popup" class="chat-popup" role="dialog" aria-label="Chatbot layanan teknisi" aria-hidden="true">
         <div class="chat-header">
             <div class="chat-title">
-                <img src="{{ asset('assets/images/images.png') }}" alt="chatbot" class="chat-logo">
+                <img src="{{ asset('assets/images/chatbot.png') }}" alt="chatbot" class="chat-logo">
                 <span>Chatbot</span>
             </div>
             <button id="chat-close" aria-label="Tutup chat">&times;</button>
@@ -66,6 +67,10 @@
         </form>
     </div>
 
+    @include('components.floating-chat')
+
+
+
     <script>
         // contoh aksi sederhana untuk tombol sign out
         document.getElementById('signOutBtn').addEventListener('click', function() {
@@ -77,6 +82,7 @@
         });
     </script>
 
+    <script src="{{ asset('assets/js/chat.js') }}"></script>
     <script src="{{ asset('assets/js/chatbot.js') }}"></script>
 
     @yield('js')
