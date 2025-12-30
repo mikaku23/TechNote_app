@@ -16,37 +16,187 @@
     }
 
     // open chat: morph effect (hide floating, show popup)
-    function openChat() {
-        // hide floating button with scale/opacity
-        floating.style.transition = "transform .28s ease, opacity .28s ease";
-        floating.style.transform = "scale(.92)";
-        floating.style.opacity = "0";
-        setTimeout(() => {
-            floating.style.display = "none";
-        }, 300);
-
-        chatPopup.setAttribute("aria-hidden", "false");
-        chatPopup.classList.add("open");
-        setTimeout(() => chatInput.focus(), 220);
+    // helpers: await transitionend or animationend with timeout fallback
+    function awaitTransitionEnd(el, timeout = 700) {
+        return new Promise((resolve) => {
+            let done = false;
+            const onEnd = (e) => {
+                // ensure we only react to transitions on the element itself
+                if (e.target !== el) return;
+                if (done) return;
+                done = true;
+                el.removeEventListener("transitionend", onEnd);
+                resolve(true);
+            };
+            el.addEventListener("transitionend", onEnd);
+            // fallback
+            setTimeout(() => {
+                if (done) return;
+                done = true;
+                el.removeEventListener("transitionend", onEnd);
+                resolve(false);
+            }, timeout);
+        });
     }
 
-    // close chat: show floating again
-    function closeChat() {
-        chatPopup.classList.remove("open");
-        chatPopup.setAttribute("aria-hidden", "true");
-        // reveal floating
-        floating.style.display = "block";
-        // small delay for visibility then animate
-        requestAnimationFrame(() => {
-            floating.style.opacity = "0";
-            floating.style.transform = "scale(.92)";
+    function awaitAnimationEnd(el, timeout = 500) {
+        return new Promise((resolve) => {
+            let done = false;
+            const onEnd = (e) => {
+                if (e.target !== el) return;
+                if (done) return;
+                done = true;
+                el.removeEventListener("animationend", onEnd);
+                resolve(true);
+            };
+            el.addEventListener("animationend", onEnd);
             setTimeout(() => {
-                floating.style.transition =
-                    "transform .28s ease, opacity .28s ease";
-                floating.style.transform = "";
-                floating.style.opacity = "";
-            }, 20);
+                if (done) return;
+                done = true;
+                el.removeEventListener("animationend", onEnd);
+                resolve(false);
+            }, timeout);
         });
+    }
+
+    /* new openChat: smooth expand (with settle) then show popup */
+    /* new openChat: faster settle, no dead time */
+    /* openChat: overshoot (stretch) -> quick correct -> show popup instantly with popup-settle */
+   async function openChat() {
+       floating.style.display = "";
+       await new Promise((r) => requestAnimationFrame(r));
+       const btnRect = floating.getBoundingClientRect();
+
+       const island = document.createElement("div");
+       island.className = "island-transition suction";
+       island.style.left = btnRect.left + "px";
+       island.style.top = btnRect.top + "px";
+       island.style.width = btnRect.width + "px";
+       island.style.height = btnRect.height + "px";
+       island.style.borderRadius =
+           Math.max(btnRect.width, btnRect.height) + "px";
+       island.style.opacity = "1";
+       document.body.appendChild(island);
+
+       /* mulai nyedot floating */
+       floating.classList.add("sucked");
+
+       /* ukur popup */
+       chatPopup.style.visibility = "hidden";
+       chatPopup.style.display = "block";
+       const popupRect = chatPopup.getBoundingClientRect();
+       chatPopup.style.display = "";
+       chatPopup.style.visibility = "";
+
+       /* OVERSHOOT + STRETCH (inti rasa nyedot) */
+       const stretchW = popupRect.width * 1.12;
+       const stretchH = popupRect.height * 0.92;
+
+       island.style.transition = [
+           "left .32s cubic-bezier(.12,1,.25,1)",
+           "top .32s cubic-bezier(.12,1,.25,1)",
+           "width .32s cubic-bezier(.12,1,.25,1)",
+           "height .32s cubic-bezier(.12,1,.25,1)",
+           "border-radius .22s cubic-bezier(.2,.9,.2,1)",
+           "transform .32s cubic-bezier(.12,1,.25,1)",
+           "box-shadow .32s ease",
+       ].join(", ");
+
+       requestAnimationFrame(() => {
+           island.style.left =
+               popupRect.left - (stretchW - popupRect.width) / 2 + "px";
+           island.style.top =
+               popupRect.top - (stretchH - popupRect.height) / 2 + "px";
+           island.style.width = stretchW + "px";
+           island.style.height = stretchH + "px";
+           island.style.borderRadius = "18px";
+           island.style.transform = "scaleX(.92) scaleY(1.08)";
+           island.style.boxShadow = "0 40px 110px rgba(2,6,23,0.48)";
+       });
+
+       await awaitTransitionEnd(island, 420);
+
+       /* QUICK SNAP KE UKURAN ASLI (kunci rasa dinamis) */
+       island.style.transition = "all .11s cubic-bezier(.3,.9,.2,1)";
+
+       requestAnimationFrame(() => {
+           island.style.left = popupRect.left + "px";
+           island.style.top = popupRect.top + "px";
+           island.style.width = popupRect.width + "px";
+           island.style.height = popupRect.height + "px";
+           island.style.borderRadius = "14px";
+           island.style.transform = "scale(1)";
+           island.style.filter = "none";
+       });
+
+       await awaitTransitionEnd(island, 160);
+
+       /* buka popup TANPA jeda */
+       island.remove();
+       floating.style.display = "none";
+
+       chatPopup.classList.add("ready");
+       chatPopup.setAttribute("aria-hidden", "false");
+
+       chatPopup.classList.add("popup-settle");
+       chatPopup.addEventListener(
+           "animationend",
+           () => chatPopup.classList.remove("popup-settle"),
+           { once: true }
+       );
+
+       setTimeout(() => chatInput.focus(), 16);
+   }
+
+    /* new closeChat: create island from popup -> shrink to floating (bottom-right) */
+    /* new closeChat: quicker collapse, no lag */
+    async function closeChat() {
+        floating.style.display = "";
+        await new Promise((r) => requestAnimationFrame(r));
+        const btnRect = floating.getBoundingClientRect();
+        const popupRect = chatPopup.getBoundingClientRect();
+
+        const island = document.createElement("div");
+        island.className = "island-transition";
+        island.style.left = popupRect.left + "px";
+        island.style.top = popupRect.top + "px";
+        island.style.width = popupRect.width + "px";
+        island.style.height = popupRect.height + "px";
+        island.style.borderRadius = "14px";
+        island.style.boxShadow = "0 24px 60px rgba(2,6,23,0.34)";
+        document.body.appendChild(island);
+
+        chatPopup.classList.remove("ready");
+        chatPopup.setAttribute("aria-hidden", "true");
+
+        island.style.transition = [
+            "left .36s cubic-bezier(.25,.9,.32,1)",
+            "top .36s cubic-bezier(.25,.9,.32,1)",
+            "width .36s cubic-bezier(.25,.9,.32,1)",
+            "height .36s cubic-bezier(.25,.9,.32,1)",
+            "border-radius .26s cubic-bezier(.3,.9,.2,1)",
+            "box-shadow .36s cubic-bezier(.25,.9,.32,1)",
+        ].join(", ");
+
+        requestAnimationFrame(() => {
+            island.style.left = btnRect.left + "px";
+            island.style.top = btnRect.top + "px";
+            island.style.width = btnRect.width + "px";
+            island.style.height = btnRect.height + "px";
+            island.style.borderRadius =
+                Math.max(btnRect.width, btnRect.height) + "px";
+            island.style.boxShadow = "0 16px 40px rgba(2,6,23,0.26)";
+        });
+
+        await awaitTransitionEnd(island, 200);
+
+        island.classList.add("island-collapse-settle");
+        await awaitAnimationEnd(island, 50);
+
+        island.remove();
+        floating.classList.remove("sucked");
+        floating.style.display = "";
+        chatInput.blur();
     }
 
     // append user message

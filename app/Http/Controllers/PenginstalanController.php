@@ -39,7 +39,9 @@ class PenginstalanController extends Controller
         }
 
         // Pagination
-        $penginstalan = $query->orderBy('tgl_instalasi', 'desc')
+        $penginstalan = $query
+            ->orderByRaw("CASE WHEN status = 'pending' THEN 0 ELSE 1 END")
+            ->orderBy('tgl_instalasi', 'desc')
             ->paginate(10)
             ->withQueryString();
 
@@ -58,7 +60,7 @@ class PenginstalanController extends Controller
 
     public function create()
     {
-        $users = User::all();
+        $users = User::whereHas('role', fn($q) => $q->where('status', 'mahasiswa'))->get();
         $softwares = software::all();
 
         return view('admin.penginstalan.create', [

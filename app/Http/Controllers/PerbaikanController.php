@@ -39,7 +39,9 @@ class PerbaikanController extends Controller
             $query->whereDate('tgl_perbaikan', $tanggal);
         }
 
-        $perbaikan = $query->orderBy('tgl_perbaikan', 'desc')
+        $perbaikan = $query
+            ->orderByRaw("CASE WHEN status = 'sedang diperbaiki' THEN 0 ELSE 1 END")
+            ->orderBy('tgl_perbaikan', 'desc')
             ->paginate(10)
             ->withQueryString();
 
@@ -56,7 +58,7 @@ class PerbaikanController extends Controller
 
     public function create()
     {
-        $user = User::all();
+        $user = User::whereHas('role', fn($q) => $q->where('status', 'dosen'))->get();
         return view('admin.perbaikan.create', [
             'menu' => 'perbaikan',
             'title' => 'Tambah Data Perbaikan',

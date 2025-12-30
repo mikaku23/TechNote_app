@@ -123,7 +123,7 @@
                                 <tr class="text-center">
                                     <th>No</th>
                                     <th>Nama Pengguna</th>
-                                    <th>Software</th>
+                                    <th>Tanggal</th>
                                     <th>Status</th>
                                     <th>Update Status</th>
 
@@ -135,7 +135,7 @@
                                 <tr class="text-center">
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $soft->user->nama ?? ($soft->user_id ?? '-') }}</td>
-                                    <td>{{ $soft->software->nama ?? ($soft->software_id ?? '-') }}</td>
+                                    <td>{{ $soft->tgl_instalasi ->format('d F Y') ?? '-'  }}</td>
                                     <td>
                                         <span class="status-badge {{ Str::slug($soft->status) }}">
                                             {{ $soft->status ?? '-' }}
@@ -148,22 +148,14 @@
                                             <form action="{{ route('penginstalan.updateStatus', $soft->id) }}" method="POST" style="display:inline;">
                                                 @csrf
                                                 @method('PATCH')
-                                                <input type="hidden" name="status" value="gagal">
-                                                <button type="submit" class="btn btn-sm btn-outline-danger">Gagal</button>
+                                                <input type="hidden" name="status" value="gagal" title="gagal">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger"><i class="fa-solid fa-triangle-exclamation"></i></button>
                                             </form>
-
                                             <form action="{{ route('penginstalan.updateStatus', $soft->id) }}" method="POST" style="display:inline;">
                                                 @csrf
                                                 @method('PATCH')
-                                                <input type="hidden" name="status" value="pending">
-                                                <button type="submit" class="btn btn-sm btn-outline-warning">Pending</button>
-                                            </form>
-
-                                            <form action="{{ route('penginstalan.updateStatus', $soft->id) }}" method="POST" style="display:inline;">
-                                                @csrf
-                                                @method('PATCH')
-                                                <input type="hidden" name="status" value="berhasil">
-                                                <button type="submit" class="btn btn-sm btn-outline-success">Berhasil</button>
+                                                <input type="hidden" name="status" value="berhasil" title="berhasil">
+                                                <button type="submit" class="btn btn-sm btn-outline-success"><i class="fa-solid fa-check"></i></button>
                                             </form>
                                         </div>
                                     </td>
