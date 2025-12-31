@@ -85,6 +85,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(Notification::class, 'user_id');
     }
+
+    public function loginLogs(): HasMany
+    {
+        return $this->hasMany(login_log::class);
+    }
+
     /**
      * Get the attributes that should be cast.
      *

@@ -192,20 +192,25 @@
             </ul>
         </li>
 
-        <!-- Notifikasi (SVG lengkap agar pasti tampil) -->
         <li class="nav-item dropdown me-2 position-relative">
             <a href="#" class="nav-link position-relative" id="notification-drop"
                 data-bs-toggle="dropdown" aria-expanded="false" aria-label="Pesan Masuk">
 
+                <!-- Ikon Pesan -->
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
                     <path d="M2 6.5L12 13L22 6.5V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6.5Z"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                     <path d="M2 6L12 12.5L22 6" stroke="currentColor" stroke-width="2" />
                 </svg>
 
-                @if($recentMessages->count() > 0)
-                <span class="bg-danger dots"></span>
+                <!-- Badge jumlah pesan -->
+                @if($unreadCount > 0)
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    {{ $unreadCount }}
+                    <span class="visually-hidden">pesan baru</span>
+                </span>
                 @endif
+
             </a>
 
             <div class="p-0 sub-drop dropdown-menu dropdown-menu-end" aria-labelledby="notification-drop">
@@ -215,50 +220,38 @@
                     </div>
 
                     <div class="p-0 card-body" style="max-height: 330px; overflow-y: auto">
-
                         @forelse($recentMessages as $msg)
                         @php
                         $nama = htmlspecialchars($msg->nama ?? '-', ENT_QUOTES);
                         $email = htmlspecialchars($msg->email ?? '-', ENT_QUOTES);
                         $pesan = htmlspecialchars($msg->pesan ?? '-', ENT_QUOTES);
                         $tgl = \Carbon\Carbon::parse($msg->created_at)->translatedFormat('d M Y H:i');
+                        $namaUser = htmlspecialchars($msg->user->nama ?? 'Guest', ENT_QUOTES);
+                        $contactId = $msg->id; // simpan id di variabel PHP
                         @endphp
 
                         <div class="iq-sub-card px-3 py-2">
-
                             <div class="d-flex justify-content-between align-items-start">
-
                                 <div>
-                                    <h6 class="mb-0">{{ $msg->nama }}</h6>
-                                    <small class="text-muted">
-                                        {{ \Illuminate\Support\Str::limit($msg->pesan, 40) }}
-                                    </small><br>
-                                    <small class="font-size-12">
-                                        {{ \Carbon\Carbon::parse($msg->created_at)->diffForHumans() }}
-                                    </small>
+                                    <h6 class="mb-0">{{ $namaUser }}</h6>
+                                    <small class="text-muted">{{ \Illuminate\Support\Str::limit($pesan, 40) }}</small><br>
+                                    <small class="font-size-12">{{ \Carbon\Carbon::parse($msg->created_at)->diffForHumans() }}</small>
                                 </div>
 
                                 <!-- Tombol Detail -->
-                                <button
-                                    class="btn-detail-pesan"
-                                    onclick="event.stopPropagation(); showDetailPesan('{{ $nama }}','{{ $email }}','{{ $pesan }}','{{ $tgl }}')">
+                                <button class="btn-detail-pesan"
+                                    onclick="event.stopPropagation(); showDetailPesan('{{ $nama }}','{{ $email }}','{{ $pesan }}','{{ $tgl }}','{{ $namaUser }}', '{{ $contactId }}')">
                                     Detail
                                 </button>
-
                             </div>
+
                             <div class="p-2 border-top text-center">
-                                <button onclick="closeDropdownNotif()"
-                                    class="btn-tutup-dropdown">
-                                    Tutup Menu
-                                </button>
+                                <button onclick="closeDropdownNotif()" class="btn-tutup-dropdown">Tutup Menu</button>
                             </div>
-
                         </div>
-
                         @empty
                         <p class="text-center text-muted py-3">Tidak ada pesan baru</p>
                         @endforelse
-
                     </div>
                 </div>
             </div>
@@ -317,14 +310,37 @@
 
 
 <script>
-    function showDetailPesan(nama, email, pesan, tanggal) {
+    function showDetailPesan(nama, email, pesan, tanggal, namaUser, contactId) {
         document.getElementById('detail-nama').innerText = nama;
         document.getElementById('detail-email').innerText = email;
         document.getElementById('detail-pesan').innerText = pesan;
         document.getElementById('detail-tanggal').innerText = tanggal;
+        document.getElementById('detail-user').innerText = namaUser;
 
         var modal = new bootstrap.Modal(document.getElementById('modalDetailPesan'));
         modal.show();
+
+        // AJAX untuk menandai sudah dibaca
+        fetch(`/contact/${contactId}/read`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            }).then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    // opsional: kurangi badge count atau sembunyikan badge
+                    let badge = document.querySelector('#notification-drop .badge');
+                    if (badge) {
+                        let count = parseInt(badge.innerText);
+                        if (count > 1) {
+                            badge.innerText = count - 1;
+                        } else {
+                            badge.remove();
+                        }
+                    }
+                }
+            });
     }
 </script>
 

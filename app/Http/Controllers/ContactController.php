@@ -46,4 +46,13 @@ class ContactController extends Controller
             'alert' => 'success'
         ]);
     }
+
+    public function markAsRead($id)
+    {
+        $contact = Contact::findOrFail($id);
+        $contact->is_read = true;
+        $contact->save();
+
+        return response()->json(['success' => true]);
+    }
 }

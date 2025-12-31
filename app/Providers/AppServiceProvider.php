@@ -21,12 +21,19 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+
         view()->composer('*', function ($view) {
-            $recentMessages = contact::where('created_at', '>=', Carbon::now()->subDays(3))
+            $recentMessages = Contact::with('user')
+                ->where('created_at', '>=', Carbon::now()->subDays(3))
                 ->latest()
                 ->get();
 
-            $view->with('recentMessages', $recentMessages);
+            $unreadCount = $recentMessages->where('is_read', false)->count();
+
+            $view->with([
+                'recentMessages' => $recentMessages,
+                'unreadCount' => $unreadCount,
+            ]);
         });
         // set locale Laravel
         config(['app.locale' => 'id']);

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\login_log;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\rekap;
@@ -15,7 +16,9 @@ class DashboardController extends Controller
 {
     public function dashboardAdmin(Request $request)
     {
-        $totalUser = User::count();
+        // hitung user yang sedang online
+        $totalUser = login_log::where('status', 'online')->distinct('user_id')->count('user_id');
+
         $targetUser = 50;
         $persentaseUser = min(100, round(($totalUser / $targetUser) * 100));
 

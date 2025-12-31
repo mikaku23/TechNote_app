@@ -7,6 +7,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RekapController;
 use App\Http\Controllers\ChatbotController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\LogLoginController;
 use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\SoftwareController;
 use App\Http\Controllers\DashboardController;
@@ -108,6 +109,10 @@ Route::middleware(['auth', 'role:dosen'])->group(function () {
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
 
+    Route::post('/contact/{id}/read', [ContactController::class, 'markAsRead'])->name('contact.read');
+
+    Route::get('/log-login', [LogLoginController::class, 'index'])
+        ->name('logLogin.index');
     Route::get('/dashboardAdmin', [DashboardController::class, 'dashboardAdmin'])->name('dashboard-admin');
 
     Route::get('/pengguna/create-mahasiswa', [PenggunaController::class, 'createMahasiswa'])->name('pengguna.createMahasiswa');

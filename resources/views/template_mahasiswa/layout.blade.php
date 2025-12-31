@@ -67,7 +67,7 @@
         </form>
     </div>
 
-    @include('components.floating-chat')
+
 
 
 

@@ -104,4 +104,17 @@
         <hr class="hr-horizontal">
     </li>
 
+    <li class="nav-item">
+        <a class="nav-link {{ ($menu ?? '') == 'logLogin' ? 'active' : '' }}" aria-current="page" href="{{ route('logLogin.index') }}">
+            <i class="icon">
+                <svg width="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="icon-20">
+                    <path opacity="0.4" d="M3 4h18a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z" fill="currentColor" />
+                    <path d="M3 9h18" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M7 13h10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M7 17h10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </i>
+            <span class="item-name">Log Login</span>
+        </a>
+    </li>
 </ul>

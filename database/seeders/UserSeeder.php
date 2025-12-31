@@ -14,15 +14,39 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         User::create([
-            'nama' => 'Muhammad Haliq Maulana',
+            'nama' => 'Haliq Admin',
             'nim' => null,
-            'nip' => '91919191', // bisa null jika tidak dipakai
-            'username' => 'haliq',
-            'password' => '1234', // otomatis di-hash oleh cast model
+            'nip' => '9191919123',
+            'username' => 'haliqadmin',
+            'password' => '1234',
             'foto' => 'default.png',
             'security_question' => 'Apa warna favorit anda?',
             'security_answer' => 'Biru',
-            'role_id' => 1, // pastikan role admin id-nya 1
+            'role_id' => 1,
+        ]);
+
+        User::create([
+            'nama' => 'Haliq Mahasiswa',
+            'nim' => '136818287',
+            'nip' => null,
+            'username' => 'haliqmhs',
+            'password' => '1234',
+            'foto' => 'default.png',
+            'security_question' => 'Tempat kelahiran anda?',
+            'security_answer' => 'Acehtamiang',
+            'role_id' => 3,
+        ]);
+
+        User::create([
+            'nama' => 'Haliq Dosen',
+            'nim' => null,
+            'nip' => '198512122010011123',
+            'username' => 'haliqdosen',
+            'password' => '1234',
+            'foto' => 'default.png',
+            'security_question' => 'Anda tinggal?',
+            'security_answer' => 'Acehtamiang',
+            'role_id' => 2,
         ]);
     }
 }
