@@ -164,7 +164,7 @@
 
                 </div>
                 <div class="col-md-6 d-md-block d-none bg-primary p-0 mt-n1 vh-100 overflow-hidden">
-                    <img src="{{ asset('assets/images/stmik.jpg') }}" class="img-fluid gradient-main " alt="images">
+                    <img src="{{ asset('assets/images/stmik-hd.jpg') }}" class="img-fluid gradient-main " alt="images">
                 </div>
             </div>
         </section>

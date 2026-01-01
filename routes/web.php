@@ -83,7 +83,7 @@ Route::middleware(['auth', 'role:mahasiswa'])->group(function () {
     })->name('contact');
 
     Route::post('/contact/submit', [ContactController::class, 'submit'])->name('mahasiswa.contact.submit');
-    Route::get('/dashboardMahasiswa', [DashboardController::class, 'dashboardMahasiswa'])->name('dashboard-mahasiswa');
+    Route::get('/dashboard', [DashboardController::class, 'dashboardMahasiswa'])->name('dashboard-mahasiswa');
 });
 
 Route::middleware(['auth', 'role:dosen'])->group(function () {
@@ -104,7 +104,7 @@ Route::middleware(['auth', 'role:dosen'])->group(function () {
     })->name('contactt');
 
     Route::post('/contact/submitt', [ContactController::class, 'submitDosen'])->name('dosen.contact.submit');
-    Route::get('/dashboardDosen', [DashboardController::class, 'dashboardDosen'])->name('dashboard-dosen');
+    Route::get('/Dashboard', [DashboardController::class, 'dashboardDosen'])->name('dashboard-dosen');
 });
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
@@ -113,7 +113,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
     Route::get('/log-login', [LogLoginController::class, 'index'])
         ->name('logLogin.index');
-    Route::get('/dashboardAdmin', [DashboardController::class, 'dashboardAdmin'])->name('dashboard-admin');
+    Route::get('/D@shboard', [DashboardController::class, 'dashboardAdmin'])->name('dashboard-admin');
 
     Route::get('/pengguna/create-mahasiswa', [PenggunaController::class, 'createMahasiswa'])->name('pengguna.createMahasiswa');
     Route::post('/pengguna/store-mahasiswa', [PenggunaController::class, 'storeMahasiswa'])->name('pengguna.storeMahasiswa');
