@@ -66,7 +66,7 @@ class SoftwareSeeder extends Seeder
                 'versi' => '5.7',
                 'kategori' => 'Communication',
                 'lisensi' => 'Free/Paid',
-                'developer' => 'Zoom Video Communications',
+                'developer' => 'Zoom Video',
                 'tgl_rilis' => '2021-07-01',
                 'deskripsi' => 'Video conferencing software.',
             ],

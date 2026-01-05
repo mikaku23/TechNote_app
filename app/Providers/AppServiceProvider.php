@@ -23,8 +23,18 @@ class AppServiceProvider extends ServiceProvider
     {
 
         view()->composer('*', function ($view) {
+
             $recentMessages = Contact::with('user')
-                ->where('created_at', '>=', Carbon::now()->subDays(3))
+                ->where(function ($query) {
+                    // pesan belum dibaca: 3 hari
+                    $query->where('is_read', false)
+                        ->where('created_at', '>=', Carbon::now()->subDays(3));
+                })
+                ->orWhere(function ($query) {
+                    // pesan sudah dibaca: 1 hari
+                    $query->where('is_read', true)
+                        ->where('created_at', '>=', Carbon::now()->subDay());
+                })
                 ->latest()
                 ->get();
 
@@ -35,6 +45,7 @@ class AppServiceProvider extends ServiceProvider
                 'unreadCount' => $unreadCount,
             ]);
         });
+
         // set locale Laravel
         config(['app.locale' => 'id']);
 

@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
-
+use App\Models\login_log;
 use App\Models\role;
 use App\Models\User;
+use App\Models\UserActivity;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PenggunaController extends Controller
 {
@@ -129,6 +131,24 @@ class PenggunaController extends Controller
         $nm->move(public_path() . '/foto', $namaFile);
         $user->save();
 
+        $authUser = Auth::user();
+
+        if ($authUser) {
+            $loginLog = login_log::where('user_id', $authUser->id)
+                ->where('status', 'online')
+                ->latest('login_at')
+                ->first();
+
+            if ($loginLog) {
+                UserActivity::create([
+                    'user_id'      => $authUser->id,
+                    'login_log_id' => $loginLog->id,
+                    'activity'     => 'Menambahkan pengguna baru',
+                    'created_at'   => now('Asia/Jakarta'),
+                ]);
+            }
+        }
+
         if ($request->wantsJson() || $request->ajax()) {
             return response()->json(['success' => true]);
         }
@@ -185,6 +205,24 @@ class PenggunaController extends Controller
         $nm->move(public_path() . '/foto', $namaFile);
         $user->save();
 
+        $authUser = Auth::user();
+
+        if ($authUser) {
+            $loginLog = login_log::where('user_id', $authUser->id)
+                ->where('status', 'online')
+                ->latest('login_at')
+                ->first();
+
+            if ($loginLog) {
+                UserActivity::create([
+                    'user_id'      => $authUser->id,
+                    'login_log_id' => $loginLog->id,
+                    'activity'     => 'Menambahkan data mahasiswa baru',
+                    'created_at'   => now('Asia/Jakarta'),
+                ]);
+            }
+        }
+
         if ($request->wantsJson() || $request->ajax()) {
             return response()->json(['success' => true]);
         }
@@ -240,6 +278,24 @@ class PenggunaController extends Controller
 
         $nm->move(public_path() . '/foto', $namaFile);
         $user->save();
+
+        $authUser = Auth::user();
+
+        if ($authUser) {
+            $loginLog = login_log::where('user_id', $authUser->id)
+                ->where('status', 'online')
+                ->latest('login_at')
+                ->first();
+
+            if ($loginLog) {
+                UserActivity::create([
+                    'user_id'      => $authUser->id,
+                    'login_log_id' => $loginLog->id,
+                    'activity'     => 'Menambahkan data dosen baru',
+                    'created_at'   => now('Asia/Jakarta'),
+                ]);
+            }
+        }
 
         if ($request->wantsJson() || $request->ajax()) {
             return response()->json(['success' => true]);
@@ -304,6 +360,25 @@ class PenggunaController extends Controller
         $user->role_id = $validated['role_id'];
         $user->save();
 
+        $authUser = Auth::user();
+
+        if ($authUser) {
+            $loginLog = login_log::where('user_id', $authUser->id)
+                ->where('status', 'online')
+                ->latest('login_at')
+                ->first();
+
+            if ($loginLog) {
+                UserActivity::create([
+                    'user_id'      => $authUser->id,
+                    'login_log_id' => $loginLog->id,
+                    'activity'     => 'Mengedit data pengguna dengan ID dan name:' . $id . ', ' . $user->nama,
+                    'created_at'   => now('Asia/Jakarta'),
+                ]);
+            }
+        }
+
+
         return redirect()->route('pengguna.index')->with('success', 'Data pengguna berhasil diperbarui.');
     }
 
@@ -311,6 +386,25 @@ class PenggunaController extends Controller
     {
         $user = User::findOrFail($id);
         $user->forceDelete(); // hapus permanen
+
+        $authUser = Auth::user();
+
+        if ($authUser) {
+            $loginLog = login_log::where('user_id', $authUser->id)
+                ->where('status', 'online')
+                ->latest('login_at')
+                ->first();
+
+            if ($loginLog) {
+                UserActivity::create([
+                    'user_id'      => $authUser->id,
+                    'login_log_id' => $loginLog->id,
+                    'activity'     => 'Menghapus pengguna dengan ID:' . $id,
+                    'created_at'   => now('Asia/Jakarta'),
+                ]);
+            }
+        }
+
 
         return redirect()
             ->route('pengguna.index');
@@ -334,4 +428,6 @@ class PenggunaController extends Controller
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
+
+   
 }

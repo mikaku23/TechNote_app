@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\login_log;
 use App\Models\User;
 use App\Models\rekap;
 use App\Models\software;
 use Illuminate\Support\Str;
 use App\Models\penginstalan;
+use App\Models\UserActivity;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 
 class PenginstalanController extends Controller
@@ -99,6 +102,24 @@ class PenginstalanController extends Controller
         $rekap->penginstalan_id = $penginstalan->id;
         $rekap->status = 'tersedia';
         $rekap->save();
+
+        $authUser = Auth::user();
+
+        if ($authUser) {
+            $loginLog = login_log::where('user_id', $authUser->id)
+                ->where('status', 'online')
+                ->latest('login_at')
+                ->first();
+
+            if ($loginLog) {
+                UserActivity::create([
+                    'user_id'      => $authUser->id,
+                    'login_log_id' => $loginLog->id,
+                    'activity'     => 'Menambahkan data penginstalan baru',
+                    'created_at'   => now('Asia/Jakarta'),
+                ]);
+            }
+        }
         
         if ($request->wantsJson() || $request->ajax()) {
             return response()->json(['success' => true]);
@@ -138,6 +159,24 @@ class PenginstalanController extends Controller
         $penginstalan->software_id = $validated['software_id'] ?? null;
         $penginstalan->user_id = $validated['user_id'] ?? null;
         $penginstalan->save();
+
+        $authUser = Auth::user();
+
+        if ($authUser) {
+            $loginLog = login_log::where('user_id', $authUser->id)
+                ->where('status', 'online')
+                ->latest('login_at')
+                ->first();
+
+            if ($loginLog) {
+                UserActivity::create([
+                    'user_id'      => $authUser->id,
+                    'login_log_id' => $loginLog->id,
+                    'activity'     => 'Mengupdate data penginstalan baru',
+                    'created_at'   => now('Asia/Jakarta'),
+                ]);
+            }
+        }
 
         // jika request AJAX/kirim JSON — kembalikan JSON
         if ($request->wantsJson() || $request->ajax()) {
@@ -192,6 +231,24 @@ class PenginstalanController extends Controller
             }
         });
 
+        $authUser = Auth::user();
+
+        if ($authUser) {
+            $loginLog = login_log::where('user_id', $authUser->id)
+                ->where('status', 'online')
+                ->latest('login_at')
+                ->first();
+
+            if ($loginLog) {
+                UserActivity::create([
+                    'user_id'      => $authUser->id,
+                    'login_log_id' => $loginLog->id,
+                    'activity'     => 'Menghapus data penginstalan baru',
+                    'created_at'   => now('Asia/Jakarta'),
+                ]);
+            }
+        }
+
         return redirect()->route('penginstalan.index');
     }
 
@@ -231,6 +288,24 @@ class PenginstalanController extends Controller
 
             // Update status rekap setelah dipulihkan
             Rekap::where('penginstalan_id', $id)->update(['status' => 'tersedia']);
+
+            $authUser = Auth::user();
+
+            if ($authUser) {
+                $loginLog = login_log::where('user_id', $authUser->id)
+                    ->where('status', 'online')
+                    ->latest('login_at')
+                    ->first();
+
+                if ($loginLog) {
+                    UserActivity::create([
+                        'user_id'      => $authUser->id,
+                        'login_log_id' => $loginLog->id,
+                        'activity'     => 'Memulihkan data penginstalan baru',
+                        'created_at'   => now('Asia/Jakarta'),
+                    ]);
+                }
+            }
 
             return redirect()
                 ->route('penginstalan.arsip')

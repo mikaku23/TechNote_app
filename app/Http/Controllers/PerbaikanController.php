@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\login_log;
 use App\Models\User;
 use App\Models\rekap;
 use App\Models\perbaikan;
+use App\Models\UserActivity;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 
 class PerbaikanController extends Controller
@@ -103,6 +106,24 @@ class PerbaikanController extends Controller
         $rekap->perbaikan_id = $perbaikan->id;
         $rekap->status = 'tersedia';
         $rekap->save();
+
+        $authUser = Auth::user();
+
+        if ($authUser) {
+            $loginLog = login_log::where('user_id', $authUser->id)
+                ->where('status', 'online')
+                ->latest('login_at')
+                ->first();
+
+            if ($loginLog) {
+                UserActivity::create([
+                    'user_id'      => $authUser->id,
+                    'login_log_id' => $loginLog->id,
+                    'activity'     => 'Menambahkan data perbaikan baru',
+                    'created_at'   => now('Asia/Jakarta'),
+                ]);
+            }
+        }
         
         if ($request->wantsJson() || $request->ajax()) {
             return response()->json(['success' => true]);
@@ -147,6 +168,24 @@ class PerbaikanController extends Controller
         $perbaikan->user_id = $validated['user_id'] ?? null;
         $perbaikan->save();
 
+        $authUser = Auth::user();
+
+        if ($authUser) {
+            $loginLog = login_log::where('user_id', $authUser->id)
+                ->where('status', 'online')
+                ->latest('login_at')
+                ->first();
+
+            if ($loginLog) {
+                UserActivity::create([
+                    'user_id'      => $authUser->id,
+                    'login_log_id' => $loginLog->id,
+                    'activity'     => 'Mengupdate data perbaikan baru',
+                    'created_at'   => now('Asia/Jakarta'),
+                ]);
+            }
+        }
+
         return response()->json(['success' => true]);
     }
 
@@ -186,6 +225,24 @@ class PerbaikanController extends Controller
         // Soft delete (rekap terkait akan otomatis ikut soft delete via model booted)
         $perbaikan->delete();
 
+        $authUser = Auth::user();
+
+        if ($authUser) {
+            $loginLog = login_log::where('user_id', $authUser->id)
+                ->where('status', 'online')
+                ->latest('login_at')
+                ->first();
+
+            if ($loginLog) {
+                UserActivity::create([
+                    'user_id'      => $authUser->id,
+                    'login_log_id' => $loginLog->id,
+                    'activity'     => 'Menghapus data perbaikan baru',
+                    'created_at'   => now('Asia/Jakarta'),
+                ]);
+            }
+        }
+
         return redirect()->route('perbaikan.index')
             ->with('success', 'Data berhasil dihapus.');
     }
@@ -214,6 +271,24 @@ class PerbaikanController extends Controller
             $perbaikan = Perbaikan::withTrashed()->findOrFail($id);
             $perbaikan->restore();
             $perbaikan->update(['status' => 'berhasil']);
+
+            $authUser = Auth::user();
+
+            if ($authUser) {
+                $loginLog = login_log::where('user_id', $authUser->id)
+                    ->where('status', 'online')
+                    ->latest('login_at')
+                    ->first();
+
+                if ($loginLog) {
+                    UserActivity::create([
+                        'user_id'      => $authUser->id,
+                        'login_log_id' => $loginLog->id,
+                        'activity'     => 'Memulihkan data perbaikan baru',
+                        'created_at'   => now('Asia/Jakarta'),
+                    ]);
+                }
+            }
 
             return redirect()
                 ->route('perbaikan.arsip')

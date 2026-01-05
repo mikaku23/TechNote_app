@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\software;
+use App\Models\login_log;
+use App\Models\UserActivity;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class SoftwareController extends Controller
 {
@@ -93,6 +97,25 @@ class SoftwareController extends Controller
         $software->deskripsi = $validated['deskripsi'] ?? null;
         $software->save();
 
+
+        $authUser = Auth::user();
+
+        if ($authUser) {
+            $loginLog = login_log::where('user_id', $authUser->id)
+                ->where('status', 'online')
+                ->latest('login_at')
+                ->first();
+
+            if ($loginLog) {
+                UserActivity::create([
+                    'user_id'      => $authUser->id,
+                    'login_log_id' => $loginLog->id,
+                    'activity'     => 'Menambahkan data software baru',
+                    'created_at'   => now('Asia/Jakarta'),
+                ]);
+            }
+        }
+
         if ($request->wantsJson() || $request->ajax()) {
             return response()->json(['success' => true]);
         }
@@ -112,6 +135,24 @@ class SoftwareController extends Controller
     {
         $software = software::findOrFail($id);
         $software->delete();
+
+        $authUser = Auth::user();
+
+        if ($authUser) {
+            $loginLog = login_log::where('user_id', $authUser->id)
+                ->where('status', 'online')
+                ->latest('login_at')
+                ->first();
+
+            if ($loginLog) {
+                UserActivity::create([
+                    'user_id'      => $authUser->id,
+                    'login_log_id' => $loginLog->id,
+                    'activity'     => 'Menghapus data software baru',
+                    'created_at'   => now('Asia/Jakarta'),
+                ]);
+            }
+        }
 
         return redirect()
             ->route('software.index');
@@ -152,6 +193,24 @@ class SoftwareController extends Controller
                 : null,
             'deskripsi' => $validated['deskripsi'] ?? null,
         ])->save();
+
+        $authUser = Auth::user();
+
+        if ($authUser) {
+            $loginLog = login_log::where('user_id', $authUser->id)
+                ->where('status', 'online')
+                ->latest('login_at')
+                ->first();
+
+            if ($loginLog) {
+                UserActivity::create([
+                    'user_id'      => $authUser->id,
+                    'login_log_id' => $loginLog->id,
+                    'activity'     => 'Mengupdate data software baru',
+                    'created_at'   => now('Asia/Jakarta'),
+                ]);
+            }
+        }
 
         return response()->json(['success' => true]);
     }

@@ -1,11 +1,8 @@
 @extends('template_admin.layout')
 @section('title', 'Data log-Login-Pengguna')
 @section('css')
-<link rel="stylesheet" href="{{ asset('assets/css/admin/pengguna/user.css') }}">
-<link rel="stylesheet" href="{{ asset('assets/css/admin/pengguna/hapus.css') }}">
 <link rel="stylesheet" href="{{ asset('assets/css/admin/pengguna/show.css') }}">
-<link rel="stylesheet" href="{{ asset('assets/css/admin/pengguna/search.css') }}">
-<link rel="stylesheet" href="{{ asset('assets/css/admin/pengguna/paginate.css') }}">
+
 @endsection
 
 @section('konten')
@@ -124,7 +121,8 @@
                                     <th>Status</th>
                                     <th>Tanggal</th>
                                     <th>Waktu Online</th>
-                                    <th>IP</th>
+
+                                    <th>Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -144,10 +142,11 @@
 
                                     <td>{{ optional($log->login_at)->format('d F Y') }}</td>
                                     <td>{{ optional($log->login_at)->format('H:i') }}</td>
+
                                     <td>
-                                        <span class="badge bg-secondary">
-                                            {{ $log->ip_address ?? '-' }}
-                                        </span>
+                                        <button type="button" class="btn btn-outline-info btn-sm show-btn" data-id="{{ $log->id }}">
+                                            <i class="fa fa-eye mr-1"></i>
+                                        </button>
                                     </td>
                                 </tr>
                                 @empty
@@ -187,10 +186,33 @@
 
 
 
+<!-- Modal -->
+<div class="modal fade show-modal-glass" id="showModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content glass-popup">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="showModalLabel">Detail Software</h5>
+                <button type="button" class="btn-close close-modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <div id="modalContent">
+                    <!-- Konten AJAX -->
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary close-modal">Tutup</button>
+            </div>
+
+        </div>
+    </div>
+</div>
 @endsection
 
 @section('js')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="{{ asset('assets/js/admin/logLoginpengguna/hapus.js') }}"></script>
-<script src="{{ asset('assets/js/admin/logLoginpengguna/show.js') }}"></script>
+<script src="{{ asset('assets/js/admin/pengguna/show.js') }}"></script>
+
 @endsection

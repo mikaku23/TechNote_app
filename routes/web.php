@@ -111,9 +111,10 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
     Route::post('/contact/{id}/read', [ContactController::class, 'markAsRead'])->name('contact.read');
 
-    Route::get('/log-login', [LogLoginController::class, 'index'])
-        ->name('logLogin.index');
-    Route::get('/D@shboard', [DashboardController::class, 'dashboardAdmin'])->name('dashboard-admin');
+    Route::get('/log-login', [LogLoginController::class, 'index'])->name('logLogin.index');
+    Route::get('/log-login/{id}', [LogLoginController::class, 'show'])->name('logLogin.show');
+
+    Route::get('/dashboardAdmin', [DashboardController::class, 'dashboardAdmin'])->name('dashboard-admin');
 
     Route::get('/pengguna/create-mahasiswa', [PenggunaController::class, 'createMahasiswa'])->name('pengguna.createMahasiswa');
     Route::post('/pengguna/store-mahasiswa', [PenggunaController::class, 'storeMahasiswa'])->name('pengguna.storeMahasiswa');

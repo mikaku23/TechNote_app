@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\login_log;
 use App\Models\role;
+use App\Models\UserActivity;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class RoleController extends Controller
 {
@@ -57,6 +60,24 @@ class RoleController extends Controller
         $role->status = $validated['status'];
         $role->save();
 
+        $authUser = Auth::user();
+
+        if ($authUser) {
+            $loginLog = login_log::where('user_id', $authUser->id)
+                ->where('status', 'online')
+                ->latest('login_at')
+                ->first();
+
+            if ($loginLog) {
+                UserActivity::create([
+                    'user_id'      => $authUser->id,
+                    'login_log_id' => $loginLog->id,
+                    'activity'     => 'Menambahkan data role baru',
+                    'created_at'   => now('Asia/Jakarta'),
+                ]);
+            }
+        }
+        
         return redirect()->route('role.index')->with('success', 'Role berhasil ditambahkan.');
     }
     

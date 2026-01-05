@@ -10,7 +10,7 @@ class LogLoginController extends Controller
 {
     public function index(Request $request)
     {
-        $query = login_log::with(['user.role']);
+        $query = login_log::with(['user.role', 'activities']);
 
         // filter tanggal login
         if ($request->filled('tanggal')) {
@@ -54,11 +54,26 @@ class LogLoginController extends Controller
             ->orderBy('ip_address')
             ->pluck('ip_address');
 
-        return view('admin.log_login', [
+        return view('admin.log_login.index', [
             'menu' => 'logLogin',
             'datauser' => $datauser,
             'roles' => $roles,
             'ips' => $ips,
+        ]);
+    }
+
+    public function show($id)
+    {
+        $log = login_log::with([
+            'user.role',
+            'activities' => function ($q) {
+                $q->orderBy('created_at', 'asc'); // atau desc
+            }
+        ])->findOrFail($id);
+
+        return view('admin.log_login.show', [
+            'menu' => 'logLogin',
+            'log' => $log,
         ]);
     }
 }
