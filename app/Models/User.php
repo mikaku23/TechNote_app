@@ -32,6 +32,8 @@ class User extends Authenticatable
         'password',
         'no_hp',
         'foto',
+        'qr_code',
+        'qr_url',
         'security_question',
         'security_answer',
         'old_password',

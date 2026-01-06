@@ -35,3 +35,23 @@
     <label class="form-label">Tanggal Edit</label>
     <input type="text" class="form-control" value="{{ $penginstalan->updated_at ? \Carbon\Carbon::parse($penginstalan->updated_at)->format('d F Y') : 'tidak ada data' }}" disabled>
 </div>
+<div class="mb-3">
+    <label class="form-label">QR Code</label>
+
+    @if(!empty($penginstalan->qr_url))
+    <div class="mt-2">
+        <img
+            src="{{ $penginstalan->qr_url }}"
+            alt="QR Code"
+            style="background:#fff; padding:8px">
+
+        <div class="mt-2 text-muted">
+            {{ $penginstalan->qr_code }}
+        </div>
+    </div>
+    @else
+    <div class="text-muted mt-2">
+        QR Code belum tersedia
+    </div>
+    @endif
+</div>

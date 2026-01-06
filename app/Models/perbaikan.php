@@ -19,11 +19,13 @@ class perbaikan extends Model
         'keterangan',
         'tgl_perbaikan',
         'estimasi',
+        'qr_code',
+        'qr_url',
         'user_id',
     ];
     use SoftDeletes;
     protected $dates = ['deleted_at'];
-    
+
     protected $casts = [
         'tgl_perbaikan' => 'date',
         'notif_terkirim' => 'boolean',

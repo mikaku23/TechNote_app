@@ -132,6 +132,12 @@
                                         </div>
 
                                         <div class="form-group mb-3">
+                                            <label>Nomor HP</label>
+                                            <input type="text" name="no_hp" class="form-control input-placeholder-muted"
+                                                placeholder="Masukkan nomor HP" value="{{ old('no_hp') }}" required>
+                                        </div>
+
+                                        <div class="form-group mb-3">
                                             <label>Foto Profil</label>
                                             <input type="file" name="foto" class="form-control">
                                         </div>

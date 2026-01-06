@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Services\WhatsappService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 
 class LoginController extends Controller
@@ -244,130 +245,151 @@ class LoginController extends Controller
 
 
 
-    public function signupStore(Request $request)
+    public function signupStore(Request $request, WhatsappService $waService)
     {
         $request->validate([
             'idnumber' => 'required',
             'nama' => 'required|string',
             'username' => 'required|string|unique:users,username',
             'password' => 'required|string|confirmed|min:4',
+            'no_hp' => 'required|string|max:15',
             'security_question' => 'required|string',
             'security_answer' => 'required|string',
             'foto' => 'nullable|image',
         ], [
-            // Pesan validasi keren
             'idnumber.required' => 'NIM atau NIP wajib diisi.',
             'nama.required' => 'Nama lengkap wajib diisi.',
             'username.required' => 'Username wajib diisi.',
-            'username.unique' => 'Username sudah dipakai, buat username lain.',
+            'username.unique' => 'Username sudah dipakai.',
             'password.required' => 'Password wajib diisi.',
             'password.min' => 'Password minimal 4 karakter.',
             'password.confirmed' => 'Konfirmasi password tidak cocok.',
+            'no_hp.required' => 'Nomor HP wajib diisi maksimal 15 karakter.',
             'security_question.required' => 'Pertanyaan keamanan wajib diisi.',
             'security_answer.required' => 'Jawaban keamanan wajib diisi.',
-            'foto.image' => 'File foto harus berupa gambar.',
         ]);
 
         $id = trim($request->idnumber);
         $length = strlen($id);
         $last3 = substr($id, -3);
 
-        // DATA CONFIG
         $daftarNIM = config('secure.nims');
         $daftarNIP = config('secure.nips');
         $kodeInstansi = config('secure.institute_code');
 
-        // CEK DUPLIKAT
         $used = User::pluck('nim')->merge(User::pluck('nip'))->toArray();
-
         if (in_array($id, $used)) {
-            return back()->withErrors([
-                'idnumber' => 'NIM atau NIP ini sudah digunakan.'
-            ])->withInput();
+            return back()->withErrors(['idnumber' => 'NIM atau NIP ini sudah digunakan.'])->withInput();
         }
 
-        // =================-------
-        // CEK LEN NIM/NIP CUSTOM
-        // =================-------
         if ($length < 7) {
-            return back()->withErrors([
-                'idnumber' => 'NIM atau NIP terlalu pendek.'
-            ])->withInput();
+            return back()->withErrors(['idnumber' => 'NIM atau NIP terlalu pendek.'])->withInput();
         }
 
-        // Jika panjang 8–15 → error
         if ($length >= 8 && $length <= 15) {
-            return back()->withErrors([
-                'idnumber' => 'NIM atau NIP tidak memenuhi syarat.'
-            ])->withInput();
+            return back()->withErrors(['idnumber' => 'NIM atau NIP tidak memenuhi syarat.'])->withInput();
         }
 
-        // Jika panjang > 16 → error
         if ($length > 16 && $length != 18) {
-            // 18 = NIP dosen, valid
-            return back()->withErrors([
-                'idnumber' => 'NIM atau NIP terlalu panjang dan tidak sesuai format.'
-            ])->withInput();
+            return back()->withErrors(['idnumber' => 'Format NIM atau NIP tidak valid.'])->withInput();
         }
 
-        // =======================
-        // DETEKSI MAHASISWA / DOSEN
-        // =======================
-
-        // Mahasiswa = 7 digit
+        // ================= ROLE DETECTION =================
         if ($length == 7) {
             if (!in_array($id, $daftarNIM)) {
-                return back()->withErrors(['idnumber' => 'NIM tidak terdaftar sebagai mahasiswa.'])->withInput();
+                return back()->withErrors(['idnumber' => 'NIM tidak terdaftar.'])->withInput();
             }
-
             $role = 3;
             $nim = $id;
             $nip = null;
-        }
-        // Dosen = 18 digit
-        elseif ($length == 18) {
-
-            if ($last3 != $kodeInstansi) {
-                return back()->withErrors(['idnumber' => 'Pastikan NIP anda benar.'])->withInput();
+            $roleCode = 'MHS';
+        } elseif ($length == 18) {
+            if ($last3 != $kodeInstansi || !in_array($id, $daftarNIP)) {
+                return back()->withErrors(['idnumber' => 'NIP tidak valid.'])->withInput();
             }
-
-            if (!in_array($id, $daftarNIP)) {
-                return back()->withErrors(['idnumber' => 'NIP tidak terdaftar sebagai dosen.'])->withInput();
-            }
-
             $role = 2;
             $nim = null;
             $nip = $id;
+            $roleCode = 'DSN';
         } else {
             return back()->withErrors(['idnumber' => 'Format NIM/NIP tidak valid.'])->withInput();
         }
 
-        // =======================
-        // SIMPAN FOTO (JIKA ADA)
-        // =======================
-        $fotoName = 'default.png'; // foto default
-
+        // ================= FOTO =================
+        $fotoName = 'default.png';
         if ($request->hasFile('foto')) {
             $file = $request->file('foto');
             $fotoName = time() . '_' . $file->getClientOriginalName();
             $file->move(public_path('foto'), $fotoName);
         }
 
+        // ================= SIMPAN USER =================
+        // normalisasi no hp
+        $noHp = preg_replace('/[^0-9]/', '', $request->no_hp); // hapus karakter non-angka
+        if (substr($noHp, 0, 1) === '0') {
+            $noHp = '62' . substr($noHp, 1); // ganti 0 awal jadi 62
+        }
 
-        // =======================
-        // SIMPAN USER
-        // =======================
-        User::create([
+        // simpan user
+        $user = User::create([
             'nama' => $request->nama,
             'nim' => $nim,
             'nip' => $nip,
             'username' => $request->username,
-            'password' => $request->password,
+            'password' => Hash::make($request->password),
+            'no_hp' => $noHp,
             'foto' => $fotoName,
             'security_question' => $request->security_question,
-            'security_answer' => $request->security_answer,
+            'security_answer' => Hash::make($request->security_answer),
             'role_id' => $role
         ]);
+
+
+        // ================= GENERATE QR =================
+        $nomor = str_pad($user->id, 6, '0', STR_PAD_LEFT);
+        $qrCode = "USER-{$nomor}-{$roleCode}";
+
+        $qrUrl = 'https://bwipjs-api.metafloor.com/?bcid=qrcode'
+            . '&text=' . urlencode($qrCode)
+            . '&scale=6'
+            . '&includetext=false';
+
+
+        $user->update([
+            'qr_code' => $qrCode,
+            'qr_url'  => $qrUrl,
+        ]);
+
+        // ================= NOTIF WHATSAPP =================
+        if (!empty($user->no_hp) && !empty($user->qr_url)) {
+
+            $tanggal = now('Asia/Jakarta')->format('d F Y');
+
+            $roleText = match ($user->role_id) {
+                2 => 'Dosen',
+                3 => 'Mahasiswa',
+                default => 'Pengguna',
+            };
+
+            $msg = "Halo {$user->nama}, akun {$roleText} berhasil dibuat.\n\n"
+                . "Detail akun:\n"
+                . ($user->nim ? "NIM: {$user->nim}\n" : "")
+                . ($user->nip ? "NIP: {$user->nip}\n" : "")
+                . "Username: {$user->username}\n\n"
+                . "QR Code akun anda (klik link berikut):\n"
+                . "{$user->qr_url}\n"
+                . "*Harap tidak membagikan tautan ini kepada siapa pun karena bersifat pribadi.*\n\n"
+                . "QR Code ini berfungsi sebagai *identitas digital*.\n"
+                . "Jika lupa password, *pemulihan akun* dapat dilakukan "
+                . "dengan datang ke Ruang Teknisi dan menunjukkan *QR Code*.\n"
+                . "*Pemulihan mandiri* juga tersedia di website TechNoteAPP.\n\n"
+                . "_{$tanggal}_\n"
+                . "_Sent via TechNoteAPP (powered by Green.com)_";
+
+            $waService->sendMessage($user->no_hp, $msg);
+        }
+
+
 
         return redirect()->route('login')->with('success', 'Akun berhasil dibuat.');
     }

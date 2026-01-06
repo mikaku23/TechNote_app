@@ -41,3 +41,23 @@
     <input type="text" class="form-control" value="Tidak ada foto" disabled>
     @endif
 </div>
+<div class="mb-3">
+    <label class="form-label">QR Code</label>
+
+    @if(!empty($user->qr_url))
+    <div class="mt-2">
+        <img
+            src="{{ $user->qr_url }}"
+            alt="QR Code"
+            style="background:#fff; padding:8px">
+
+        <div class="mt-2 text-muted">
+            {{ $user->qr_code }}
+        </div>
+    </div>
+    @else
+    <div class="text-muted mt-2">
+        QR Code belum tersedia
+    </div>
+    @endif
+</div>

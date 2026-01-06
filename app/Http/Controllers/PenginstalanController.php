@@ -332,6 +332,25 @@ class PenginstalanController extends Controller
         $penginstalan->status = $request->status;
         $penginstalan->save();
 
+        if (in_array($request->status, ['berhasil', 'gagal'])) {
+
+            $nomor = str_pad($penginstalan->id, 6, '0', STR_PAD_LEFT);
+            $hasil = $request->status === 'berhasil' ? 'SUCCESS' : 'FAILED';
+
+            $qrCode = "INST-{$nomor}-{$hasil}";
+
+            $penginstalan->update([
+                'qr_code' => $qrCode,
+                'qr_url'  => 'https://bwipjs-api.metafloor.com/?bcid=qrcode&text='
+                    . urlencode($qrCode)
+                    . '&scale=6'
+            ]);
+
+            $penginstalan->refresh();
+        }
+
+
+
         // kirim WA jika status BERHASIL atau GAGAL, dan belum pernah kirim
         if (
             in_array($request->status, ['berhasil', 'gagal']) &&

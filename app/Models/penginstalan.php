@@ -22,6 +22,8 @@ class penginstalan extends Model
         'tgl_instalasi',
         'status',
         'estimasi',
+        'qr_code',
+        'qr_url',
         'software_id',
         'user_id',
     ];

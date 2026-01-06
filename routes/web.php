@@ -14,23 +14,11 @@ use App\Http\Controllers\SoftwareController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PerbaikanController;
 use App\Http\Controllers\PenginstalanController;
+use App\Http\Controllers\qrController;
 
 Route::fallback(function () {
     return response()->view('error.404', [], 404);
 });
-Route::get('/test-wa', function (App\Services\WhatsappService $wa) {
-    $phone = '082285926175';
-    $message = 'Test WA via Green API - ' . now();
-
-    $sent = $wa->sendMessage($phone, $message);
-
-    return response()->json([
-        'sent' => $sent,
-        'phone' => $phone,
-        'timestamp' => now()->toDateTimeString()
-    ]);
-});
-
 
 Route::get('/', [LoginController::class, 'login'])->name('login');
 Route::post('/authenticate', [LoginController::class, 'Auth'])->name('authenticate');
@@ -98,6 +86,7 @@ Route::middleware(['auth', 'role:mahasiswa'])->group(function () {
 
     Route::post('/contact/submit', [ContactController::class, 'submit'])->name('mahasiswa.contact.submit');
     Route::get('/dashboard', [DashboardController::class, 'dashboardMahasiswa'])->name('dashboard-mahasiswa');
+
 });
 
 Route::middleware(['auth', 'role:dosen'])->group(function () {
@@ -119,6 +108,7 @@ Route::middleware(['auth', 'role:dosen'])->group(function () {
 
     Route::post('/contact/submitt', [ContactController::class, 'submitDosen'])->name('dosen.contact.submit');
     Route::get('/Dashboard', [DashboardController::class, 'dashboardDosen'])->name('dashboard-dosen');
+
 });
 
 Route::middleware(['auth', 'role:admin'])->group(function () {

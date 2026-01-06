@@ -43,3 +43,23 @@
     <label class="form-label">Keterangan</label>
     <textarea class="form-control" rows="4" disabled>{{ $perbaikan->keterangan ?? 'tidak ada data' }}</textarea>
 </div>
+<div class="mb-3">
+    <label class="form-label">QR Code</label>
+
+    @if(!empty($perbaikan->qr_url))
+    <div class="mt-2">
+        <img
+            src="{{ $perbaikan->qr_url }}"
+            alt="QR Code"
+            style="background:#fff; padding:8px">
+
+        <div class="mt-2 text-muted">
+            {{ $perbaikan->qr_code }}
+        </div>
+    </div>
+    @else
+    <div class="text-muted mt-2">
+        QR Code belum tersedia
+    </div>
+    @endif
+</div>

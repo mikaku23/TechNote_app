@@ -20,6 +20,8 @@ return new class extends Migration
             $table->string('password');
             $table->string('no_hp')->nullable();
             $table->string('foto')->nullable();
+            $table->string('qr_code')->nullable()->unique();
+            $table->text('qr_url')->nullable();
             $table->string('security_question')->nullable();
             $table->string('security_answer')->nullable();
             $table->string('old_password')->nullable();

@@ -130,6 +130,23 @@ class DashboardController extends Controller
         ]);
     }
 
+    private function generateSuccessQr()
+    {
+        $last = Penginstalan::whereNotNull('qr_code')
+            ->where('qr_code', 'like', 'INST-%-SUCCESS')
+            ->orderBy('id', 'desc')
+            ->first();
+
+        if ($last && preg_match('/INST-(\d+)-SUCCESS/', $last->qr_code, $m)) {
+            $next = (int)$m[1] + 1;
+        } else {
+            $next = 1;
+        }
+
+        return 'INST-' . str_pad($next, 6, '0', STR_PAD_LEFT) . '-SUCCESS';
+    }
+
+
     public function dashboardMahasiswa(WhatsappService $waService)
     {
         $userId = Auth::id();
@@ -170,14 +187,33 @@ class DashboardController extends Controller
                 if ($sekarang->greaterThanOrEqualTo($target)) {
                     $item->estimasi_hitung = 'penginstalan selesai';
 
-                    if ($item->status === 'pending') {
-                        // Update status di DB
-                        Penginstalan::where('id', $item->id)->update([
-                            'status' => 'berhasil',
-                        ]);
+                if ($item->status === 'pending') {
 
-                        $item->status = 'berhasil';
-                        $item->updated_at = Carbon::now('Asia/Jakarta');
+                    $qrCode = $item->qr_code;
+                    $qrUrl  = $item->qr_url;
+
+                    // buat QR hanya sekali
+                    if (empty($qrCode)) {
+                        $nomor = str_pad($item->id, 6, '0', STR_PAD_LEFT);
+                        $qrCode = "INST-{$nomor}-SUCCESS";
+
+                        $qrUrl = 'https://bwipjs-api.metafloor.com/?bcid=qrcode&text='
+                            . $qrCode .
+                            '&scale=6';
+                    }
+
+                    Penginstalan::where('id', $item->id)->update([
+                        'status'     => 'berhasil',
+                        'qr_code'    => $qrCode,
+                        'qr_url'     => $qrUrl,
+                        'updated_at' => Carbon::now('Asia/Jakarta'),
+                    ]);
+
+                    $item->status = 'berhasil';
+                    $item->qr_code = $qrCode;
+                    $item->qr_url  = $qrUrl;
+                    $item->updated_at = Carbon::now('Asia/Jakarta');
+
 
                     if (!$item->notif_terkirim && $item->user?->no_hp) {
 
@@ -303,14 +339,36 @@ class DashboardController extends Controller
                     if ($sekarang->greaterThanOrEqualTo($target)) {
                         $item->estimasi_hitung = 'perbaikan selesai';
 
-                        if (strtolower($item->status) === 'sedang diperbaiki') {
-                            $item->status = 'selesai';
-                            $item->updated_at = $sekarang;
-                            Perbaikan::where('id', $item->id)->update([
-                                'status' => 'selesai',
-                                'updated_at' => $sekarang
-                            ]);
+                    if (strtolower($item->status) === 'sedang diperbaiki') {
+
+                        $sekarang = Carbon::now('Asia/Jakarta');
+
+                        $qrCode = $item->qr_code;
+                        $qrUrl  = $item->qr_url;
+
+                        // buat QR hanya sekali
+                        if (empty($qrCode)) {
+                            $nomor = str_pad($item->id, 6, '0', STR_PAD_LEFT);
+                            $qrCode = "REPAIR-{$nomor}-SUCCESS";
+
+                            $qrUrl = 'https://bwipjs-api.metafloor.com/?bcid=qrcode&text='
+                                . urlencode($qrCode)
+                                . '&scale=6';
                         }
+
+                        Perbaikan::where('id', $item->id)->update([
+                            'status'     => 'selesai',
+                            'qr_code'    => $qrCode,
+                            'qr_url'     => $qrUrl,
+                            'updated_at' => $sekarang,
+                        ]);
+
+                        // sinkronkan object
+                        $item->status     = 'selesai';
+                        $item->qr_code    = $qrCode;
+                        $item->qr_url     = $qrUrl;
+                        $item->updated_at = $sekarang;
+                    }
 
                         // 🔹 Kirim WA jika belum terkirim
                         if (!$item->notif_terkirim && $item->user?->no_hp) {

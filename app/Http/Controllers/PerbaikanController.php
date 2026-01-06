@@ -313,6 +313,24 @@ class PerbaikanController extends Controller
         $perbaikan->status = $request->status;
         $perbaikan->save();
 
+        if (in_array($request->status, ['selesai', 'rusak'])) {
+
+            $nomor = str_pad($perbaikan->id, 6, '0', STR_PAD_LEFT);
+            $hasil = $request->status === 'selesai' ? 'SUCCESS' : 'FAILED';
+
+            $qrCode = "REPAIR-{$nomor}-{$hasil}";
+
+            $perbaikan->update([
+                'qr_code' => $qrCode,
+                'qr_url'  => 'https://bwipjs-api.metafloor.com/?bcid=qrcode&text='
+                    . urlencode($qrCode)
+                    . '&scale=6'
+            ]);
+
+            $perbaikan->refresh();
+        }
+
+
         // Kirim WA jika status selesai atau gagal (anggap 'rusak' = gagal)
         if (($perbaikan->status === 'selesai' || $perbaikan->status === 'rusak')
             && $perbaikan->user?->no_hp

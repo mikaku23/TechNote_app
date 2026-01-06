@@ -106,6 +106,15 @@
             </div>
 
             <div class="form-group mb-3">
+                <label class="form-label" for="no_hp">Nomor HP</label>
+                <input type="text"
+                    class="form-control {{ $errors->has('no_hp') ? 'is-invalid' : (old('no_hp') ? 'is-valid' : '') }}"
+                    id="no_hp" name="no_hp"
+                    value="{{ old('no_hp') }}"
+                    placeholder="Masukkan nomor HP">
+            </div>
+
+            <div class="form-group mb-3">
                 <label class="form-label" for="security_question">Security Question</label>
                 <input type="text"
                     class="form-control"

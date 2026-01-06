@@ -22,6 +22,7 @@
                         <th>Software</th>
                         <th>Status</th>
                         <th>Estimasi Selesai</th>
+                        <th>QR Code</th>
 
                     </tr>
                 </thead>
@@ -59,6 +60,19 @@
                             @endif
                             @endif
                         </td>
+                        <td class="text-center align-middle">
+                            @if(in_array($item->status, ['berhasil', 'gagal']) && !empty($item->qr_url))
+                            <img
+                                src="{{ $item->qr_url }}"
+                                alt="QR Bukti Penginstalan"
+                                width="80"
+                                height="80"
+                                style="background:#fff; padding:6px; border-radius:6px">
+                            @else
+                            <span class="text-muted">-</span>
+                            @endif
+                        </td>
+
                     </tr>
                     @empty
                     <tr>

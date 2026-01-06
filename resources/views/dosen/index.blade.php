@@ -21,7 +21,7 @@
                         <th>Tanggal</th>
                         <th>Nama</th>
                         <th>Kategori</th>
-                      
+
                         <th>Status</th>
                         <th>Keterangan</th>
                         <th>Estimasi Selesai</th>
@@ -41,7 +41,7 @@
                         <td data-label="Tanggal">{{ $item->tgl_perbaikan ? $item->tgl_perbaikan->format('d M Y') : 'tidak ada data' }}</td>
                         <td data-label="Nama">{{ $item->nama ?? 'tidak ada data' }}</td>
                         <td data-label="Kategori">{{ $item->kategori ?? 'tidak ada data' }}</td>
-                       
+
                         <td data-label="Status">
                             <span class="badge {{ $badgeClass }}">{{ $item->status ?? '-' }}</span>
                         </td>
@@ -59,6 +59,18 @@
                             @else
                             <br>Selesai pada: {{ $target->format('d-m-Y H:i:s') }}
                             @endif
+                            @endif
+                        </td>
+                        <td class="text-center align-middle">
+                            @if(in_array($item->status, ['selesai', 'rusak']) && !empty($item->qr_url))
+                            <img
+                                src="{{ $item->qr_url }}"
+                                alt="QR Bukti Penginstalan"
+                                width="80"
+                                height="80"
+                                style="background:#fff; padding:6px; border-radius:6px">
+                            @else
+                            <span class="text-muted">-</span>
                             @endif
                         </td>
                     </tr>

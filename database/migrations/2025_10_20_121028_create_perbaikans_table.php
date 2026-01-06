@@ -20,6 +20,8 @@ return new class extends Migration
             $table->text('keterangan')->nullable();
             $table->date('tgl_perbaikan');
             $table->time('estimasi')->nullable();
+            $table->string('qr_code')->nullable()->unique();
+            $table->text('qr_url')->nullable();
             $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();
         });
