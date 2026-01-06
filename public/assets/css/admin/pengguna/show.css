@@ -100,6 +100,29 @@
     padding: 1rem 1.5rem;
 }
 
+/* Activities - samakan dengan input */
+.modal-body .list-group {
+    background: transparent;
+    border: none;
+}
+
+/* override bootstrap list-group-item */
+.modal-body .list-group-item {
+    background-color: rgba(255, 255, 255, 0.6) !important;
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+    border-radius: 10px;
+    padding: 0.6rem 0.75rem;
+    margin-bottom: 0.5rem;
+    color: #000;
+    font-weight: 400;
+}
+
+/* hover halus */
+.modal-body .list-group-item:hover {
+    background-color: rgba(255, 255, 255, 0.75) !important;
+}
+
+
 /* Tombol "Tutup" - awalnya outline */
 .btn-primary.close-modal {
     background-color: transparent !important; /* awalnya transparan */

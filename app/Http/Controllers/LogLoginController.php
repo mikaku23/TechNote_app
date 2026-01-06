@@ -2,38 +2,58 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\login_log;
+use Carbon\Carbon;
 use App\Models\role;
+use App\Models\login_log;
 use Illuminate\Http\Request;
 
 class LogLoginController extends Controller
 {
     public function index(Request $request)
     {
+        // bersihkan URL kalau filter hari ini
+        if (
+            !$request->filled('tanggal_filter') ||
+            $request->tanggal_filter === 'hari_ini'
+        ) {
+            if ($request->query()) {
+                return redirect()->route('logLogin.index');
+            }
+        }
+
         $query = login_log::with(['user.role', 'activities']);
 
-        // filter tanggal login
-        if ($request->filled('tanggal')) {
+        $tanggalFilter = $request->get('tanggal_filter', 'hari_ini');
+
+        if ($tanggalFilter === 'hari_ini') {
+            $query->whereDate('login_at', Carbon::today());
+        } elseif ($tanggalFilter === 'kemarin') {
+            $query->whereDate('login_at', Carbon::yesterday());
+        } elseif ($tanggalFilter === 'besok') {
+            $query->whereDate('login_at', Carbon::tomorrow());
+        } elseif ($tanggalFilter === 'custom' && $request->filled('tanggal')) {
             $query->whereDate('login_at', $request->tanggal);
         }
-        // filter status online / offline
+        // kalau "semua" → tidak diberi whereDate
+
+        // status
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
-        // filter role
+        // role
         if ($request->filled('role')) {
             $query->whereHas('user', function ($q) use ($request) {
                 $q->where('role_id', $request->role);
             });
         }
 
-        // filter IP
+        // IP
         if ($request->filled('ip')) {
             $query->where('ip_address', $request->ip);
         }
 
-        // search nama / username
+        // search
         if ($request->filled('search')) {
             $query->whereHas('user', function ($q) use ($request) {
                 $q->where('nama', 'like', '%' . $request->search . '%')
@@ -48,7 +68,6 @@ class LogLoginController extends Controller
 
         $roles = role::all();
 
-        // ambil semua IP unik untuk dropdown
         $ips = login_log::select('ip_address')
             ->distinct()
             ->orderBy('ip_address')
@@ -59,6 +78,7 @@ class LogLoginController extends Controller
             'datauser' => $datauser,
             'roles' => $roles,
             'ips' => $ips,
+            'tanggalFilter' => $tanggalFilter,
         ]);
     }
 

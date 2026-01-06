@@ -2,7 +2,11 @@
 @section('title', 'Data log-Login-Pengguna')
 @section('css')
 <link rel="stylesheet" href="{{ asset('assets/css/admin/pengguna/show.css') }}">
-
+<style>
+    .tanggal-custom {
+        width: 150px;
+    }
+</style>
 @endsection
 
 @section('konten')
@@ -22,7 +26,8 @@
 
                             <!-- 🔹 Form Search, Role & Tanggal -->
                             <form action="{{ route('logLogin.index') }}" method="GET"
-                                class="d-flex align-items-end gap-2 ms-auto flex-wrap">
+                                class="d-flex align-items-end gap-2 flex-nowrap">
+
 
                                 <!-- Search -->
                                 <div>
@@ -58,32 +63,54 @@
                                 <!-- Tanggal -->
                                 <div>
                                     <label class="form-label mb-1">Tanggal</label>
-                                    <input type="date" name="tanggal" value="{{ request('tanggal') }}"
-                                        class="form-control form-control-sm" style="width: 150px;">
-                                </div>
-                                <!-- IP -->
-                                <div>
-                                    <label class="form-label mb-1">IP</label>
-                                    <select name="ip" class="form-select form-select-sm" style="width: 150px;">
-                                        <option value="">Semua</option>
-                                        @foreach($ips as $ip)
-                                        <option value="{{ $ip }}" {{ request('ip') == $ip ? 'selected' : '' }}>{{ $ip }}</option>
-                                        @endforeach
+                                    <select name="tanggal_filter"
+                                        id="tanggalFilter"
+                                        class="form-select form-select-sm"
+                                        style="width: 160px;">
+                                        <option value="" {{ empty($tanggalFilter) || $tanggalFilter === 'hari_ini' ? 'selected' : '' }}>
+                                            Hari ini
+                                        </option>
+
+                                        <option value="kemarin" {{ ($tanggalFilter ?? '') === 'kemarin' ? 'selected' : '' }}>
+                                            Kemarin
+                                        </option>
+                                        <option value="semua" {{ ($tanggalFilter ?? '') === 'semua' ? 'selected' : '' }}>
+                                            Semua
+                                        </option>
+                                        <option value="custom" {{ ($tanggalFilter ?? '') === 'custom' ? 'selected' : '' }}>
+                                            Pilih tanggal
+                                        </option>
                                     </select>
                                 </div>
 
+                                <!-- SLOT KHUSUS (tanggal custom / tombol) -->
+                                <div id="swapSlot" class="d-flex gap-2 align-items-end ms-auto">
 
-                                <!-- Button -->
-                                <div class="d-flex gap-2">
+
+                                    <!-- tanggal custom -->
+                                    <div id="tanggalCustom"
+                                        class="tanggal-custom {{ ($tanggalFilter ?? '') === 'custom' ? '' : 'd-none' }}">
+                                        <label class="form-label mb-1">Pilih</label>
+                                        <input type="date"
+                                            name="tanggal"
+                                            id="inputTanggal"
+                                            value="{{ request('tanggal') }}"
+                                            class="form-control form-control-sm">
+                                    </div>
+
+                                </div>
+
+                                <!-- TOMBOL (default di kanan) -->
+                                <div id="buttonBox" class="d-flex gap-2 align-items-end">
                                     <button type="submit" class="btn btn-outline-secondary btn-sm px-3">
                                         <i class="fa fa-search"></i> Cari
                                     </button>
 
-                                    <a href="{{ route('logLogin.index') }}"
-                                        class="btn btn-outline-danger btn-sm px-3">
+                                    <a href="{{ route('logLogin.index') }}" class="btn btn-outline-danger btn-sm px-3">
                                         <i class="fa fa-undo"></i> Reset
                                     </a>
                                 </div>
+
 
                             </form>
 
@@ -192,7 +219,7 @@
         <div class="modal-content glass-popup">
 
             <div class="modal-header">
-                <h5 class="modal-title" id="showModalLabel">Detail Software</h5>
+                <h5 class="modal-title" id="showModalLabel">Detail Log Login</h5>
                 <button type="button" class="btn-close close-modal" aria-label="Close"></button>
             </div>
 
@@ -212,6 +239,42 @@
 @endsection
 
 @section('js')
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const filter = document.getElementById('tanggalFilter');
+        const custom = document.getElementById('tanggalCustom');
+        const input = document.getElementById('inputTanggal');
+        const swapSlot = document.getElementById('swapSlot');
+        const buttonBox = document.getElementById('buttonBox');
+
+        if (!filter) return;
+
+        function toCustomMode() {
+            custom.classList.remove('d-none');
+            swapSlot.appendChild(custom); // input di slot
+            buttonBox.parentNode.appendChild(buttonBox); // tombol ke kanan
+            input?.focus();
+        }
+
+        function toNormalMode() {
+            custom.classList.add('d-none');
+            swapSlot.appendChild(buttonBox); // tombol isi slot
+            if (input) input.value = '';
+        }
+
+        // initial state
+        filter.value === 'custom' ? toCustomMode() : toNormalMode();
+
+        filter.addEventListener('change', function() {
+            this.value === 'custom' ? toCustomMode() : toNormalMode();
+        });
+    });
+</script>
+
+
+
+
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="{{ asset('assets/js/admin/pengguna/show.js') }}"></script>
 
