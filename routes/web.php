@@ -1,5 +1,6 @@
 <?php
 
+use App\Services\WhatsappService;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\RoleController;
@@ -17,6 +18,19 @@ use App\Http\Controllers\PenginstalanController;
 Route::fallback(function () {
     return response()->view('error.404', [], 404);
 });
+Route::get('/test-wa', function (App\Services\WhatsappService $wa) {
+    $phone = '082285926175';
+    $message = 'Test WA via Green API - ' . now();
+
+    $sent = $wa->sendMessage($phone, $message);
+
+    return response()->json([
+        'sent' => $sent,
+        'phone' => $phone,
+        'timestamp' => now()->toDateTimeString()
+    ]);
+});
+
 
 Route::get('/', [LoginController::class, 'login'])->name('login');
 Route::post('/authenticate', [LoginController::class, 'Auth'])->name('authenticate');

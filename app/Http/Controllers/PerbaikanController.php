@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\login_log;
+use Carbon\Carbon;
 use App\Models\User;
 use App\Models\rekap;
+use App\Models\login_log;
 use App\Models\perbaikan;
-use App\Models\UserActivity;
 use Illuminate\Support\Str;
+use App\Models\UserActivity;
 use Illuminate\Http\Request;
+use App\Services\WhatsappService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
@@ -301,15 +303,62 @@ class PerbaikanController extends Controller
 
 
 
-    public function updateStatus(Request $request, $id)
+    public function updateStatus(Request $request, $id, WhatsappService $waService)
     {
         $request->validate([
             'status' => 'required|in:rusak,sedang diperbaiki,selesai,bagus',
         ]);
 
-        $perbaikan = Perbaikan::findOrFail($id);
+        $perbaikan = Perbaikan::with('user')->findOrFail($id);
         $perbaikan->status = $request->status;
         $perbaikan->save();
+
+        // Kirim WA jika status selesai atau gagal (anggap 'rusak' = gagal)
+        if (($perbaikan->status === 'selesai' || $perbaikan->status === 'rusak')
+            && $perbaikan->user?->no_hp
+            && !$perbaikan->notif_terkirim
+        ) {
+            // Durasi pengerjaan (opsional, jika ada estimasi atau start)
+            $mulai = $perbaikan->created_at instanceof Carbon
+                ? $perbaikan->created_at->copy()
+                : Carbon::parse($perbaikan->created_at)->setTimezone('Asia/Jakarta');
+
+            $sekarang = Carbon::now('Asia/Jakarta');
+            $durasi = $mulai->diffInMinutes($sekarang);
+            $jam = floor($durasi / 60);
+            $menit = $durasi % 60;
+            $durasiText = ($jam > 0 ? $jam . ' jam ' : '') . $menit . ' menit';
+
+            $tanggalSelesai = $perbaikan->tgl_perbaikan
+                ? Carbon::parse($perbaikan->tgl_perbaikan)->setTimezone('Asia/Jakarta')->format('d F Y')
+                : 'tidak ada data';
+
+            // Tentukan pesan berdasarkan status
+            if ($perbaikan->status === 'selesai' || $perbaikan->status === 'bagus') {
+                $msg = "Halo {$perbaikan->user->nama}, perbaikan {$perbaikan->nama} anda telah *selesai*.\n\n"
+                    . "Berikut data perbaikan anda:\n"
+                    . "Nama barang: {$perbaikan->nama}\n"
+                    . "Kategori: {$perbaikan->kategori}\n"
+                    . "Status: {$perbaikan->status}\n"
+                    . "Durasi pengerjaan: {$durasiText}\n\n"
+                    . "Silakan datang ke ruang teknisi untuk mengambil barang.\n\n"
+                    . "_{$tanggalSelesai}_\n"
+                    . "_Sent via TechNoteAPP (powered by Green.com)_";
+            } elseif ($perbaikan->status === 'rusak') {
+                $msg = "Halo {$perbaikan->user->nama}, perbaikan {$perbaikan->nama} anda *gagal* karena ada masalah teknis.\n\n"
+                    . "Berikut data perbaikan anda:\n"
+                    . "Nama barang: {$perbaikan->nama}\n"
+                    . "Kategori: {$perbaikan->kategori}\n"
+                    . "Status: {$perbaikan->status}\n\n"
+                    . "Silakan datang ke ruang teknisi untuk informasi lebih lanjut.\n\n"
+                    . "_{$tanggalSelesai}_\n"
+                    . "_Sent via TechNoteAPP (powered by Green.com)_";
+            }
+
+            if ($waService->sendMessage($perbaikan->user->no_hp, $msg)) {
+                $perbaikan->update(['notif_terkirim' => true]);
+            }
+        }
 
         return back()->with('message', 'Status berhasil diperbarui');
     }

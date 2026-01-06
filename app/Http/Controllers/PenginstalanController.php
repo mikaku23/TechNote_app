@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\login_log;
+use Carbon\Carbon;
 use App\Models\User;
 use App\Models\rekap;
 use App\Models\software;
+use App\Models\login_log;
 use Illuminate\Support\Str;
 use App\Models\penginstalan;
 use App\Models\UserActivity;
 use Illuminate\Http\Request;
+use App\Services\WhatsappService;
 use Illuminate\Support\Facades\Auth;
 
 
@@ -317,15 +319,83 @@ class PenginstalanController extends Controller
         }
     }
 
-    public function updateStatus(Request $request, $id)
+
+
+    public function updateStatus(Request $request, $id, WhatsappService $waService)
     {
         $request->validate([
             'status' => 'required|in:berhasil,gagal,pending',
         ]);
 
-        $penginstalan = Penginstalan::findOrFail($id);
+        $penginstalan = Penginstalan::with(['user', 'software'])->findOrFail($id);
+
         $penginstalan->status = $request->status;
         $penginstalan->save();
+
+        // kirim WA jika status BERHASIL atau GAGAL, dan belum pernah kirim
+        if (
+            in_array($request->status, ['berhasil', 'gagal']) &&
+            !$penginstalan->notif_terkirim &&
+            $penginstalan->user?->no_hp
+        ) {
+
+            // Hitung durasi
+            $mulai = $penginstalan->created_at instanceof Carbon
+                ? $penginstalan->created_at->copy()
+                : Carbon::parse($penginstalan->created_at)->setTimezone('Asia/Jakarta');
+
+            $parts = explode(':', $penginstalan->estimasi);
+            $hour = isset($parts[0]) ? (int)$parts[0] : 0;
+            $minute = isset($parts[1]) ? (int)$parts[1] : 0;
+            $second = isset($parts[2]) ? (int)$parts[2] : 0;
+
+            $estimasiDetik = $hour * 3600 + $minute * 60 + $second;
+            $target = $mulai->copy()->addSeconds($estimasiDetik);
+            $sekarang = Carbon::now('Asia/Jakarta');
+
+            if ($sekarang->greaterThanOrEqualTo($target)) {
+                $durasi = $mulai->diffInMinutes($target);
+            } else {
+                $durasi = $sekarang->diffInMinutes($target);
+            }
+
+            $jam = floor($durasi / 60);
+            $menit = $durasi % 60;
+
+            $durasiText = ($jam > 0 ? $jam . ' jam ' : '') . $menit . ' menit';
+
+            $tanggalSelesai = $penginstalan->tgl_instalasi
+                ? Carbon::parse($penginstalan->tgl_instalasi)->setTimezone('Asia/Jakarta')->format('d F Y')
+                : 'tidak ada data';
+
+            // Tentukan pesan berbeda jika gagal
+            if ($request->status === 'berhasil') {
+                $msg = "Halo {$penginstalan->user->nama}, penginstalan anda telah *selesai* dikerjakan\n\n"
+                    . "Berikut data penginstalan anda:\n"
+                    . "Nama software: {$penginstalan->software->nama}\n"
+                    . "Versi: {$penginstalan->software->versi}\n"
+                    . "Status penginstalan: {$penginstalan->status}\n"
+                    . "Durasi Pengerjaan: {$durasiText}\n\n"
+                    . "Silakan datang ke ruang teknisi untuk mengambil perangkat.\n\n"
+                    . "_{$tanggalSelesai}_\n"
+                    . "_Sent via TechNoteAPP (powered by Green.com)_";
+            } else {
+                // status gagal
+                $msg = "Halo {$penginstalan->user->nama}, penginstalan anda *gagal* karena ada kesalahan teknis.\n\n"
+                    . "Berikut data penginstalan anda:\n"
+                    . "Nama software: {$penginstalan->software->nama}\n"
+                    . "Versi: {$penginstalan->software->versi}\n"
+                    . "Status penginstalan: {$penginstalan->status}\n\n"
+                    . "Silakan datang ke ruang teknisi untuk informasi lebih lanjut.\n\n"
+                    . "_{$tanggalSelesai}_\n"
+                    . "_Sent via TechNoteAPP (powered by Green.com)_";
+            }
+
+            // Kirim WA
+            if ($waService->sendMessage($penginstalan->user->no_hp, $msg)) {
+                $penginstalan->update(['notif_terkirim' => true]);
+            }
+        }
 
         return back()->with('message', 'Status berhasil diperbarui');
     }

@@ -29,6 +29,7 @@ class penginstalan extends Model
     protected $casts = [
         'tgl_hapus' => 'date',
         'tgl_instalasi' => 'date',
+        'notif_terkirim' => 'boolean',
     ];
 
     public function software(): BelongsTo

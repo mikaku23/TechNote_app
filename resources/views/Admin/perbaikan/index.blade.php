@@ -142,14 +142,7 @@
                                                 <input type="hidden" name="status" value="rusak">
                                                 <button type="submit" class="btn btn-sm btn-outline-danger">Rusak</button>
                                             </form>
-
-                                            <form action="{{ route('perbaikan.updateStatus', $soft->id) }}" method="POST" style="display:inline;">
-                                                @csrf
-                                                @method('PATCH')
-                                                <input type="hidden" name="status" value="sedang diperbaiki">
-                                                <button type="submit" class="btn btn-sm btn-outline-warning">Diperbaiki</button>
-                                            </form>
-
+                                            
                                             <form action="{{ route('perbaikan.updateStatus', $soft->id) }}" method="POST" style="display:inline;">
                                                 @csrf
                                                 @method('PATCH')

@@ -26,6 +26,7 @@ class perbaikan extends Model
     
     protected $casts = [
         'tgl_perbaikan' => 'date',
+        'notif_terkirim' => 'boolean',
     ];
 
     public function user(): BelongsTo

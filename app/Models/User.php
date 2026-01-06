@@ -30,6 +30,7 @@ class User extends Authenticatable
         'nip',
         'username',
         'password',
+        'no_hp',
         'foto',
         'security_question',
         'security_answer',
