@@ -8,8 +8,10 @@ use App\Models\User;
 use App\Models\login_log;
 use App\Models\UserActivity;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use App\Services\WhatsappService;
 use Illuminate\Support\Facades\Auth;
+
 
 class PenggunaController extends Controller
 {
@@ -125,6 +127,7 @@ class PenggunaController extends Controller
         $nm->move(public_path('foto'), $namaFile);
         $user->save();
 
+
         // ================= GENERATE QR =================
         $roleCode = match ($user->role_id) {
             1 => 'ADM',
@@ -133,17 +136,23 @@ class PenggunaController extends Controller
             default => 'USR',
         };
 
-        $nomor = str_pad($user->id, 6, '0', STR_PAD_LEFT);
-        $qrCode = "USER-{$nomor}-{$roleCode}";
+        // token acak unik (misal 10 karakter)
+        $token = strtoupper(Str::random(10));
 
-        $qrUrl = 'https://bwipjs-api.metafloor.com/?bcid=qrcode&text='
-            . urlencode($qrCode)
-            . '&scale=6';
+        // format QR
+        $qrCode = "USER-{$token}-{$roleCode}";
+
+        // URL QR (background putih otomatis dari API)
+        $qrUrl = 'https://bwipjs-api.metafloor.com/?bcid=qrcode'
+            . '&text=' . urlencode($qrCode)
+            . '&scale=6'
+            . '&backgroundcolor=FFFFFF';
 
         $user->update([
             'qr_code' => $qrCode,
             'qr_url'  => $qrUrl,
         ]);
+
 
         // ================= KIRIM WHATSAPP =================
         if ($user->no_hp) {
@@ -241,12 +250,18 @@ class PenggunaController extends Controller
 
         // === GENERATE QR CODE MAHASISWA ===
         $roleCode = 'MHS';
-        $nomor = str_pad($user->id, 6, '0', STR_PAD_LEFT);
-        $qrCode = "USER-{$nomor}-{$roleCode}";
 
-        $qrUrl = 'https://bwipjs-api.metafloor.com/?bcid=qrcode&text='
-            . urlencode($qrCode)
-            . '&scale=6';
+        // token acak unik (misal 10 karakter)
+        $token = strtoupper(Str::random(10));
+
+        // format QR
+        $qrCode = "USER-{$token}-{$roleCode}";
+
+        // URL QR (background putih otomatis dari API)
+        $qrUrl = 'https://bwipjs-api.metafloor.com/?bcid=qrcode'
+            . '&text=' . urlencode($qrCode)
+            . '&scale=6'
+            . '&backgroundcolor=FFFFFF';
 
         $user->update([
             'qr_code' => $qrCode,
@@ -349,12 +364,18 @@ class PenggunaController extends Controller
 
         // === GENERATE QR CODE DOSEN ===
         $roleCode = 'DSN';
-        $nomor = str_pad($user->id, 6, '0', STR_PAD_LEFT);
-        $qrCode = "USER-{$nomor}-{$roleCode}";
 
-        $qrUrl = 'https://bwipjs-api.metafloor.com/?bcid=qrcode&text='
-            . urlencode($qrCode)
-            . '&scale=6';
+        // token acak unik (misal 10 karakter)
+        $token = strtoupper(Str::random(10));
+
+        // format QR
+        $qrCode = "USER-{$token}-{$roleCode}";
+
+        // URL QR (background putih otomatis dari API)
+        $qrUrl = 'https://bwipjs-api.metafloor.com/?bcid=qrcode'
+            . '&text=' . urlencode($qrCode)
+            . '&scale=6'
+            . '&backgroundcolor=FFFFFF';
 
         $user->update([
             'qr_code' => $qrCode,

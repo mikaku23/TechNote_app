@@ -344,19 +344,24 @@ class LoginController extends Controller
 
 
         // ================= GENERATE QR =================
-        $nomor = str_pad($user->id, 6, '0', STR_PAD_LEFT);
-        $qrCode = "USER-{$nomor}-{$roleCode}";
+        // ================= GENERATE QR =================
+        // token acak unik (10 karakter, uppercase)
+        $token = strtoupper(Str::random(10));
 
+        // format QR
+        $qrCode = "USER-{$token}-{$roleCode}";
+
+        // QR URL dengan background putih
         $qrUrl = 'https://bwipjs-api.metafloor.com/?bcid=qrcode'
             . '&text=' . urlencode($qrCode)
             . '&scale=6'
-            . '&includetext=false';
-
+            . '&backgroundcolor=FFFFFF';
 
         $user->update([
             'qr_code' => $qrCode,
             'qr_url'  => $qrUrl,
         ]);
+
 
         // ================= NOTIF WHATSAPP =================
         if (!empty($user->no_hp) && !empty($user->qr_url)) {
