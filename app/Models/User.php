@@ -94,6 +94,11 @@ class User extends Authenticatable
         return $this->hasMany(login_log::class);
     }
 
+    public function passwordResetOtps(): HasMany
+    {
+        return $this->hasMany(PasswordResetOtp::class, 'user_id');
+    }
+
     /**
      * Get the attributes that should be cast.
      *

@@ -2,6 +2,7 @@
 
 use App\Services\WhatsappService;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\qrController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\LoginController;
@@ -14,7 +15,7 @@ use App\Http\Controllers\SoftwareController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PerbaikanController;
 use App\Http\Controllers\PenginstalanController;
-use App\Http\Controllers\qrController;
+use App\Http\Controllers\ForgotPasswordController;
 
 Route::fallback(function () {
     return response()->view('error.404', [], 404);
@@ -42,15 +43,29 @@ Route::post('/forgot-password/check-answer', [LoginController::class, 'forgotChe
     ->name('forgot-check-answer');
 
 // Step 4: Simpan password baru
-Route::post('/forgot-password/reset', [LoginController::class, 'resetPassword'])
+Route::post('/forgot/reset', [LoginController::class, 'resetPassword'])
     ->name('forgot-reset');
 
-Route::get('/forgot-password/reset/{id}', [LoginController::class, 'resetPasswordForm'])
+Route::get('/forgot/reset/{id}', [LoginController::class, 'resetPasswordForm'])
     ->name('forgot-reset-form');
 
 // add GET route so forgot-question dapat diakses langsung
 Route::get('/forgot-password/question/{id}', [LoginController::class, 'forgotQuestionForm'])
     ->name('forgot-question');
+
+
+Route::get('forgot-password/choose', [ForgotPasswordController::class, 'showChoice'])->name('forgot.choose');
+
+Route::get('forgot-password/phone', [ForgotPasswordController::class, 'showPhoneForm'])->name('forgot.phone');
+Route::post('forgot-password/phone/send', [ForgotPasswordController::class, 'sendOtpByPhone'])->name('forgot.phone.send');
+
+Route::get('forgot-password/verify/{otpId}', [ForgotPasswordController::class, 'showVerifyForm'])->name('forgot.phone.verify');
+Route::post('forgot-password/verify', [ForgotPasswordController::class, 'verifyOtp'])->name('forgot.phone.verify.post');
+
+Route::get('forgot-password/reset', [ForgotPasswordController::class, 'showResetForm'])->name('forgot.phone.reset');
+Route::post('forgot-password/reset', [ForgotPasswordController::class, 'resetPassword'])
+    ->name('forgot.phone.reset.post');
+
 
 
 

@@ -145,7 +145,7 @@
                                             <div class="col-lg-12 d-flex justify-content-between">
                                                 <div class="form-check mb-3">
                                                 </div>
-                                                <a href="{{ route('forgot-password') }}">Forgot Password?</a>
+                                                <a href="{{ route('forgot.choose') }}">Forgot Password?</a>
 
                                             </div>
                                         </div>

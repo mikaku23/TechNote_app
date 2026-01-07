@@ -249,7 +249,6 @@ class LoginController extends Controller
     {
         $request->validate([
             'idnumber' => 'required',
-            'nama' => 'required|string',
             'username' => 'required|string|unique:users,username',
             'password' => 'required|string|confirmed|min:4',
             'no_hp' => 'required|string|max:15',
@@ -258,7 +257,6 @@ class LoginController extends Controller
             'foto' => 'nullable|image',
         ], [
             'idnumber.required' => 'NIM atau NIP wajib diisi.',
-            'nama.required' => 'Nama lengkap wajib diisi.',
             'username.required' => 'Username wajib diisi.',
             'username.unique' => 'Username sudah dipakai.',
             'password.required' => 'Password wajib diisi.',
@@ -332,7 +330,7 @@ class LoginController extends Controller
 
         // simpan user
         $user = User::create([
-            'nama' => $request->nama,
+            'nama' => $request->username,
             'nim' => $nim,
             'nip' => $nip,
             'username' => $request->username,

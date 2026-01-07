@@ -82,19 +82,12 @@
 
                                             <div class="col-md-6">
                                                 <div class="form-group mb-3">
-                                                    <label>Nama Lengkap</label>
-                                                    <input type="text" name="nama" class="form-control input-placeholder-muted"
-                                                        placeholder="Masukkan nama" value="{{ old('nama') }}" required>
+                                                    <label>Username</label>
+                                                    <input type="text" name="username" class="form-control input-placeholder-muted"
+                                                        placeholder="Buat username" value="{{ old('username') }}" required>
                                                 </div>
                                             </div>
                                         </div>
-
-                                        <div class="form-group mb-3">
-                                            <label>Username</label>
-                                            <input type="text" name="username" class="form-control input-placeholder-muted"
-                                                placeholder="Buat username" value="{{ old('username') }}" required>
-                                        </div>
-
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <div class="form-group mb-3">
