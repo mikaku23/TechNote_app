@@ -82,8 +82,8 @@ class SoftwareController extends Controller
         ], [
             'nama.required' => 'Nama software harus diisi.',
             'versi.required' => 'Versi software harus diisi.',
-            
-            
+            'tgl_rilis.date' => 'Tanggal rilis tidak valid.',
+            'deskripsi.string' => 'Deskripsi harus berupa teks.',
         ]);
 
         // Simpan ke database
@@ -178,6 +178,9 @@ class SoftwareController extends Controller
             'developer' => 'nullable|string',
             'tgl_rilis' => 'nullable|date',
             'deskripsi' => 'nullable|string',
+        ], [
+            'tgl_rilis.date' => 'Tanggal rilis tidak valid.',
+            'deskripsi.string' => 'Deskripsi harus berupa teks.',
         ]);
 
         $software = Software::findOrFail($id);

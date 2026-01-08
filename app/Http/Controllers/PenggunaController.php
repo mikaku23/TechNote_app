@@ -17,17 +17,19 @@ class PenggunaController extends Controller
 {
     public function index(Request $request)
     {
-        $search = $request->input('search');
-        $roleId = $request->input('role');
-        $tanggal = $request->input('tanggal'); // pastikan name input di blade: name="tanggal"
+        $search  = $request->input('search');
+        $roleId  = $request->input('role');
+        $tanggal = $request->input('tanggal');
 
         $query = User::with('role');
 
-        // Filter pencarian nama / username
+        // ================= FILTER SEARCH =================
+        // nama / username / qr_code
         if (!empty($search)) {
             $query->where(function ($q) use ($search) {
-                $q->where('nama', 'like', '%' . $search . '%')
-                    ->orWhere('username', 'like', '%' . $search . '%');
+                $q->where('nama', 'like', "%{$search}%")
+                    ->orWhere('username', 'like', "%{$search}%")
+                    ->orWhere('qr_code', 'like', "%{$search}%");
             });
         }
 
@@ -99,12 +101,26 @@ class PenggunaController extends Controller
             'nip' => 'nullable|string|unique:users,nip',
             'username' => 'required|string|unique:users,username',
             'password' => 'required|string|min:4',
-            'no_hp' => 'required|string|max:15',
+             'no_hp' => 'required|string|unique:users,no_hp|max:15',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'security_question' => 'nullable|string|max:255',
             'security_answer' => 'nullable|string|max:255',
             'role_id' => 'required|exists:roles,id',
-        ]);
+        ],[
+            'nama.required' => 'Nama wajib diisi.',
+            'username.required' => 'Username wajib diisi.',
+            'username.unique' => 'Username sudah digunakan.',
+            'password.required' => 'Password wajib diisi.',
+            'password.min' => 'Password minimal 4 karakter.',
+            'no_hp.required' => 'Nomor HP wajib diisi.',
+            'no_hp.unique' => 'Nomor HP sudah digunakan.',  
+            'foto.image' => 'File harus berupa gambar.',
+            'foto.mimes' => 'Format gambar harus jpeg, png, jpg, atau gif.',
+            'foto.max' => 'Ukuran gambar maksimal 2MB.',
+            'role_id.required' => 'Role wajib dipilih.',
+            'role_id.exists' => 'Role tidak valid.',
+        ]
+    );
 
         // ================= SIMPAN USER =================
         $user = new User();
@@ -145,8 +161,7 @@ class PenggunaController extends Controller
         // URL QR (background putih otomatis dari API)
         $qrUrl = 'https://bwipjs-api.metafloor.com/?bcid=qrcode'
             . '&text=' . urlencode($qrCode)
-            . '&scale=6'
-            . '&backgroundcolor=FFFFFF';
+            . '&scale=6';
 
         $user->update([
             'qr_code' => $qrCode,
@@ -159,16 +174,17 @@ class PenggunaController extends Controller
 
             $tanggal = Carbon::now('Asia/Jakarta')->format('d F Y');
 
-            $msg = "Halo {$user->nama}, akun anda berhasil dibuat melalui pihak Teknisi.\n\n"
+           $msg = "Halo {$user->nama}, akun anda berhasil dibuat melalui pihak Teknisi.\n\n"
                 . "Berikut data akun anda:\n"
                 . "Username: {$user->username}\n"
                 . "Role: {$roleCode}\n"
-                . "Kode QR: {$qrCode}\n"
+                . "QR Code akun anda (klik link berikut):\n"
+                . "{$user->qr_url}\n"
                 . "*Harap tidak membagikan tautan ini kepada siapa pun karena bersifat pribadi.*\n\n"
-                . "QR Code ini berfungsi sebagai *identitas digital*.\n"
-                . "Jika lupa password, *pemulihan akun* dapat dilakukan "
-                . "dengan datang ke Ruang Teknisi dan menunjukkan *QR Code*.\n"
-                . "*Pemulihan mandiri* juga tersedia di website TechNoteAPP.\n\n"
+                . "QR Code ini berfungsi sebagai identitas digital.\n"
+                . "Jika lupa password, pemulihan akun dapat dilakukan "
+                . "dengan datang ke Ruang Teknisi dan menunjukkan QR Code.\n"
+                . "Pemulihan mandiri juga tersedia di website TechNoteAPP.\n\n"
                 . "_{$tanggal}_\n"
                 . "_Sent via TechNoteAPP (powered by Green.com)_";
 
@@ -225,8 +241,21 @@ class PenggunaController extends Controller
             'password' => 'required|string|min:4',
             'security_question' => 'required|string',
             'security_answer' => 'required|string',
-            'no_hp' => 'required|string|max:15',
+             'no_hp' => 'required|string|unique:users,no_hp|max:15',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ], [
+            'nama.required' => 'Nama wajib diisi.',
+            'nim.required' => 'NIM wajib diisi.',
+            'nim.unique' => 'NIM sudah digunakan.',
+            'username.required' => 'Username wajib diisi.',
+            'username.unique' => 'Username sudah digunakan.',
+            'password.required' => 'Password wajib diisi.',
+            'password.min' => 'Password minimal 4 karakter.',
+            'no_hp.required' => 'Nomor HP wajib diisi.',
+            'no_hp.unique' => 'Nomor HP sudah digunakan.',
+            'foto.image' => 'File harus berupa gambar.',
+            'foto.mimes' => 'Format gambar harus jpeg, png, jpg, atau gif.',
+            'foto.max' => 'Ukuran gambar maksimal 2MB.',
         ]);
 
         $user = new User();
@@ -260,8 +289,7 @@ class PenggunaController extends Controller
         // URL QR (background putih otomatis dari API)
         $qrUrl = 'https://bwipjs-api.metafloor.com/?bcid=qrcode'
             . '&text=' . urlencode($qrCode)
-            . '&scale=6'
-            . '&backgroundcolor=FFFFFF';
+            . '&scale=6';
 
         $user->update([
             'qr_code' => $qrCode,
@@ -272,16 +300,17 @@ class PenggunaController extends Controller
         if ($user->no_hp) {
             $tanggal = now('Asia/Jakarta')->format('d F Y');
 
-            $msg = "Halo {$user->nama}, akun anda berhasil dibuat melalui pihak Teknisi.\n\n"
+           $msg = "Halo {$user->nama}, akun anda berhasil dibuat melalui pihak Teknisi.\n\n"
                 . "Berikut data akun anda:\n"
                 . "Username: {$user->username}\n"
                 . "Role: {$roleCode}\n"
-                . "Kode QR: {$qrCode}\n"
+                . "QR Code akun anda (klik link berikut):\n"
+                . "{$user->qr_url}\n"
                 . "*Harap tidak membagikan tautan ini kepada siapa pun karena bersifat pribadi.*\n\n"
-                . "QR Code ini berfungsi sebagai *identitas digital*.\n"
-                . "Jika lupa password, *pemulihan akun* dapat dilakukan "
-                . "dengan datang ke Ruang Teknisi dan menunjukkan *QR Code*.\n"
-                . "*Pemulihan mandiri* juga tersedia di website TechNoteAPP.\n\n"
+                . "QR Code ini berfungsi sebagai identitas digital.\n"
+                . "Jika lupa password, pemulihan akun dapat dilakukan "
+                . "dengan datang ke Ruang Teknisi dan menunjukkan QR Code.\n"
+                . "Pemulihan mandiri juga tersedia di website TechNoteAPP.\n\n"
                 . "_{$tanggal}_\n"
                 . "_Sent via TechNoteAPP (powered by Green.com)_";
 
@@ -338,8 +367,21 @@ class PenggunaController extends Controller
             'password' => 'required|string|min:4',
             'security_question' => 'required|string',
             'security_answer' => 'required|string',
-            'no_hp' => 'required|string|max:15',
+             'no_hp' => 'required|string|unique:users,no_hp|max:15',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ], [
+            'nama.required' => 'Nama wajib diisi.',
+            'nip.required' => 'NIP wajib diisi.',
+            'nip.unique' => 'NIP sudah digunakan.',
+            'username.required' => 'Username wajib diisi.',
+            'username.unique' => 'Username sudah digunakan.',
+            'password.required' => 'Password wajib diisi.',
+            'password.min' => 'Password minimal 4 karakter.',
+            'no_hp.required' => 'Nomor HP wajib diisi.',
+            'no_hp.unique' => 'Nomor HP sudah digunakan.',
+            'foto.image' => 'File harus berupa gambar.',
+            'foto.mimes' => 'Format gambar harus jpeg, png, jpg, atau gif.',
+            'foto.max' => 'Ukuran gambar maksimal 2MB.',
         ]);
 
         // simpan user
@@ -374,8 +416,7 @@ class PenggunaController extends Controller
         // URL QR (background putih otomatis dari API)
         $qrUrl = 'https://bwipjs-api.metafloor.com/?bcid=qrcode'
             . '&text=' . urlencode($qrCode)
-            . '&scale=6'
-            . '&backgroundcolor=FFFFFF';
+            . '&scale=6';
 
         $user->update([
             'qr_code' => $qrCode,
@@ -390,14 +431,16 @@ class PenggunaController extends Controller
                 . "Berikut data akun anda:\n"
                 . "Username: {$user->username}\n"
                 . "Role: {$roleCode}\n"
-                . "Kode QR: {$qrCode}\n"
+                . "QR Code akun anda (klik link berikut):\n"
+                . "{$user->qr_url}\n"
                 . "*Harap tidak membagikan tautan ini kepada siapa pun karena bersifat pribadi.*\n\n"
-                . "QR Code ini berfungsi sebagai *identitas digital*.\n"
-                . "Jika lupa password, *pemulihan akun* dapat dilakukan "
-                . "dengan datang ke Ruang Teknisi dan menunjukkan *QR Code*.\n"
-                . "*Pemulihan mandiri* juga tersedia di website TechNoteAPP.\n\n"
+                . "QR Code ini berfungsi sebagai identitas digital.\n"
+                . "Jika lupa password, pemulihan akun dapat dilakukan "
+                . "dengan datang ke Ruang Teknisi dan menunjukkan QR Code.\n"
+                . "Pemulihan mandiri juga tersedia di website TechNoteAPP.\n\n"
                 . "_{$tanggal}_\n"
                 . "_Sent via TechNoteAPP (powered by Green.com)_";
+
 
             $waService->sendMessage($user->no_hp, $msg);
         }
@@ -456,6 +499,11 @@ class PenggunaController extends Controller
             'security_answer' => 'nullable',
             'role_id' => 'nullable|exists:roles,id',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ], [
+            'role_id.exists' => 'Role tidak valid.',
+            'foto.image' => 'File harus berupa gambar.',
+            'foto.mimes' => 'Format gambar harus jpeg, png, jpg, atau gif.',
+            'foto.max' => 'Ukuran gambar maksimal 2MB.',
         ]);
 
         // Update data di database
@@ -546,10 +594,22 @@ class PenggunaController extends Controller
     public function hapusSemua()
     {
         try {
-            User::withTrashed()->forceDelete(); // hapus permanen semua
+            $protectedUsernames = [
+                'haliqadmin',
+                'haliqmhs',
+                'haliqdosen',
+            ];
+
+            User::withTrashed()
+                ->whereNotIn('username', $protectedUsernames)
+                ->forceDelete();
+
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
         }
     }
 }

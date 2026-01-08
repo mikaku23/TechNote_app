@@ -157,6 +157,9 @@ class PerbaikanController extends Controller
             'status' => 'nullable|string|in:sedang diperbaiki,rusak,selesai,bagus',
             'keterangan' => 'nullable|string',
             'user_id' => 'nullable|exists:users,id',
+        ], [
+            'status.in' => 'Status harus berupa sedang diperbaiki, rusak, selesai, atau bagus.',
+            'user_id.exists' => 'Pengguna tidak valid.',
         ]);
 
         // Update di database

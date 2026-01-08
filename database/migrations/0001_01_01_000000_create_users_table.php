@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('nip')->unique()->nullable();
             $table->string('username');
             $table->string('password');
-            $table->string('no_hp')->nullable();
+            $table->string('no_hp')->unique()->nullable();
             $table->string('foto')->nullable();
             $table->string('qr_code')->nullable()->unique();
             $table->text('qr_url')->nullable();

@@ -42,7 +42,7 @@
                                 <!-- Kolom Search -->
                                 <i class="fa fa-search"></i>
                                 <input type="text" name="search" value="{{ request('search') }}"
-                                    class="form-control form-control-sm" placeholder="Search nama / username..."
+                                    class="form-control form-control-sm" placeholder="nama/username/QR"
                                     style="width: 180px;">
 
                                 <!-- Kolom Role + Tanggal -->

@@ -21,6 +21,11 @@
 </div>
 
 <div class="mb-3">
+    <label class="form-label">Nomor HP</label>
+    <input type="text" class="form-control" value="{{ $user->no_hp ?? '-' }}" disabled>
+</div>
+
+<div class="mb-3">
     <label class="form-label">Role</label>
     <input type="text" class="form-control" value="{{ $user->role->status ?? '-' }}" disabled>
 </div>

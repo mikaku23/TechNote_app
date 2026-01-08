@@ -17,6 +17,11 @@ class ContactController extends Controller
             'nama' => 'required|string|max:255',
             'email' => 'required|email|max:255',
             'pesan' => 'required|string',
+        ], [
+            'nama.required' => 'Nama harus diisi.',
+            'email.required' => 'Email harus diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'pesan.required' => 'Pesan harus diisi.',
         ]);
 
         // Ambil id user yang login
@@ -56,6 +61,11 @@ class ContactController extends Controller
             'nama' => 'required|string|max:255',
             'email' => 'required|email|max:255',
             'pesan' => 'required|string',
+        ], [
+            'nama.required' => 'Nama harus diisi.',
+            'email.required' => 'Email harus diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'pesan.required' => 'Pesan harus diisi.',
         ]);
         // Ambil id user yang login
         $validatedData['user_id'] = Auth::user()->id;

@@ -74,8 +74,10 @@ class ForgotPasswordController extends Controller
             "Halo {$user->nama},\n\n" .
             "Kode OTP reset password TechNoteApp:\n" .
             "*{$otp}*\n\n" .
-            "Kode berlaku 10 menit.\n\n" .
-            "_Sent via TechNoteAPP_";
+            "Kode berlaku 10 menit.\n" .
+            "Jika Anda tidak merasa melakukan permintaan ini, silakan abaikan pesan ini.\n\n" .
+            "_Sent via TechNoteAPP (powered by Green.com)_";
+
 
         // KIRIM WA
         $sent = $waService->sendMessage($phone, $msg);

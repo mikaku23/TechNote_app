@@ -152,6 +152,10 @@ class PenginstalanController extends Controller
             'estimasi' => 'nullable',
             'software_id' => 'nullable|exists:software,id',
             'user_id' => 'nullable|exists:users,id',
+        ], [
+            'status.in' => 'Status harus berupa berhasil atau gagal.',
+            'software_id.exists' => 'Software tidak valid.',
+            'user_id.exists' => 'Pengguna tidak valid.',
         ]);
 
         // Update di database
