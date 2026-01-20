@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Support\Str;
+use App\Models\login_log;
+use App\Models\UserActivity;
 use Illuminate\Http\Request;
 use App\Services\WhatsappService;
 use Illuminate\Support\Facades\Auth;
@@ -329,6 +331,7 @@ class LoginController extends Controller
         }
 
         // simpan user
+        $securityAnswerValue = $request->security_answer;
         $user = User::create([
             'nama' => $request->username,
             'nim' => $nim,
@@ -378,10 +381,12 @@ class LoginController extends Controller
                 . "Detail akun:\n"
                 . ($user->nim ? "NIM: {$user->nim}\n" : "")
                 . ($user->nip ? "NIP: {$user->nip}\n" : "")
-                . "Username: {$user->username}\n\n"
+                . "Username: {$user->username}\n"
+                . "Pertanyaan Keamanan: {$user->security_question}\n"
+                . "Jawaban Keamanan: {$securityAnswerValue}\n\n"
                 . "QR Code akun anda (klik link berikut):\n"
                 . "{$user->qr_url}\n"
-                . "*Harap tidak membagikan tautan ini kepada siapa pun karena bersifat pribadi.*\n\n"
+                . "*Harap tidak membagikan informasi ini kepada siapa pun karena bersifat pribadi.*\n\n"
                 . "QR Code ini berfungsi sebagai *identitas digital*.\n"
                 . "Jika lupa password, *pemulihan akun* dapat dilakukan "
                 . "dengan datang ke Ruang Teknisi dan menunjukkan *QR Code*.\n"
@@ -390,6 +395,7 @@ class LoginController extends Controller
                 . "_Sent via TechNoteAPP (powered by Green.com)_";
 
             $waService->sendMessage($user->no_hp, $msg);
+
         }
 
 

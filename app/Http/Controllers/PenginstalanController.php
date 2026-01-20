@@ -117,7 +117,8 @@ class PenginstalanController extends Controller
                 UserActivity::create([
                     'user_id'      => $authUser->id,
                     'login_log_id' => $loginLog->id,
-                    'activity'     => 'Menambahkan data penginstalan baru',
+                    'activity'     => 'Menambahkan data penginstalan baru dengan id: ' . $penginstalan->id,
+                    'type' => 'nonsistem',
                     'created_at'   => now('Asia/Jakarta'),
                 ]);
             }
@@ -178,7 +179,8 @@ class PenginstalanController extends Controller
                 UserActivity::create([
                     'user_id'      => $authUser->id,
                     'login_log_id' => $loginLog->id,
-                    'activity'     => 'Mengupdate data penginstalan baru',
+                    'activity'     => 'Mengupdate data penginstalan dengan id: ' . $penginstalan->id,
+                    'type' => 'nonsistem',
                     'created_at'   => now('Asia/Jakarta'),
                 ]);
             }
@@ -197,9 +199,29 @@ class PenginstalanController extends Controller
     public function show($id)
     {
         $penginstalan = penginstalan::findOrFail($id);
+
+        $authUser = Auth::user();
+        if ($authUser) {
+            $loginLog = login_log::where('user_id', $authUser->id)
+                ->where('status', 'online')
+                ->latest('login_at')
+                ->first();
+
+            if ($loginLog) {
+                UserActivity::create([
+                    'user_id'      => $authUser->id,
+                    'login_log_id' => $loginLog->id,
+                    'activity'     => 'Melihat data penginstalan dengan id: ' . $penginstalan->id,
+                    'type' => 'nonsistem',
+                    'created_at'   => now('Asia/Jakarta'),
+                ]);
+            }
+        }
+
         return view('admin.penginstalan.show', [
             'penginstalan' => $penginstalan
         ]);
+
     }
 
     public function hapusSemua()
@@ -249,7 +271,8 @@ class PenginstalanController extends Controller
                 UserActivity::create([
                     'user_id'      => $authUser->id,
                     'login_log_id' => $loginLog->id,
-                    'activity'     => 'Menghapus data penginstalan baru',
+                    'activity'     => 'Menghapus data penginstalan dengan id: ' . $penginstalan->id,
+                    'type' => 'nonsistem',
                     'created_at'   => now('Asia/Jakarta'),
                 ]);
             }
@@ -307,7 +330,8 @@ class PenginstalanController extends Controller
                     UserActivity::create([
                         'user_id'      => $authUser->id,
                         'login_log_id' => $loginLog->id,
-                        'activity'     => 'Memulihkan data penginstalan baru',
+                        'activity'     => 'Memulihkan data penginstalan dengan id: ' . $penginstalan->id,
+                        'type' => 'nonsistem',
                         'created_at'   => now('Asia/Jakarta'),
                     ]);
                 }
@@ -418,8 +442,45 @@ class PenginstalanController extends Controller
             if ($waService->sendMessage($penginstalan->user->no_hp, $msg)) {
                 $penginstalan->update(['notif_terkirim' => true]);
             }
+
+            $authUser = Auth::user();
+
+            if ($authUser) {
+                $loginLog = login_log::where('user_id', $authUser->id)
+                    ->where('status', 'online')
+                    ->latest('login_at')
+                    ->first();
+
+                if ($loginLog) {
+                    UserActivity::create([
+                        'user_id'      => $authUser->id,
+                        'login_log_id' => $loginLog->id,
+                        'activity'     => 'Dikirimkan notifikasi WhatsApp tentang penginstalan telah selesai dengan idpenginstalan: ' . $penginstalan->id,
+                        'type'         => 'sistem',
+                        'created_at'   => now('Asia/Jakarta'),
+                    ]);
+                }
+            }            
         }
 
+        $authUser = Auth::user();
+
+        if ($authUser) {
+            $loginLog = login_log::where('user_id', $authUser->id)
+                ->where('status', 'online')
+                ->latest('login_at')
+                ->first();
+
+            if ($loginLog) {
+                UserActivity::create([
+                    'user_id'      => $authUser->id,
+                    'login_log_id' => $loginLog->id,
+                    'activity'     => 'update status penginstalan dengan id: ' . $penginstalan->id,
+                    'type' => 'nonsistem',
+                    'created_at'   => now('Asia/Jakarta'),
+                ]);
+            }
+        }
         return back()->with('message', 'Status berhasil diperbarui');
     }
 }

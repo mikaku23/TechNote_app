@@ -110,7 +110,8 @@ class SoftwareController extends Controller
                 UserActivity::create([
                     'user_id'      => $authUser->id,
                     'login_log_id' => $loginLog->id,
-                    'activity'     => 'Menambahkan data software baru',
+                    'activity'     => 'Menambahkan data software baru dengan id: ' . $software->id,
+                    'type' => 'nonsistem',
                     'created_at'   => now('Asia/Jakarta'),
                 ]);
             }
@@ -126,6 +127,26 @@ class SoftwareController extends Controller
     public function show($id)
     {
         $software = software::findOrFail($id);
+
+        $authUser = Auth::user();
+
+        if ($authUser) {
+            $loginLog = login_log::where('user_id', $authUser->id)
+                ->where('status', 'online')
+                ->latest('login_at')
+                ->first();
+
+            if ($loginLog) {
+                UserActivity::create([
+                    'user_id'      => $authUser->id,
+                    'login_log_id' => $loginLog->id,
+                    'activity'     =>  'Melihat detail data software dengan id: ' . $software->id,
+                    'type' => 'nonsistem',
+                    'created_at'   => now('Asia/Jakarta'),
+                ]);
+            }
+        }
+
         return view('admin.software.show', [
             'software' => $software
         ]);
@@ -148,7 +169,8 @@ class SoftwareController extends Controller
                 UserActivity::create([
                     'user_id'      => $authUser->id,
                     'login_log_id' => $loginLog->id,
-                    'activity'     => 'Menghapus data software baru',
+                    'activity'     => 'Menghapus data software dengan id: ' . $software->id,
+                    'type' => 'nonsistem',
                     'created_at'   => now('Asia/Jakarta'),
                 ]);
             }
@@ -209,7 +231,8 @@ class SoftwareController extends Controller
                 UserActivity::create([
                     'user_id'      => $authUser->id,
                     'login_log_id' => $loginLog->id,
-                    'activity'     => 'Mengupdate data software baru',
+                    'activity'     => 'Mengupdate data software dengan id: ' . $software->id,
+                    'type' => 'nonsistem',
                     'created_at'   => now('Asia/Jakarta'),
                 ]);
             }

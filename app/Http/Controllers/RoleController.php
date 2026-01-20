@@ -72,7 +72,8 @@ class RoleController extends Controller
                 UserActivity::create([
                     'user_id'      => $authUser->id,
                     'login_log_id' => $loginLog->id,
-                    'activity'     => 'Menambahkan data role baru',
+                    'activity'     => 'Menambahkan data role baru dengan id: ' . $role->id,
+                    'type' => 'nonsistem',
                     'created_at'   => now('Asia/Jakarta'),
                 ]);
             }

@@ -16,6 +16,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PerbaikanController;
 use App\Http\Controllers\PenginstalanController;
 use App\Http\Controllers\ForgotPasswordController;
+use App\Http\Controllers\LogActivitiesController;
 
 Route::fallback(function () {
     return response()->view('error.404', [], 404);
@@ -132,6 +133,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
     Route::get('/log-login', [LogLoginController::class, 'index'])->name('logLogin.index');
     Route::get('/log-login/{id}', [LogLoginController::class, 'show'])->name('logLogin.show');
+
+    Route::get('/log-aktivitas', [LogActivitiesController::class, 'index'])->name('logAktif.index');
 
     Route::get('/dashboardAdmin', [DashboardController::class, 'dashboardAdmin'])->name('dashboard-admin');
 

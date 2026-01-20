@@ -43,6 +43,7 @@ class ContactController extends Controller
                     'user_id'      => $authUser->id,
                     'login_log_id' => $loginLog->id,
                     'activity'     => 'Mahasiswa mengirim data contact baru',
+                    'type' => 'nonsistem',
                     'created_at'   => now('Asia/Jakarta'),
                 ]);
             }
@@ -86,6 +87,7 @@ class ContactController extends Controller
                     'user_id'      => $authUser->id,
                     'login_log_id' => $loginLog->id,
                     'activity'     => 'Dosen mengirim data contact baru',
+                    'type' => 'nonsistem',
                     'created_at'   => now('Asia/Jakarta'),
                 ]);
             }

@@ -81,6 +81,11 @@ class User extends Authenticatable
         return $this->hasMany(Contact::class, 'user_id');
     }
 
+    public function UserActivities(): HasMany
+    {
+        return $this->hasMany(UserActivity::class, 'user_id');
+    }
+
     /**
      * Relasi ke Notification (jika ada)
      */

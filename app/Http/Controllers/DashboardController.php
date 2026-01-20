@@ -9,6 +9,7 @@ use App\Models\software;
 use App\Models\login_log;
 use App\Models\perbaikan;
 use App\Models\penginstalan;
+use App\Models\UserActivity;
 use Illuminate\Http\Request;
 use App\Services\WhatsappService;
 use Illuminate\Support\Facades\Auth;
@@ -276,6 +277,25 @@ class DashboardController extends Controller
                             $item->notif_terkirim = true;
                             Penginstalan::where('id', $item->id)->update(['notif_terkirim' => true]);
                         }
+
+                        $authUser = Auth::user();
+
+                        if ($authUser) {
+                            $loginLog = login_log::where('user_id', $authUser->id)
+                                ->where('status', 'online')
+                                ->latest('login_at')
+                                ->first();
+
+                            if ($loginLog) {
+                                UserActivity::create([
+                                    'user_id'      => $authUser->id,
+                                    'login_log_id' => $loginLog->id,
+                                    'activity'     => 'Dikirimkan notifikasi WhatsApp tentang penginstalan telah selesai dengan idpenginstalan: ' . $item->id,
+                                    'type'         => 'sistem',
+                                    'created_at'   => now('Asia/Jakarta'),
+                                ]);
+                            }
+                        }
                     }
                 }
                 } else {
@@ -398,6 +418,24 @@ class DashboardController extends Controller
                                 $item->notif_terkirim = true;
                                 Perbaikan::where('id', $item->id)->update(['notif_terkirim' => true]);
                             }
+                        $authUser = Auth::user();
+
+                        if ($authUser) {
+                            $loginLog = login_log::where('user_id', $authUser->id)
+                                ->where('status', 'online')
+                                ->latest('login_at')
+                                ->first();
+
+                            if ($loginLog) {
+                                UserActivity::create([
+                                    'user_id'      => $authUser->id,
+                                    'login_log_id' => $loginLog->id,
+                                    'activity'     => 'Dikirimkan notifikasi WhatsApp tentang perbaikan telah selesai dengan idperbaikan: ' . $item->id,
+                                    'type'         => 'sistem',
+                                    'created_at'   => now('Asia/Jakarta'),
+                                ]);
+                            }
+                        }
                         }
                     } else {
                         $diff = $sekarang->diff($target);

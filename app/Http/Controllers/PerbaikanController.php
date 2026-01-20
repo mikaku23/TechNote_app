@@ -121,7 +121,8 @@ class PerbaikanController extends Controller
                 UserActivity::create([
                     'user_id'      => $authUser->id,
                     'login_log_id' => $loginLog->id,
-                    'activity'     => 'Menambahkan data perbaikan baru',
+                    'activity'     => 'Menambahkan data perbaikan baru dengan id: ' . $perbaikan->id,
+                    'type' => 'nonsistem',
                     'created_at'   => now('Asia/Jakarta'),
                 ]);
             }
@@ -185,7 +186,8 @@ class PerbaikanController extends Controller
                 UserActivity::create([
                     'user_id'      => $authUser->id,
                     'login_log_id' => $loginLog->id,
-                    'activity'     => 'Mengupdate data perbaikan baru',
+                    'activity'     => 'Mengupdate data perbaikan dengan id: ' . $perbaikan->id,
+                    'type' => 'nonsistem',
                     'created_at'   => now('Asia/Jakarta'),
                 ]);
             }
@@ -197,6 +199,26 @@ class PerbaikanController extends Controller
     public function show($id)
     {
         $perbaikan = perbaikan::findOrFail($id);
+
+        $authUser = Auth::user();
+
+        if ($authUser) {
+            $loginLog = login_log::where('user_id', $authUser->id)
+                ->where('status', 'online')
+                ->latest('login_at')
+                ->first();
+
+            if ($loginLog) {
+                UserActivity::create([
+                    'user_id'      => $authUser->id,
+                    'login_log_id' => $loginLog->id,
+                    'activity'     => 'Melihat data perbaikan dengan id: ' . $perbaikan->id,
+                    'type' => 'nonsistem',
+                    'created_at'   => now('Asia/Jakarta'),
+                ]);
+            }
+        }
+
         return view('admin.perbaikan.show', [
             'perbaikan' => $perbaikan
         ]);
@@ -242,7 +264,8 @@ class PerbaikanController extends Controller
                 UserActivity::create([
                     'user_id'      => $authUser->id,
                     'login_log_id' => $loginLog->id,
-                    'activity'     => 'Menghapus data perbaikan baru',
+                    'activity'     => 'Menghapus data perbaikan dengan id: ' . $perbaikan->id,
+                    'type' => 'nonsistem',
                     'created_at'   => now('Asia/Jakarta'),
                 ]);
             }
@@ -251,9 +274,6 @@ class PerbaikanController extends Controller
         return redirect()->route('perbaikan.index')
             ->with('success', 'Data berhasil dihapus.');
     }
-
-
-
 
 
     public function arsip()
@@ -289,7 +309,8 @@ class PerbaikanController extends Controller
                     UserActivity::create([
                         'user_id'      => $authUser->id,
                         'login_log_id' => $loginLog->id,
-                        'activity'     => 'Memulihkan data perbaikan baru',
+                        'activity'     => 'Memulihkan data perbaikan dengan id: ' . $perbaikan->id,
+                        'type' => 'nonsistem',
                         'created_at'   => now('Asia/Jakarta'),
                     ]);
                 }
@@ -378,6 +399,44 @@ class PerbaikanController extends Controller
 
             if ($waService->sendMessage($perbaikan->user->no_hp, $msg)) {
                 $perbaikan->update(['notif_terkirim' => true]);
+            }
+
+            $authUser = Auth::user();
+
+            if ($authUser) {
+                $loginLog = login_log::where('user_id', $authUser->id)
+                    ->where('status', 'online')
+                    ->latest('login_at')
+                    ->first();
+
+                if ($loginLog) {
+                    UserActivity::create([
+                        'user_id'      => $authUser->id,
+                        'login_log_id' => $loginLog->id,
+                        'activity'     => 'Dikirimkan notifikasi WhatsApp tentang perbaikan telah selesai dengan idperbaikan: ' . $perbaikan->id,
+                        'type'         => 'sistem',
+                        'created_at'   => now('Asia/Jakarta'),
+                    ]);
+                }
+            }
+        }
+
+        $authUser = Auth::user();
+
+        if ($authUser) {
+            $loginLog = login_log::where('user_id', $authUser->id)
+                ->where('status', 'online')
+                ->latest('login_at')
+                ->first();
+
+            if ($loginLog) {
+                UserActivity::create([
+                    'user_id'      => $authUser->id,
+                    'login_log_id' => $loginLog->id,
+                    'activity'     => 'Mengupdate status data perbaikan dengan id: ' . $perbaikan->id,
+                    'type' => 'nonsistem',
+                    'created_at'   => now('Asia/Jakarta'),
+                ]);
             }
         }
 

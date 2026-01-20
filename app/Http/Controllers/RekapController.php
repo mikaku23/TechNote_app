@@ -4,14 +4,17 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\Rekap;
+use App\Models\login_log;
 use App\Models\perbaikan;
 use App\Exports\RekapExport;
 use App\Models\penginstalan;
+use App\Models\UserActivity;
 use Illuminate\Http\Request;
+
 use Barryvdh\DomPDF\Facade\Pdf;
 
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -169,12 +172,49 @@ class RekapController extends Controller
             'isPdf' => $isPdf,
         ])->setPaper('a4', 'portrait');
 
+        $authUser = Auth::user();
+
+        if ($authUser) {
+            $loginLog = login_log::where('user_id', $authUser->id)
+                ->where('status', 'online')
+                ->latest('login_at')
+                ->first();
+
+            if ($loginLog) {
+                UserActivity::create([
+                    'user_id'      => $authUser->id,
+                    'login_log_id' => $loginLog->id,
+                    'activity'     =>  'Mengekspor data rekapitulasi lengkap ke PDF',
+                    'type' => 'nonsistem',
+                    'created_at'   => now('Asia/Jakarta'),
+                ]);
+            }
+        }
+
         return $pdf->download('rekap-lengkap.pdf');
     }
 
 
     public function exportExcel()
     {
+        $authUser = Auth::user();
+
+        if ($authUser) {
+            $loginLog = login_log::where('user_id', $authUser->id)
+                ->where('status', 'online')
+                ->latest('login_at')
+                ->first();
+
+            if ($loginLog) {
+                UserActivity::create([
+                    'user_id'      => $authUser->id,
+                    'login_log_id' => $loginLog->id,
+                    'activity'     =>  'Mengekspor data rekapitulasi lengkap ke Excel',
+                    'type' => 'nonsistem',
+                    'created_at'   => now('Asia/Jakarta'),
+                ]);
+            }
+        }
         return Excel::download(new \App\Exports\RekapExport, 'rekap-lengkap.xlsx');
     }
 
@@ -190,6 +230,26 @@ class RekapController extends Controller
             ->get();
 
         $isPdf = false; // untuk view print memakai asset()
+
+
+        $authUser = Auth::user();
+
+        if ($authUser) {
+            $loginLog = login_log::where('user_id', $authUser->id)
+                ->where('status', 'online')
+                ->latest('login_at')
+                ->first();
+
+            if ($loginLog) {
+                UserActivity::create([
+                    'user_id'      => $authUser->id,
+                    'login_log_id' => $loginLog->id,
+                    'activity'     =>  'Mengeprint data rekapitulasi lengkap',
+                    'type' => 'nonsistem',
+                    'created_at'   => now('Asia/Jakarta'),
+                ]);
+            }
+        }
 
         return view('admin.rekap.print', compact('perbaikan', 'penginstalan', 'isPdf'));
     }

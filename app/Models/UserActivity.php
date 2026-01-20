@@ -12,12 +12,18 @@ class UserActivity extends Model
         'user_id',
         'login_log_id',
         'activity',
+        'type',
         'created_at',
     ];
 
     public function loginLog()
     {
         return $this->belongsTo(login_log::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 
     protected $casts = [

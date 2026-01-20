@@ -121,6 +121,8 @@ class PenggunaController extends Controller
             'role_id.exists' => 'Role tidak valid.',
         ]
     );
+        $plainSecurityAnswer = $validated['security_answer'];
+
 
         // ================= SIMPAN USER =================
         $user = new User();
@@ -174,13 +176,15 @@ class PenggunaController extends Controller
 
             $tanggal = Carbon::now('Asia/Jakarta')->format('d F Y');
 
-           $msg = "Halo {$user->nama}, akun anda berhasil dibuat melalui pihak Teknisi.\n\n"
+           $msg = "Halo {$user->nama}, akun anda berhasil dibuat oleh pihak Teknisi.\n\n"
                 . "Berikut data akun anda:\n"
                 . "Username: {$user->username}\n"
-                . "Role: {$roleCode}\n"
+              . "Role: {$user->role->status}\n"
+                . "Pertanyaan Keamanan: {$user->security_question}\n"
+                . "Jawaban Keamanan: {$plainSecurityAnswer}\n\n"
                 . "QR Code akun anda (klik link berikut):\n"
                 . "{$user->qr_url}\n"
-                . "*Harap tidak membagikan tautan ini kepada siapa pun karena bersifat pribadi.*\n\n"
+                . "*Harap tidak membagikan informasi ini kepada siapa pun karena bersifat pribadi.*\n\n"
                 . "QR Code ini berfungsi sebagai identitas digital.\n"
                 . "Jika lupa password, pemulihan akun dapat dilakukan "
                 . "dengan datang ke Ruang Teknisi dan menunjukkan QR Code.\n"
@@ -189,6 +193,25 @@ class PenggunaController extends Controller
                 . "_Sent via TechNoteAPP (powered by Green.com)_";
 
             $waService->sendMessage($user->no_hp, $msg);
+
+            $authUser = Auth::user();
+
+            if ($authUser) {
+                $loginLog = login_log::where('user_id', $authUser->id)
+                    ->where('status', 'online')
+                    ->latest('login_at')
+                    ->first();
+
+                if ($loginLog) {
+                    UserActivity::create([
+                        'user_id'      => $authUser->id,
+                        'login_log_id' => $loginLog->id,
+                        'activity'     => 'Dikirimkan notifikasi WhatsApp ke pengguna baru dengan id: ' . $user->id,
+                        'type'         => 'sistem',
+                        'created_at'   => now('Asia/Jakarta'),
+                    ]);
+                }
+            }
         }
 
         // ================= LOG AKTIVITAS =================
@@ -203,7 +226,8 @@ class PenggunaController extends Controller
                 UserActivity::create([
                     'user_id'      => $authUser->id,
                     'login_log_id' => $loginLog->id,
-                    'activity'     => 'Menambahkan pengguna baru',
+                    'activity'     => 'Menambahkan pengguna baru dengan id: ' . $user->id,
+                    'type' => 'nonsistem',
                     'created_at'   => now('Asia/Jakarta'),
                 ]);
             }
@@ -258,6 +282,7 @@ class PenggunaController extends Controller
             'foto.max' => 'Ukuran gambar maksimal 2MB.',
         ]);
 
+        $plainSecurityAnswer = $validated['security_answer'];
         $user = new User();
         $user->nama = $validated['nama'];
         $user->nim = $validated['nim'];
@@ -300,13 +325,15 @@ class PenggunaController extends Controller
         if ($user->no_hp) {
             $tanggal = now('Asia/Jakarta')->format('d F Y');
 
-           $msg = "Halo {$user->nama}, akun anda berhasil dibuat melalui pihak Teknisi.\n\n"
+           $msg = "Halo {$user->nama}, akun anda berhasil dibuat oleh pihak Teknisi.\n\n"
                 . "Berikut data akun anda:\n"
                 . "Username: {$user->username}\n"
-                . "Role: {$roleCode}\n"
+             . "Role: {$user->role->status}\n"
+                . "Pertanyaan Keamanan: {$user->security_question}\n"
+                . "Jawaban Keamanan: {$plainSecurityAnswer}\n\n"
                 . "QR Code akun anda (klik link berikut):\n"
                 . "{$user->qr_url}\n"
-                . "*Harap tidak membagikan tautan ini kepada siapa pun karena bersifat pribadi.*\n\n"
+                . "*Harap tidak membagikan informasi ini kepada siapa pun karena bersifat pribadi.*\n\n"
                 . "QR Code ini berfungsi sebagai identitas digital.\n"
                 . "Jika lupa password, pemulihan akun dapat dilakukan "
                 . "dengan datang ke Ruang Teknisi dan menunjukkan QR Code.\n"
@@ -315,6 +342,25 @@ class PenggunaController extends Controller
                 . "_Sent via TechNoteAPP (powered by Green.com)_";
 
             $waService->sendMessage($user->no_hp, $msg);
+
+            $authUser = Auth::user();
+
+            if ($authUser) {
+                $loginLog = login_log::where('user_id', $authUser->id)
+                    ->where('status', 'online')
+                    ->latest('login_at')
+                    ->first();
+
+                if ($loginLog) {
+                    UserActivity::create([
+                        'user_id'      => $authUser->id,
+                        'login_log_id' => $loginLog->id,
+                        'activity'     => 'Dikirimkan notifikasi WhatsApp ke mahasiswa baru dengan id: ' . $user->id,
+                        'type'         => 'sistem',
+                        'created_at'   => now('Asia/Jakarta'),
+                    ]);
+                }
+            }
         }
 
         // === LOG AKTIVITAS ===
@@ -329,7 +375,8 @@ class PenggunaController extends Controller
                 UserActivity::create([
                     'user_id'      => $authUser->id,
                     'login_log_id' => $loginLog->id,
-                    'activity'     => 'Menambahkan data mahasiswa baru',
+                    'activity'     => 'Menambahkan data mahasiswa baru dengan id: ' . $user->id,
+                    'type' => 'nonsistem',
                     'created_at'   => now('Asia/Jakarta'),
                 ]);
             }
@@ -385,6 +432,7 @@ class PenggunaController extends Controller
         ]);
 
         // simpan user
+        $plainSecurityAnswer = $validated['security_answer'];
         $user = new User();
         $user->nama = $validated['nama'];
         $user->nip = $validated['nip'];
@@ -427,13 +475,15 @@ class PenggunaController extends Controller
         if ($user->no_hp) {
             $tanggal = now('Asia/Jakarta')->format('d F Y');
 
-            $msg = "Halo {$user->nama}, akun anda berhasil dibuat melalui pihak Teknisi.\n\n"
+            $msg = "Halo {$user->nama}, akun anda berhasil dibuat oleh pihak Teknisi.\n\n"
                 . "Berikut data akun anda:\n"
                 . "Username: {$user->username}\n"
-                . "Role: {$roleCode}\n"
+             . "Role: {$user->role->status}\n"
+                . "Pertanyaan Keamanan: {$user->security_question}\n"
+                . "Jawaban Keamanan: {$plainSecurityAnswer}\n\n"
                 . "QR Code akun anda (klik link berikut):\n"
                 . "{$user->qr_url}\n"
-                . "*Harap tidak membagikan tautan ini kepada siapa pun karena bersifat pribadi.*\n\n"
+                . "*Harap tidak membagikan informasi ini kepada siapa pun karena bersifat pribadi.*\n\n"
                 . "QR Code ini berfungsi sebagai identitas digital.\n"
                 . "Jika lupa password, pemulihan akun dapat dilakukan "
                 . "dengan datang ke Ruang Teknisi dan menunjukkan QR Code.\n"
@@ -443,6 +493,25 @@ class PenggunaController extends Controller
 
 
             $waService->sendMessage($user->no_hp, $msg);
+
+            $authUser = Auth::user();
+
+            if ($authUser) {
+                $loginLog = login_log::where('user_id', $authUser->id)
+                    ->where('status', 'online')
+                    ->latest('login_at')
+                    ->first();
+
+                if ($loginLog) {
+                    UserActivity::create([
+                        'user_id'      => $authUser->id,
+                        'login_log_id' => $loginLog->id,
+                        'activity'     => 'Dikirimkan notifikasi WhatsApp ke dosen baru dengan id: ' . $user->id,
+                        'type'         => 'sistem',
+                        'created_at'   => now('Asia/Jakarta'),
+                    ]);
+                }
+            }
         }
 
         // === LOG AKTIVITAS ===
@@ -457,7 +526,8 @@ class PenggunaController extends Controller
                 UserActivity::create([
                     'user_id'      => $authUser->id,
                     'login_log_id' => $loginLog->id,
-                    'activity'     => 'Menambahkan data dosen baru',
+                    'activity'     => 'Menambahkan data dosen baru dengan id: ' . $user->id,
+                    'type' => 'nonsistem',
                     'created_at'   => now('Asia/Jakarta'),
                 ]);
             }
@@ -544,7 +614,8 @@ class PenggunaController extends Controller
                 UserActivity::create([
                     'user_id'      => $authUser->id,
                     'login_log_id' => $loginLog->id,
-                    'activity'     => 'Mengedit data pengguna dengan ID dan name:' . $id . ', ' . $user->nama,
+                    'activity'     => 'Mengedit data pengguna dengan id: ' . $user->id,
+                    'type' => 'nonsistem',
                     'created_at'   => now('Asia/Jakarta'),
                 ]);
             }
@@ -571,7 +642,8 @@ class PenggunaController extends Controller
                 UserActivity::create([
                     'user_id'      => $authUser->id,
                     'login_log_id' => $loginLog->id,
-                    'activity'     => 'Menghapus pengguna dengan ID:' . $id,
+                    'activity'     => 'Menghapus pengguna dengan id:' . $id,
+                    'type' => 'nonsistem',
                     'created_at'   => now('Asia/Jakarta'),
                 ]);
             }
@@ -586,6 +658,26 @@ class PenggunaController extends Controller
     public function show($id)
     {
         $user = User::findOrFail($id);
+
+        $authUser = Auth::user();
+
+        if ($authUser) {
+            $loginLog = login_log::where('user_id', $authUser->id)
+                ->where('status', 'online')
+                ->latest('login_at')
+                ->first();
+
+            if ($loginLog) {
+                UserActivity::create([
+                    'user_id'      => $authUser->id,
+                    'login_log_id' => $loginLog->id,
+                    'activity'     => 'Melihat detail pengguna dengan id:' . $id,
+                    'type' => 'nonsistem',
+                    'created_at'   => now('Asia/Jakarta'),
+                ]);
+            }
+        }
+
         return view('admin.pengguna.show', [
             'user' => $user
         ]);

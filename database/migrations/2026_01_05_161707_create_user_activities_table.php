@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('login_log_id')->constrained('login_logs')->onDelete('cascade');
             $table->string('activity'); // contoh: buka dashboard, update data, dll
+            $table->enum('type', ['sistem', 'nonsistem'])->default('nonsistem')->nullable();
             $table->timestamp('created_at');
         });
     }
