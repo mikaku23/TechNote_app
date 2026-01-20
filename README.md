@@ -1,61 +1,108 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+<!-- Banner Animasi -->
 
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <img src="https://readme-typing-svg.herokuapp.com?size=26&color=0AFF99&center=true&vCenter=true&width=700&lines=TechNoteAPP;PKL+Project+at+STMIK+Triguna+Dharma;Laravel+Based+Web+Application;Installation+%26+Repair+Management+System" alt="Typing SVG" />
 </p>
 
-## About Laravel
+<hr>
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+<!-- Banner Image -->
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+<p align="center">
+  <img src="https://raw.githubusercontent.com/yourusername/yourrepo/main/banner.png" alt="TechNoteAPP Banner" width="100%" />
+</p>
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+# TechNoteAPP 👨‍💻
 
-## Learning Laravel
+TechNoteAPP is a web-based application developed during Praktik Kerja Lapangan (PKL) at STMIK Triguna Dharma Medan.
+This application is designed to manage software installation services and hardware repair requests handled by technicians, while allowing students and lecturers to monitor their service status in real time.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+The system focuses on structured data management, transparency, and service efficiency through automation and real-time features.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+> "Good systems do not just store data, they create clarity."
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 🎯 Project Objectives
 
-## Laravel Sponsors
+* Digitize software installation and repair service records
+* Simplify technician workflow and daily monitoring
+* Provide real-time service status for students and lecturers
+* Generate structured recap data for evaluation and reporting
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## 🛠️ Tech Stack
 
-### Premium Partners
+<p align="left">
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/laravel/laravel-original.svg" width="45" height="45"/>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/php/php-original.svg" width="45" height="45"/>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" width="45" height="45"/>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" width="45" height="45"/>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg" width="45" height="45"/>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" width="45" height="45"/>
+</p>
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## 🔐 Authentication Features
 
-## Contributing
+* Login and logout system
+* Student registration with NIM validation
+* Lecturer registration with registered NIP validation
+* Password reset using security question
+* Password reset using WhatsApp OTP
+* Automatic QR Code delivery via WhatsApp as digital identity
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## 🧑‍💼 Admin Features
 
-## Code of Conduct
+* User management (admin, student, lecturer)
+* Software data management
+* Software installation management
+* Device repair management
+* Service recap (daily, weekly, monthly, yearly)
+* Real-time dashboard statistics and charts
+* Contact message management
+* User login status monitoring (online/offline)
+* Real-time user activity log
+* Profile and account settings
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## 🎓 Student Features
 
-## Security Vulnerabilities
+* View personal software installation data
+* Installation time estimation countdown
+* WhatsApp notification when installation is completed
+* Contact form for feedback and suggestions
+* About page
+* Chatbot for installation info, recap, and campus information
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## 👨‍🏫 Lecturer Features
 
-## License
+* View personal device repair data
+* Repair time estimation countdown
+* WhatsApp notification when repair is completed
+* Contact form for feedback and suggestions
+* About page
+* Chatbot for repair info, recap, and campus information
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## 📊 Real-Time Activity Log
+
+* Records all user activities in real time
+* Stores action type, timestamp, and activity context
+* Supports monitoring, auditing, and system transparency
+
+## 🗃️ Database Structure
+
+* users
+* roles
+* software
+* penginstalans
+* perbaikans
+* rekaps
+* contacts
+
+Relationships are implemented using hasMany and belongsTo, with soft delete applied to selected tables.
+
+## 🚀 Project Status
+
+The TechNoteAPP website has been fully developed and finalized as a PKL project at STMIK Triguna Dharma Medan.
+
+## 📌 Conclusion
+
+TechNoteAPP serves as a digital solution for managing technical services within the campus environment while acting as a real-world implementation of web application development using Laravel.
+
+Developed during Praktik Kerja Lapangan at STMIK Triguna Dharma Medan.
