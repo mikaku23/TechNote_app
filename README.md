@@ -9,7 +9,7 @@
 <!-- Banner Image -->
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/yourusername/yourrepo/main/banner.png" alt="TechNoteAPP Banner" width="100%" />
+  <img src="https://github.com/mikaku23/mikaku23/blob/main/banner2.png?raw=true" alt="TechNoteAPP Banner" width="100%" />
 </p>
 
 # TechNoteAPP 👨‍💻
