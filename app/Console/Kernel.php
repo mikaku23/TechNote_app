@@ -13,7 +13,15 @@ protected function schedule(Schedule $schedule): void
 {
 // Contoh: jalankan perintah notify:wa setiap menit
 $schedule->command('notify:wa')->everyMinute();
-}
+
+        $schedule->command('autofinish:run')
+            ->everyMinute()
+            ->appendOutputTo(storage_path('logs/autofinish.log'))
+            ->withoutOverlapping()
+            ->onOneServer()
+            ->timezone('Asia/Jakarta')
+            ->runInBackground();
+    }
 
 /**
 * Register the commands for the application.

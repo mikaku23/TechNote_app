@@ -148,12 +148,12 @@ class DashboardController extends Controller
     }
 
 
-    public function dashboardMahasiswa(WhatsappService $waService)
+    public function dashboardMahasiswa()
     {
         $userId = Auth::id();
         $threeDaysAgo = Carbon::now('Asia/Jakarta')->subDays(3);
 
-        $penginstalans = Penginstalan::with(['software', 'user'])
+        $penginstalans = Penginstalan::with(['software'])
             ->where('user_id', $userId)
             ->where(function ($q) use ($threeDaysAgo) {
                 $q->where('status', '!=', 'berhasil')
@@ -164,7 +164,7 @@ class DashboardController extends Controller
             })
             ->orderBy('updated_at', 'desc')
             ->paginate(10)
-            ->through(function ($item) use ($waService) {
+            ->through(function ($item) {
 
                 if (empty($item->estimasi)) {
                     $item->estimasi_hitung  = 'tidak ada estimasi';
@@ -177,129 +177,23 @@ class DashboardController extends Controller
                     : Carbon::parse($item->created_at)->setTimezone('Asia/Jakarta');
 
                 $parts = explode(':', $item->estimasi);
-                $hour = isset($parts[0]) ? (int)$parts[0] : 0;
-                $minute = isset($parts[1]) ? (int)$parts[1] : 0;
-                $second = isset($parts[2]) ? (int)$parts[2] : 0;
-                $estimasiDetik = $hour * 3600 + $minute * 60 + $second;
+                $hour   = (int)($parts[0] ?? 0);
+                $minute = (int)($parts[1] ?? 0);
+                $second = (int)($parts[2] ?? 0);
 
-                $target = $mulai->copy()->addSeconds($estimasiDetik);
+                $estimasiDetik = ($hour * 3600) + ($minute * 60) + $second;
+
+                $target   = $mulai->copy()->addSeconds($estimasiDetik);
                 $sekarang = Carbon::now('Asia/Jakarta');
 
                 if ($sekarang->greaterThanOrEqualTo($target)) {
-                    $item->estimasi_hitung = 'penginstalan selesai';
-
-                if ($item->status === 'pending') {
-
-                    $qrCode = $item->qr_code;
-                    $qrUrl  = $item->qr_url;
-
-                    // buat QR hanya sekali
-                    if (empty($qrCode)) {
-                        $nomor = str_pad($item->id, 6, '0', STR_PAD_LEFT);
-                        $qrCode = "INST-{$nomor}-SUCCESS";
-
-                        $qrUrl = 'https://bwipjs-api.metafloor.com/?bcid=qrcode&text='
-                            . $qrCode .
-                            '&scale=6';
-                    }
-
-                    Penginstalan::where('id', $item->id)->update([
-                        'status'     => 'berhasil',
-                        'qr_code'    => $qrCode,
-                        'qr_url'     => $qrUrl,
-                        'updated_at' => Carbon::now('Asia/Jakarta'),
-                    ]);
-
-                    $item->status = 'berhasil';
-                    $item->qr_code = $qrCode;
-                    $item->qr_url  = $qrUrl;
-                    $item->updated_at = Carbon::now('Asia/Jakarta');
-
-
-                    if (!$item->notif_terkirim && $item->user?->no_hp) {
-
-                        // misal $mulai = waktu mulai penginstalan
-                        // $estimasiDetik = durasi estimasi dalam detik (sudah kamu hitung sebelumnya)
-                        $mulai = $item->created_at instanceof Carbon
-                            ? $item->created_at->copy()
-                            : Carbon::parse($item->created_at)->setTimezone('Asia/Jakarta');
-
-                        $parts = explode(':', $item->estimasi);
-                        $hour = isset($parts[0]) ? (int)$parts[0] : 0;
-                        $minute = isset($parts[1]) ? (int)$parts[1] : 0;
-                        $second = isset($parts[2]) ? (int)$parts[2] : 0;
-
-                        $estimasiDetik = $hour * 3600 + $minute * 60 + $second;
-                        $target = $mulai->copy()->addSeconds($estimasiDetik);
-                        $sekarang = Carbon::now('Asia/Jakarta');
-
-                        if ($sekarang->greaterThanOrEqualTo($target)) {
-                            // sudah selesai
-                            $durasi = $mulai->diffInMinutes($target);
-                        } else {
-                            // masih proses → tampilkan sisa waktu
-                            $durasi = $sekarang->diffInMinutes($target);
-                        }
-
-                        // konversi menit ke jam + menit
-                        $jam = floor($durasi / 60);
-                        $menit = $durasi % 60;
-
-                        // hasil string
-                        $durasiText = '';
-                        if ($jam > 0) {
-                            $durasiText .= $jam . ' jam ';
-                        }
-                        $durasiText .= $menit . ' menit';
-
-
-                        $namaUser = $item->user->nama;
-                        $versiSoftware = $item->software->versi;
-                        $tanggalSelesai = $item->tgl_instalasi
-                            ? Carbon::parse($item->tgl_instalasi)->setTimezone('Asia/Jakarta')->format('d F Y')
-                            : 'tidak ada data';
-                        
-                        $statusSoftware = $item->status;
-
-                        $namaSoftware = $item->software->nama;
-
-                        $msg = "Halo {$namaUser}, penginstalan anda telah selesai dikerjakan\n\n"
-                            . "Berikut data penginstalan anda:\n\n"
-                            . "Nama software: {$namaSoftware}\n"
-                            . "Versi: {$versiSoftware}\n"
-                            . "Status penginstalan: {$statusSoftware}\n"
-                            . "Durasi Pengerjaan: {$durasiText}\n\n"
-                            . "Silakan datang ke ruang teknisi untuk mengambil perangkat.\n\n"
-                            . "_{$tanggalSelesai}_\n"
-                            . "_Sent via TechNoteAPP (powered by Green.com)_";
-
-                        if ($waService->sendMessage($item->user->no_hp, $msg)) {
-                            $item->notif_terkirim = true;
-                            Penginstalan::where('id', $item->id)->update(['notif_terkirim' => true]);
-                        }
-
-                        $authUser = Auth::user();
-
-                        if ($authUser) {
-                            $loginLog = login_log::where('user_id', $authUser->id)
-                                ->where('status', 'online')
-                                ->latest('login_at')
-                                ->first();
-
-                            if ($loginLog) {
-                                UserActivity::create([
-                                    'user_id'      => $authUser->id,
-                                    'login_log_id' => $loginLog->id,
-                                    'activity'     => 'Dikirimkan notifikasi WhatsApp tentang penginstalan telah selesai dengan idpenginstalan: ' . $item->id,
-                                    'type'         => 'sistem',
-                                    'created_at'   => now('Asia/Jakarta'),
-                                ]);
-                            }
-                        }
-                    }
-                }
+                    // sudah lewat estimasi
+                    $item->estimasi_hitung =
+                        $item->status === 'berhasil'
+                        ? 'penginstalan selesai'
+                        : 'menunggu sinkron sistem';
                 } else {
-                    // MASIH PROSES → Hitung sisa waktu
+                    // masih hitung mundur
                     $diff = $sekarang->diff($target);
                     $item->estimasi_hitung = sprintf(
                         'sisa: %02d jam %02d menit %02d detik',
@@ -310,18 +204,22 @@ class DashboardController extends Controller
                 }
 
                 $item->estimasi_selesai = $target->format('d-m-Y H:i:s');
+
+                // QR hanya ditampilkan jika sudah dibuat oleh sistem otomatis
+                $item->qr_ready = !empty($item->qr_url);
+
                 return $item;
             });
 
         return view('mahasiswa.index', [
-            'menu' => 'dashboard',
-            'title' => 'Dashboard Mahasiswa',
+            'menu'          => 'dashboard',
+            'title'         => 'Dashboard Mahasiswa',
             'penginstalans' => $penginstalans
         ]);
     }
 
 
-    public function dashboardDosen(WhatsappService $waService)
+    public function dashboardDosen()
     {
         $userId = Auth::id();
         $threeDaysAgo = Carbon::now('Asia/Jakarta')->subDays(3);
@@ -337,130 +235,60 @@ class DashboardController extends Controller
             })
             ->orderBy('updated_at', 'desc')
             ->paginate(10)
-            ->through(function ($item) use ($waService) {
+            ->through(function ($item) {
 
                 if (empty($item->estimasi)) {
                     $item->estimasi_hitung  = 'tidak ada estimasi';
                     $item->estimasi_selesai = null;
-                } else {
-                    $mulai = $item->created_at instanceof Carbon
-                        ? $item->created_at->copy()
-                        : Carbon::parse($item->created_at)->setTimezone('Asia/Jakarta');
-
-                    $parts = explode(':', $item->estimasi);
-                    $hour = isset($parts[0]) ? (int)$parts[0] : 0;
-                    $minute = isset($parts[1]) ? (int)$parts[1] : 0;
-                    $second = isset($parts[2]) ? (int)$parts[2] : 0;
-                    $estimasiDetik = $hour * 3600 + $minute * 60 + $second;
-
-                    $target = $mulai->copy()->addSeconds($estimasiDetik);
-                    $sekarang = Carbon::now('Asia/Jakarta');
-
-                    if ($sekarang->greaterThanOrEqualTo($target)) {
-                        $item->estimasi_hitung = 'perbaikan selesai';
-
-                    if (strtolower($item->status) === 'sedang diperbaiki') {
-
-                        $sekarang = Carbon::now('Asia/Jakarta');
-
-                        $qrCode = $item->qr_code;
-                        $qrUrl  = $item->qr_url;
-
-                        // buat QR hanya sekali
-                        if (empty($qrCode)) {
-                            $nomor = str_pad($item->id, 6, '0', STR_PAD_LEFT);
-                            $qrCode = "REPAIR-{$nomor}-SUCCESS";
-
-                            $qrUrl = 'https://bwipjs-api.metafloor.com/?bcid=qrcode&text='
-                                . urlencode($qrCode)
-                                . '&scale=6';
-                        }
-
-                        Perbaikan::where('id', $item->id)->update([
-                            'status'     => 'selesai',
-                            'qr_code'    => $qrCode,
-                            'qr_url'     => $qrUrl,
-                            'updated_at' => $sekarang,
-                        ]);
-
-                        // sinkronkan object
-                        $item->status     = 'selesai';
-                        $item->qr_code    = $qrCode;
-                        $item->qr_url     = $qrUrl;
-                        $item->updated_at = $sekarang;
-                    }
-
-                        // 🔹 Kirim WA jika belum terkirim
-                        if (!$item->notif_terkirim && $item->user?->no_hp) {
-                            $durasi = $mulai->diffInMinutes($target);
-                            $jam = floor($durasi / 60);
-                            $menit = $durasi % 60;
-                            $durasiText = ($jam > 0 ? $jam . ' jam ' : '') . $menit . ' menit';
-
-                            $tanggalSelesai = $item->tgl_perbaikan
-                                ? Carbon::parse($item->tgl_perbaikan)->setTimezone('Asia/Jakarta')->format('d F Y')
-                                : 'tidak ada data';
-
-                            // Tentukan pesan
-                            if ($item->status === 'selesai') {
-                                $msg = "Halo {$item->user->nama}, perbaikan {$item->nama} anda telah selesai.\n\n"
-                                    . "Berikut data perbaikan anda:\n"
-                                    . "Nama barang: {$item->nama}\n"
-                                    . "Kategori: {$item->kategori}\n"
-                                    . "Status: {$item->status}\n"
-                                    . "Durasi pengerjaan: {$durasiText}\n\n"
-                                    . "Silakan datang ke ruang teknisi untuk mengambil barang.\n\n"
-                                    . "_{$tanggalSelesai}_\n"
-                                    . "_Sent via TechNoteAPP (powered by Green.com)_";
-                            }
-
-                            if ($waService->sendMessage($item->user->no_hp, $msg)) {
-                                $item->notif_terkirim = true;
-                                Perbaikan::where('id', $item->id)->update(['notif_terkirim' => true]);
-                            }
-                        $authUser = Auth::user();
-
-                        if ($authUser) {
-                            $loginLog = login_log::where('user_id', $authUser->id)
-                                ->where('status', 'online')
-                                ->latest('login_at')
-                                ->first();
-
-                            if ($loginLog) {
-                                UserActivity::create([
-                                    'user_id'      => $authUser->id,
-                                    'login_log_id' => $loginLog->id,
-                                    'activity'     => 'Dikirimkan notifikasi WhatsApp tentang perbaikan telah selesai dengan idperbaikan: ' . $item->id,
-                                    'type'         => 'sistem',
-                                    'created_at'   => now('Asia/Jakarta'),
-                                ]);
-                            }
-                        }
-                        }
-                    } else {
-                        $diff = $sekarang->diff($target);
-                        $item->estimasi_hitung = sprintf(
-                            'sisa: %02d jam %02d menit %02d detik',
-                            $diff->h + ($diff->d * 24),
-                            $diff->i,
-                            $diff->s
-                        );
-                    }
-
-                    $item->estimasi_selesai = $target->format('d-m-Y H:i:s');
+                    return $item;
                 }
 
+                $mulai = $item->created_at instanceof Carbon
+                    ? $item->created_at->copy()
+                    : Carbon::parse($item->created_at)->setTimezone('Asia/Jakarta');
+
+                $parts = explode(':', $item->estimasi);
+                $hour   = (int)($parts[0] ?? 0);
+                $minute = (int)($parts[1] ?? 0);
+                $second = (int)($parts[2] ?? 0);
+
+                $estimasiDetik = ($hour * 3600) + ($minute * 60) + $second;
+
+                $target   = $mulai->copy()->addSeconds($estimasiDetik);
+                $sekarang = Carbon::now('Asia/Jakarta');
+
+                if ($sekarang->greaterThanOrEqualTo($target)) {
+                    $item->estimasi_hitung =
+                        $item->status === 'selesai'
+                        ? 'perbaikan selesai'
+                        : 'menunggu sinkron sistem';
+                } else {
+                    $diff = $sekarang->diff($target);
+                    $item->estimasi_hitung = sprintf(
+                        'sisa: %02d jam %02d menit %02d detik',
+                        $diff->h + ($diff->d * 24),
+                        $diff->i,
+                        $diff->s
+                    );
+                }
+
+                $item->estimasi_selesai = $target->format('d-m-Y H:i:s');
+
+                $item->qr_ready = !empty($item->qr_url);
+
                 $item->tgl_perbaikan_formatted = $item->tgl_perbaikan
-                    ? Carbon::parse($item->tgl_perbaikan)->setTimezone('Asia/Jakarta')->format('d-m-Y')
+                    ? Carbon::parse($item->tgl_perbaikan)
+                    ->setTimezone('Asia/Jakarta')
+                    ->format('d-m-Y')
                     : 'tidak ada data';
 
                 return $item;
             });
 
         return view('dosen.index', [
-            'menu' => 'dashboard',
-            'title' => 'Dashboard Dosen',
-            'perbaikans' => $perbaikans,
+            'menu'       => 'dashboard',
+            'title'      => 'Dashboard Dosen',
+            'perbaikans' => $perbaikans
         ]);
     }
 }
