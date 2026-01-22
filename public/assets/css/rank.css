@@ -1,0 +1,42 @@
+.rank-badge {
+    min-width: 48px;
+    height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.chart-card {
+    height: 360px;
+}
+
+.truncate {
+    max-width: 220px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.role-badge {
+    font-size: 0.75rem;
+    padding: 0.35rem 0.5rem;
+    border-radius: .35rem;
+}
+
+.rank-gold {
+    background: #fde68a; /* emas soft */
+    color: #92400e;
+}
+
+.rank-silver {
+    background: #e5e7eb; /* perak soft */
+    color: #374151;
+}
+
+.rank-bronze {
+    background: #f3c6a5; /* bronze soft */
+    color: #7c2d12;
+}
+

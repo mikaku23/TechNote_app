@@ -4,6 +4,7 @@ use App\Services\WhatsappService;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\qrController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\RankController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RekapController;
@@ -15,8 +16,8 @@ use App\Http\Controllers\SoftwareController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PerbaikanController;
 use App\Http\Controllers\PenginstalanController;
-use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\LogActivitiesController;
+use App\Http\Controllers\ForgotPasswordController;
 
 Route::fallback(function () {
     return response()->view('error.404', [], 404);
@@ -135,6 +136,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/log-login/{id}', [LogLoginController::class, 'show'])->name('logLogin.show');
 
     Route::get('/log-aktivitas', [LogActivitiesController::class, 'index'])->name('logAktif.index');
+
+    Route::get('/Rank', [RankController::class, 'index'])->name('rank.index');
 
     Route::get('/dashboardAdmin', [DashboardController::class, 'dashboardAdmin'])->name('dashboard-admin');
 
