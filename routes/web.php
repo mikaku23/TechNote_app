@@ -103,6 +103,7 @@ Route::middleware(['auth', 'role:mahasiswa'])->group(function () {
 
     Route::post('/contact/submit', [ContactController::class, 'submit'])->name('mahasiswa.contact.submit');
     Route::get('/dashboard', [DashboardController::class, 'dashboardMahasiswa'])->name('dashboard-mahasiswa');
+    Route::get('/rank', [RankController::class, 'rankmhs'])->name('rank.mhs');
 
 });
 
@@ -137,7 +138,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
     Route::get('/log-aktivitas', [LogActivitiesController::class, 'index'])->name('logAktif.index');
 
-    Route::get('/Rank', [RankController::class, 'index'])->name('rank.index');
+    Route::get('/RankAdmin', [RankController::class, 'index'])->name('rank.index');
+
 
     Route::get('/dashboardAdmin', [DashboardController::class, 'dashboardAdmin'])->name('dashboard-admin');
 
@@ -146,6 +148,20 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/pengguna/create-dosen', [PenggunaController::class, 'createDosen'])->name('pengguna.createDosen');
     Route::post('/pengguna/store-dosen', [PenggunaController::class, 'storeDosen'])->name('pengguna.storeDosen');
     Route::delete('/pengguna/hapus-semua', [PenggunaController::class, 'hapusSemua'])->name('pengguna.hapusSemua');
+
+    // Tambah banyak pengguna
+    Route::get('/pengguna/create-multiple', [PenggunaController::class, 'createMultiple'])
+        ->name('pengguna.createMultiple');
+
+    Route::post('/pengguna/store-multiple', [PenggunaController::class, 'storeMultiple'])
+        ->name('pengguna.storeMultiple');
+
+    // create banyak
+    Route::get('/software/create-multiple', [SoftwareController::class, 'createMultiple'])
+        ->name('software.createMultiple');
+
+    Route::post('/software/store-multiple', [SoftwareController::class, 'storeMultiple'])
+        ->name('software.storeMultiple');
 
     Route::delete('/software/hapus-semua', [SoftwareController::class, 'hapusSemua'])->name('software.hapusSemua');
 
@@ -157,6 +173,13 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::patch('/penginstalan/{id}/status', [PenginstalanController::class, 'updateStatus'])
         ->name('penginstalan.updateStatus');
 
+    // tambah banyak penginstalan
+    Route::get('/penginstalan/create-multiple', [PenginstalanController::class, 'createMultiple'])
+        ->name('penginstalan.createMultiple');
+
+    Route::post('/penginstalan/store-multiple', [PenginstalanController::class, 'storeMultiple'])
+        ->name('penginstalan.storeMultiple');
+
     Route::prefix('perbaikan')->group(function () {
         Route::get('/terhapus', [PerbaikanController::class, 'arsip'])->name('perbaikan.arsip');
         Route::patch('/pulihkan/{id}', [PerbaikanController::class, 'pulihkan'])->name('perbaikan.pulihkan');
@@ -164,6 +187,13 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     });
     Route::patch('/perbaikan/{id}/status', [PerbaikanController::class, 'updateStatus'])
         ->name('perbaikan.updateStatus');
+
+    Route::get('/perbaikan/create-multiple', [PerbaikanController::class, 'createMultiple'])
+        ->name('perbaikan.createMultiple');
+
+    Route::post('/perbaikan/store-multiple', [PerbaikanController::class, 'storeMultiple'])
+        ->name('perbaikan.storeMultiple');
+
 
     Route::resource('perbaikan', PerbaikanController::class);
 

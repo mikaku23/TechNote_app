@@ -20,6 +20,11 @@
                 About
             </a>
         </li>
+        <li>
+            <a href="{{ route('rank.mhs') }}" class="{{ ($menu ?? '') === 'rank' ? 'active' : '' }}">
+                Rank
+            </a>
+        </li>
     </ul>
 </nav>
 

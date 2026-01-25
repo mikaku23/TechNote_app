@@ -2,6 +2,7 @@
 @section('title', 'Data log-Login-Pengguna')
 @section('css')
 <link rel="stylesheet" href="{{ asset('assets/css/admin/pengguna/show.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/admin/pengguna/paginate.css') }}">
 <style>
     .tanggal-custom {
         width: 150px;

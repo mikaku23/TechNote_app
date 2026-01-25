@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class RankController extends Controller
 {
@@ -110,6 +111,56 @@ class RankController extends Controller
             'top'      => $top,
             'labels'   => $labels,
             'data'     => $data,
+        ]);
+    }
+
+    public function rankmhs(Request $request)
+    {
+        $type = $request->query('type', 'mahasiswa');
+        $limit = 10;
+
+        $all = User::with('role')
+            ->withCount('penginstalans')
+            ->whereHas('role', function ($q) {
+                $q->where('status', 'mahasiswa');
+            })
+            ->having('penginstalans_count', '>', 0)
+            ->orderByDesc('penginstalans_count')
+            ->get();
+
+        $top = $all->take($limit);
+
+        $myRank = null;
+        $myBadge = null;
+
+        $loginUser = $request->user();
+        $loginUserId = $loginUser ? $loginUser->id : null;
+
+        foreach ($all as $index => $user) {
+            if ($loginUserId && $user->id === $loginUserId) {
+                $myRank = $index + 1;
+
+                if ($myRank === 1) $myBadge = 'gold';
+                elseif ($myRank === 2) $myBadge = 'silver';
+                elseif ($myRank === 3) $myBadge = 'bronze';
+                else $myBadge = null; // pastikan null kalau >3
+
+                break;
+            }
+        }
+
+        $progressWidth = 0;
+        if ($myRank && $myRank <= 10) {
+            $progressWidth = max(8, (11 - $myRank) * 10);
+        }
+
+        return view('mahasiswa.rank', [
+            'menu' => 'rank',
+            'type' => $type,
+            'top' => $top,
+            'myRank' => $myRank,
+            'myBadge' => $myBadge,
+            'progressWidth' => $progressWidth,
         ]);
     }
 }

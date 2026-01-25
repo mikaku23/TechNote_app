@@ -1,0 +1,105 @@
+/* rank-user.css - podium & animasi (full) */
+
+.progress {
+    background: rgba(0,0,0,.08);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0;
+    background: linear-gradient(90deg, rgba(var(--accent-1),1), rgba(var(--accent-2),1));
+    border-radius: 8px;
+    transition: width 1.2s ease;
+}
+
+
+/* hilangkan margin default <p> hanya untuk teks di podium */
+.my-podium p {
+  margin: 0;
+  line-height: 1.35; /* biar teks rapih */
+}
+
+/* kelas util untuk teks kecil/penjelasan */
+.my-podium .meta {
+  margin-top: 6px;      /* jarak tipis bila diperlukan */
+  color: rgba(var(--muted),0.9);
+  font-size: 0.95rem;
+}
+
+/* jika ingin spasi sedikit antara progress dan baris pertama */
+.my-podium .progress + .meta {
+  margin-top: 8px;
+}
+
+
+.my-podium{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:6px;
+  padding:22px;
+  border-radius:14px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border:1px solid rgba(255,255,255,0.03);
+  box-shadow:0 12px 30px rgba(2,6,23,0.45);
+  position:relative;
+}
+
+/* podium badge (only visible when has class gold/silver/bronze)
+   if markup does not include it, nothing is shown */
+.podium-badge { display:inline-block; width:12px; height:12px; border-radius:50%; margin-bottom:6px; }
+.podium-badge.gold { background: radial-gradient(circle, rgba(var(--accent-1),1), rgba(var(--accent-2),1)); box-shadow: 0 6px 18px rgba(var(--accent-1),0.25); }
+.podium-badge.silver { background: linear-gradient(90deg,#e6e9ec,#f3f4f6); box-shadow:0 6px 18px rgba(0,0,0,0.12); }
+.podium-badge.bronze { background: linear-gradient(90deg,#f3c6a5,#fde7d3); box-shadow:0 6px 18px rgba(0,0,0,0.12); }
+
+/* number wrap */
+.podium-number-wrap{ position:relative; height:64px; display:flex; align-items:center; justify-content:center; width:160px; }
+
+/* base number */
+.podium-number{ font-size:2.6rem; font-weight:800; display:block; width:100%; text-align:center; position:absolute; left:0; top:0; -webkit-text-stroke: 0.6px rgba(255,255,255,0.06); }
+
+/* current */
+.podium-number--now{
+  z-index:2;
+  color:transparent;
+  background: linear-gradient(90deg, rgba(var(--accent-1),1), rgba(var(--accent-2),1));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  opacity:1;
+  transition: opacity .35s ease, transform .35s ease;
+}
+
+/* old */
+.podium-number--old{
+  z-index:1;
+  color: rgba(var(--muted),0.85);
+  opacity:0;
+  transition: opacity .25s ease, transform .35s ease;
+}
+
+/* label */
+.podium-label{ font-weight:700; color: rgba(var(--muted),0.95); margin-top:6px; }
+
+/* progress container */
+.progress{ background: rgba(255,255,255,0.03); border-radius:999px; overflow:hidden; width:100%; max-width:520px; margin:0 auto; }
+.progress-bar{ height:100%; box-shadow:0 0 12px rgba(var(--accent-1),0.45); transition: width .7s cubic-bezier(.2,.8,.2,1); }
+
+/* animations */
+.fly-up-old { animation: flyUpOld .8s ease forwards; }
+@keyframes flyUpOld { 0%{ transform:translateY(0); opacity:1 } 60%{ transform:translateY(-40px) scale(.98); opacity:.6 } 100%{ transform:translateY(-70px) scale(.95); opacity:0 } }
+
+.fly-down-old { animation: flyDownOld .8s ease forwards; }
+@keyframes flyDownOld { 0%{ transform:translateY(0); opacity:1 } 60%{ transform:translateY(40px) scale(.98); opacity:.6 } 100%{ transform:translateY(70px) scale(.95); opacity:0 } }
+
+.reveal-now { animation: revealNow .6s ease forwards; }
+@keyframes revealNow { 0%{ transform:translateY(20px) scale(.96); opacity:0 } 100%{ transform:translateY(0) scale(1); opacity:1 } }
+
+.pulse-now { animation: pulseNow .6s ease; }
+@keyframes pulseNow { 0%{ transform:scale(1) } 50%{ transform:scale(1.04) } 100%{ transform:scale(1) } }
+
+/* responsive tweak */
+@media(max-width:720px){
+  .podium-number-wrap{ height:56px; width:120px; }
+  .podium-number{ font-size:2rem; }
+}

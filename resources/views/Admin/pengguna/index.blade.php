@@ -29,6 +29,11 @@
                                 <i class="fa fa-plus me-1"></i> Tambah Pengguna
                             </button>
 
+                            <a href="{{ route('pengguna.createMultiple') }}" class="btn btn-outline-primary">
+                                <i class="fa fa-layer-group me-1"></i> Tambah Banyak
+                            </a>
+
+
                             <a href="{{ route('role.index') }}" class="btn btn-outline-primary">
                                 <i class="fa fa-user-shield me-1"></i> Role
                             </a>

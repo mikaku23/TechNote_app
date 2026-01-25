@@ -23,7 +23,12 @@
                         <a href="{{ route('software.create') }}" class="btn btn-outline-success">
                             <i class="fa fa-plus me-1"></i> Tambah Software
                         </a>
+
+                        <a href="{{ route('software.createMultiple') }}" class="btn btn-outline-primary">
+                            <i class="fa fa-layer-group me-1"></i> Tambah Banyak
+                        </a>
                     </div>
+
 
                     <!-- Filter di kanan -->
                     <form action="{{ route('software.index') }}" method="GET"

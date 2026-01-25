@@ -12,6 +12,7 @@ use App\Models\penginstalan;
 use App\Models\UserActivity;
 use Illuminate\Http\Request;
 use App\Services\WhatsappService;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
 
@@ -130,6 +131,103 @@ class PenginstalanController extends Controller
 
         return redirect()->route('software.index');
     }
+
+    public function createMultiple()
+    {
+        $users = User::whereHas('role', fn($q) => $q->where('status', 'mahasiswa'))->get();
+        $softwares = software::all();
+
+        return view('admin.penginstalan.create-multiple', [
+            'menu' => 'penginstalan',
+            'title' => 'Tambah Banyak Penginstalan',
+            'users' => $users,
+            'softwares' => $softwares,
+        ]);
+    }
+
+    public function storeMultiple(Request $request)
+    {
+        $request->validate([
+            'penginstalan' => 'required|array|min:1',
+            'penginstalan.*.user_id' => 'required|exists:users,id',
+            'penginstalan.*.software_id' => 'required|exists:software,id',
+            'penginstalan.*.estimasi' => 'nullable|date_format:H:i', // H:i sesuai store per 1 data
+        ], [
+            'penginstalan.required' => 'Tidak ada data penginstalan untuk disimpan.',
+            'penginstalan.*.user_id.required' => 'User harus dipilih.',
+            'penginstalan.*.software_id.required' => 'Software harus dipilih.',
+        ]);
+
+        $dataInsert = [];
+        $now = now('Asia/Jakarta')->toDateString();
+
+        foreach ($request->penginstalan as $item) {
+            $dataInsert[] = [
+                'tgl_instalasi' => $now,
+                'tgl_hapus'     => null,
+                'status'        => 'pending',
+                'estimasi'      => $item['estimasi'] ?? null,
+                'software_id'   => $item['software_id'],
+                'user_id'       => $item['user_id'],
+                'created_at'    => now('Asia/Jakarta'),
+                'updated_at'    => now('Asia/Jakarta'),
+            ];
+        }
+
+        DB::beginTransaction();
+        try {
+            // Insert massal penginstalan
+            penginstalan::insert($dataInsert);
+
+            // Ambil penginstalan baru (by tgl_instalasi)
+            $penginstalans = penginstalan::where('tgl_instalasi', $now)
+                ->where('status', 'pending')
+                ->orderBy('id', 'desc')
+                ->take(count($dataInsert))
+                ->get();
+
+            // Buat rekap & log
+            $authUser = Auth::user();
+            $createdIds = [];
+
+            foreach ($penginstalans as $p) {
+                $createdIds[] = $p->id;
+
+                rekap::create([
+                    'penginstalan_id' => $p->id,
+                    'status'          => 'tersedia',
+                ]);
+
+                if ($authUser) {
+                    $loginLog = login_log::where('user_id', $authUser->id)
+                        ->where('status', 'online')
+                        ->latest('login_at')
+                        ->first();
+
+                    if ($loginLog) {
+                        UserActivity::create([
+                            'user_id'      => $authUser->id,
+                            'login_log_id' => $loginLog->id,
+                            'activity'     => 'Menambahkan beberapa data penginstalan: ids [' . implode(',', $createdIds) . ']',
+                            'type'         => 'nonsistem',
+                            'created_at'   => now('Asia/Jakarta'),
+                        ]);
+                    }
+                }
+            }
+
+            DB::commit();
+
+            return redirect()->route('penginstalan.index')
+                ->with('message', 'Data penginstalan berhasil ditambahkan sekaligus')
+                ->with('alert', 'success');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->withErrors(['error' => 'Gagal menyimpan data: ' . $e->getMessage()]);
+        }
+    }
+
+
 
     public function edit($id)
     {

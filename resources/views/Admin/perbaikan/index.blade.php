@@ -55,13 +55,18 @@
                         <a href="{{ route('perbaikan.create') }}" class="btn btn-outline-success">
                             <i class="fa fa-plus me-1"></i>Tambah Data
                         </a>
+
+                        <a href="{{ route('perbaikan.createMultiple') }}" class="btn btn-outline-primary">
+                            <i class="fa fa-layer-group me-1"></i>Tambah Banyak
+                        </a>
+
                         @if ($jumlahTerhapus > 0)
                         <a href="{{ route('perbaikan.arsip') }}" class="btn btn-outline-danger">
                             <i class="fa fa-trash me-1"></i>({{ $jumlahTerhapus }})
                         </a>
                         @endif
-
                     </div>
+
 
                     <!-- Filter di kanan -->
                     <form method="GET" action="{{ route('perbaikan.index') }}" class="d-flex gap-2 align-items-center">
@@ -142,7 +147,7 @@
                                                 <input type="hidden" name="status" value="rusak">
                                                 <button type="submit" class="btn btn-sm btn-outline-danger">Rusak</button>
                                             </form>
-                                            
+
                                             <form action="{{ route('perbaikan.updateStatus', $soft->id) }}" method="POST" style="display:inline;">
                                                 @csrf
                                                 @method('PATCH')

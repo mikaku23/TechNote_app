@@ -6,12 +6,15 @@ use Carbon\Carbon;
 use App\Models\role;
 use App\Models\User;
 use App\Models\login_log;
+use Illuminate\Support\Str;
 use App\Models\UserActivity;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use App\Services\WhatsappService;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 
 class PenggunaController extends Controller
 {
@@ -539,6 +542,213 @@ class PenggunaController extends Controller
 
         return redirect()->route('pengguna.index');
     }
+
+    public function createMultiple()
+    {
+        $questions = config('secure.security_questions');
+        $randomQuestion = $questions[array_rand($questions)];
+
+        $roles = role::all();
+
+        // Sembunyikan role admin jika sudah ada admin seperti di create()
+        $adminRole = $roles->firstWhere('status', 'admin');
+        if ($adminRole && User::where('role_id', $adminRole->id)->exists()) {
+            $roles = $roles->reject(fn($r) => $r->status === 'admin');
+        }
+
+        return view('admin.pengguna.create-multiple', [
+            'menu' => 'pengguna',
+            'title' => 'Tambah Banyak Pengguna',
+            'roles' => $roles,
+            'randomQuestion' => $randomQuestion,
+        ]);
+    }
+
+    public function storeMultiple(Request $request, WhatsappService $waService)
+    {
+        // aturan dasar (tanpa distinct pada nullable fields)
+        $rules = [
+            'pengguna' => 'required|array|min:1',
+            'pengguna.*.nama' => 'required|string|max:100',
+            'pengguna.*.nim' => 'nullable|string',
+            'pengguna.*.nip' => 'nullable|string',
+            'pengguna.*.username' => 'required|string',
+            'pengguna.*.password' => 'required|string|min:4',
+            'pengguna.*.no_hp' => 'required|string',
+            'pengguna.*.security_question' => 'nullable|string|max:255',
+            'pengguna.*.security_answer' => 'required|string|max:255',
+            'pengguna.*.role_id' => 'required|exists:roles,id',
+        ];
+        $messages = [
+            'pengguna.required' => 'Tidak ada data pengguna untuk disimpan.',
+            'pengguna.*.nama.required' => 'Nama wajib diisi.',
+            'pengguna.*.username.required' => 'Username wajib diisi.',
+            'pengguna.*.password.required' => 'Password wajib diisi.',
+            'pengguna.*.no_hp.required' => 'Nomor HP wajib diisi.',
+            'pengguna.*.security_answer.required' => 'Jawaban keamanan wajib diisi.',
+            'pengguna.*.role_id.required' => 'Role wajib dipilih.',
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        // after callback untuk pengecekan duplikat dalam batch dan cek ke DB
+        $validator->after(function ($v) use ($request) {
+            $seenUsername = [];
+            $seenNoHp = [];
+            $seenNim = [];
+            $seenNip = [];
+
+            foreach ($request->input('pengguna', []) as $i => $item) {
+                // normalisasi nomor HP (untuk pengecekan)
+                $rawNoHp = isset($item['no_hp']) ? preg_replace('/[^0-9]/', '', $item['no_hp']) : '';
+                if (substr($rawNoHp, 0, 1) === '0') {
+                    $normalizedNoHp = '62' . substr($rawNoHp, 1);
+                } else {
+                    $normalizedNoHp = $rawNoHp;
+                }
+
+                // username: cek duplikat dalam batch
+                if (!empty($item['username'])) {
+                    if (in_array($item['username'], $seenUsername, true)) {
+                        $v->errors()->add("pengguna.{$i}.username", "Username '{$item['username']}' duplikat dalam input.");
+                    } else {
+                        $seenUsername[] = $item['username'];
+                        // cek DB
+                        if (\App\Models\User::where('username', $item['username'])->exists()) {
+                            $v->errors()->add("pengguna.{$i}.username", "Username '{$item['username']}' sudah terdaftar.");
+                        }
+                    }
+                }
+
+              
+
+
+                // nim: hanya cek jika ada nilai (jangan pakai distinct ketika null)
+                if (!empty($item['nim'])) {
+                    if (in_array($item['nim'], $seenNim, true)) {
+                        $v->errors()->add("pengguna.{$i}.nim", "NIM '{$item['nim']}' duplikat dalam input.");
+                    } else {
+                        $seenNim[] = $item['nim'];
+                        if (\App\Models\User::where('nim', $item['nim'])->exists()) {
+                            $v->errors()->add("pengguna.{$i}.nim", "NIM '{$item['nim']}' sudah terdaftar.");
+                        }
+                    }
+                }
+
+                // nip: hanya cek jika ada nilai
+                if (!empty($item['nip'])) {
+                    if (in_array($item['nip'], $seenNip, true)) {
+                        $v->errors()->add("pengguna.{$i}.nip", "NIP '{$item['nip']}' duplikat dalam input.");
+                    } else {
+                        $seenNip[] = $item['nip'];
+                        if (\App\Models\User::where('nip', $item['nip'])->exists()) {
+                            $v->errors()->add("pengguna.{$i}.nip", "NIP '{$item['nip']}' sudah terdaftar.");
+                        }
+                    }
+                }
+            }
+        });
+
+        if ($validator->fails()) {
+            throw ValidationException::withMessages($validator->errors()->toArray());
+        }
+
+        // simpan data
+        DB::beginTransaction();
+        try {
+            $createdIds = [];
+
+            foreach ($request->input('pengguna') as $item) {
+                // normalisasi no hp
+                $rawNoHp = isset($item['no_hp']) ? preg_replace('/[^0-9]/', '', $item['no_hp']) : '';
+                if (substr($rawNoHp, 0, 1) === '0') {
+                    $normalizedNoHp = '62' . substr($rawNoHp, 1);
+                } else {
+                    $normalizedNoHp = $rawNoHp;
+                }
+
+                $user = new \App\Models\User();
+                $user->nama = $item['nama'];
+                $user->nim = $item['nim'] ?? null;
+                $user->nip = $item['nip'] ?? null;
+                $user->username = $item['username'];
+                $user->password = bcrypt($item['password']);
+                $user->no_hp = $normalizedNoHp ?: null;
+                $user->security_question = $item['security_question'] ?? ($request->input('randomQuestion') ?? null);
+                $user->security_answer = bcrypt($item['security_answer']);
+                $user->foto = 'default.png'; // foto tidak di-handle di bulk
+                $user->role_id = $item['role_id'];
+                $user->save();
+
+                // generate QR
+                $roleCode = match ($user->role_id) {
+                    1 => 'ADM',
+                    2 => 'DSN',
+                    3 => 'MHS',
+                    default => 'USR',
+                };
+
+                $token = strtoupper(Str::random(10));
+                $qrCode = "USER-{$token}-{$roleCode}";
+                $qrUrl = 'https://bwipjs-api.metafloor.com/?bcid=qrcode'
+                    . '&text=' . urlencode($qrCode)
+                    . '&scale=6';
+
+                $user->update([
+                    'qr_code' => $qrCode,
+                    'qr_url' => $qrUrl,
+                ]);
+
+                // optional WA (jangan gagalkan batch jika WA gagal)
+                if ($user->no_hp) {
+                    try {
+                        $tanggal = now('Asia/Jakarta')->format('d F Y');
+                        $msg = "Halo {$user->nama}, akun anda telah dibuat.\n\n"
+                            . "Username: {$user->username}\n"
+                            . "Role: {$user->role->status}\n"
+                            . "Pertanyaan Keamanan: {$user->security_question}\n\n"
+                            . "QR: {$user->qr_url}\n\n"
+                            . "_{$tanggal}_\nSent via TechNoteAPP";
+                        $waService->sendMessage($user->no_hp, $msg);
+                    } catch (\Throwable $e) {
+                        Log::warning('Gagal kirim WA pada bulk create user: ' . $e->getMessage());
+                    }
+                }
+
+                $createdIds[] = $user->id;
+            }
+
+            // buat 1 user activity ringkasan
+            $authUser = Auth::user();
+            if ($authUser && count($createdIds) > 0) {
+                $loginLog = login_log::where('user_id', $authUser->id)
+                    ->where('status', 'online')
+                    ->latest('login_at')
+                    ->first();
+
+                if ($loginLog) {
+                    UserActivity::create([
+                        'user_id' => $authUser->id,
+                        'login_log_id' => $loginLog->id,
+                        'activity' => 'Menambahkan beberapa pengguna: ids [' . implode(',', $createdIds) . ']',
+                        'type' => 'nonsistem',
+                        'created_at' => now('Asia/Jakarta'),
+                    ]);
+                }
+            }
+
+            DB::commit();
+
+            return redirect()->route('pengguna.index')
+                ->with('message', 'Data pengguna berhasil ditambahkan sekaligus')
+                ->with('alert', 'success');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->withErrors(['error' => 'Gagal menyimpan data: ' . $e->getMessage()]);
+        }
+    }
+
+
 
 
     public function edit($id)

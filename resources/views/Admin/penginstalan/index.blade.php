@@ -59,13 +59,18 @@
                         <a href="{{ route('penginstalan.create') }}" class="btn btn-outline-success">
                             <i class="fa fa-plus me-1"></i>Data Instalasi
                         </a>
+
+                        <a href="{{ route('penginstalan.createMultiple') }}" class="btn btn-outline-primary">
+                            <i class="fa fa-layer-group me-1"></i>Tambah Banyak
+                        </a>
+
                         @if ($jumlahTerhapus > 0)
                         <a href="{{ route('penginstalan.terhapus') }}" class="btn btn-outline-danger">
                             <i class="fa fa-trash me-1"></i>({{ $jumlahTerhapus }})
                         </a>
                         @endif
-
                     </div>
+
 
                     <!-- Filter di kanan -->
                     <form action="{{ route('penginstalan.index') }}" method="GET" class="d-flex gap-2 align-items-center">

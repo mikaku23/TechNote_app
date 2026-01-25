@@ -6,6 +6,7 @@ use App\Models\software;
 use App\Models\login_log;
 use App\Models\UserActivity;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 
@@ -123,6 +124,85 @@ class SoftwareController extends Controller
 
         return redirect()->route('software.index');
     }
+
+    public function createMultiple()
+    {
+        return view('admin.software.create-multiple', [
+            'menu' => 'software',
+            'title' => 'Tambah Banyak Software',
+        ]);
+    }
+
+    public function storeMultiple(Request $request)
+    {
+        $request->validate([
+            'software' => 'required|array|min:1',
+            'software.*.nama' => 'required|string|max:100',
+            'software.*.versi' => 'required|string|max:100',
+            'software.*.kategori' => 'nullable|string|max:100',
+            'software.*.lisensi' => 'nullable|string|max:100',
+            'software.*.developer' => 'nullable|string|max:100',
+            'software.*.tgl_rilis' => 'nullable|date',
+            'software.*.deskripsi' => 'nullable|string',
+        ]);
+
+        $dataInsert = [];
+        $now = now('Asia/Jakarta');
+
+        foreach ($request->software as $item) {
+            $dataInsert[] = [
+                'nama'       => $item['nama'],
+                'versi'      => $item['versi'],
+                'kategori'   => $item['kategori'] ?? null,
+                'lisensi'    => $item['lisensi'] ?? null,
+                'developer'  => $item['developer'] ?? null,
+                'tgl_rilis'  => $item['tgl_rilis'] ?? null,
+                'deskripsi'  => $item['deskripsi'] ?? null,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ];
+        }
+
+        DB::beginTransaction();
+        try {
+            // Insert massal software
+            software::insert($dataInsert);
+
+            // Ambil software baru sesuai jumlah insert terakhir
+            $softwares = software::latest('id')->take(count($dataInsert))->get();
+            $createdIds = $softwares->pluck('id')->toArray();
+
+            // Buat log aktivitas user
+            $authUser = Auth::user();
+            if ($authUser) {
+                $loginLog = login_log::where('user_id', $authUser->id)
+                    ->where('status', 'online')
+                    ->latest('login_at')
+                    ->first();
+
+                if ($loginLog) {
+                    UserActivity::create([
+                        'user_id'      => $authUser->id,
+                        'login_log_id' => $loginLog->id,
+                        'activity'     => 'Menambahkan beberapa data software: ids [' . implode(',', $createdIds) . ']',
+                        'type'         => 'nonsistem',
+                        'created_at'   => now('Asia/Jakarta'),
+                    ]);
+                }
+            }
+
+            DB::commit();
+
+            return redirect()->route('software.index')
+                ->with('message', 'Data software berhasil ditambahkan sekaligus')
+                ->with('alert', 'success');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->withErrors(['error' => 'Gagal menyimpan data: ' . $e->getMessage()]);
+        }
+    }
+
+
 
     public function show($id)
     {

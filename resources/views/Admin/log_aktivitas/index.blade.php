@@ -1,6 +1,8 @@
 @extends('template_admin.layout')
 @section('title', 'Log Aktivitas Pengguna')
-
+@section('css')
+<link rel="stylesheet" href="{{ asset('assets/css/admin/pengguna/paginate.css') }}">
+@endsection
 @section('konten')
 <div class="container-fluid">
     <div class="card mt-3">
@@ -64,6 +66,7 @@
             </form>
 
             <!-- LIST AKTIVITAS -->
+            <!-- LIST AKTIVITAS -->
             @forelse($activities as $item)
             <div class="border rounded p-3 mb-2 bg-light">
                 <div class="d-flex justify-content-between">
@@ -80,7 +83,6 @@
                     </div>
 
                     <div class="text-end">
-
                         <div class="mt-1">
                             <span class="badge bg-info">
                                 {{ $item->type }}
@@ -95,10 +97,9 @@
             </div>
             @endforelse
 
-            <!-- PAGINATION -->
-            <div class="mt-3">
-                {{ $activities->links() }}
-            </div>
+            <!-- PAGINATE -->
+            @include('template_admin.paginate', ['data' => $activities])
+
 
         </div>
     </div>

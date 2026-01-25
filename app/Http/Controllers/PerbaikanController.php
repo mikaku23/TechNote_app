@@ -135,6 +135,107 @@ class PerbaikanController extends Controller
         return redirect()->route('perbaikan.index');
     }
 
+    public function createMultiple()
+    {
+        $users = User::whereHas('role', fn($q) => $q->where('status', 'dosen'))->get();
+
+        return view('admin.perbaikan.create-multiple', [
+            'menu' => 'perbaikan',
+            'title' => 'Tambah Banyak Perbaikan',
+            'users' => $users,
+        ]);
+    }
+
+    public function storeMultiple(Request $request)
+    {
+        $request->validate([
+            'perbaikan' => 'required|array|min:1',
+            'perbaikan.*.nama' => 'required|string|max:255',
+            'perbaikan.*.kategori' => 'required|string|max:255',
+            'perbaikan.*.lokasi' => 'required|string|max:255',
+            'perbaikan.*.keterangan' => 'required|string',
+            'perbaikan.*.estimasi' => 'required|date_format:H:i',
+            'perbaikan.*.user_id' => 'required|exists:users,id',
+        ], [
+            'perbaikan.required' => 'Tidak ada data perbaikan untuk disimpan.',
+            'perbaikan.*.nama.required' => 'Nama barang harus diisi.',
+            'perbaikan.*.user_id.required' => 'User harus dipilih.',
+            'perbaikan.*.user_id.exists' => 'User tidak ditemukan.',
+        ]);
+
+        $dataInsert = [];
+        $todayDate = now('Asia/Jakarta')->toDateString();
+        $now = now('Asia/Jakarta');
+
+        foreach ($request->perbaikan as $item) {
+            $dataInsert[] = [
+                'nama' => $item['nama'],
+                'kategori' => $item['kategori'] ?? null,
+                'lokasi' => $item['lokasi'] ?? null,
+                'status' => 'sedang diperbaiki',
+                'keterangan' => $item['keterangan'] ?? null,
+                'tgl_perbaikan' => $todayDate,
+                'estimasi' => $item['estimasi'] ?? null,
+                'user_id' => $item['user_id'],
+                'created_at' => $now,
+                'updated_at' => $now,
+            ];
+        }
+
+        DB::beginTransaction();
+        try {
+            // Insert massal
+            perbaikan::insert($dataInsert);
+
+            // Ambil entri baru (berdasarkan tgl_perbaikan dan status)
+            $newRecords = perbaikan::where('tgl_perbaikan', $todayDate)
+                ->where('status', 'sedang diperbaiki')
+                ->orderBy('id', 'desc')
+                ->take(count($dataInsert))
+                ->get();
+
+            $createdIds = [];
+
+            // Buat rekap untuk masing-masing
+            foreach ($newRecords as $p) {
+                $createdIds[] = $p->id;
+                rekap::create([
+                    'perbaikan_id' => $p->id,
+                    'status' => 'tersedia',
+                ]);
+            }
+
+            // Buat 1 user activity ringkasan seperti modul lain
+            $authUser = Auth::user();
+            if ($authUser && count($createdIds) > 0) {
+                $loginLog = login_log::where('user_id', $authUser->id)
+                    ->where('status', 'online')
+                    ->latest('login_at')
+                    ->first();
+
+                if ($loginLog) {
+                    UserActivity::create([
+                        'user_id' => $authUser->id,
+                        'login_log_id' => $loginLog->id,
+                        'activity' => 'Menambahkan beberapa data perbaikan: ids [' . implode(',', $createdIds) . ']',
+                        'type' => 'nonsistem',
+                        'created_at' => now('Asia/Jakarta'),
+                    ]);
+                }
+            }
+
+            DB::commit();
+
+            return redirect()->route('perbaikan.index')
+                ->with('message', 'Data perbaikan berhasil ditambahkan sekaligus')
+                ->with('alert', 'success');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->withErrors(['error' => 'Gagal menyimpan data: ' . $e->getMessage()]);
+        }
+    }
+
+
     public function edit($id)
     {
         $users = User::all();
