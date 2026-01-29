@@ -1,4 +1,78 @@
-   .alert-warning {
+html, body {
+  height: 100%;
+}
+
+/* Sidebar utama */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: visible; /* toggle tidak kepotong */
+
+  /* HAPUS semua efek biru */
+  box-shadow: none !important;
+  border-right: none !important;
+  background-image: none !important;
+}
+
+/* Hapus kemungkinan glow dari pseudo element tema */
+.sidebar::before,
+.sidebar::after {
+  display: none !important;
+}
+
+/* Header & footer tetap */
+.sidebar .sidebar-header,
+.sidebar .sidebar-footer {
+  flex: 0 0 auto;
+}
+
+/* Body sidebar yang scroll */
+.sidebar .sidebar-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: visible;
+
+  box-shadow: none !important;
+  border-right: none !important;
+  background-image: none !important;
+
+  position: relative;
+  z-index: 1;
+
+  /* HILANGKAN scrollbar Firefox */
+  scrollbar-width: none;
+}
+
+/* Hilangkan scrollbar Chrome, Edge, Safari */
+.sidebar .sidebar-body::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+}
+
+/* Jika Hope UI pakai wrapper scroll */
+.data-scrollbar {
+  overflow-y: auto !important;
+  overflow-x: visible !important;
+  box-shadow: none !important;
+  border-right: none !important;
+
+  scrollbar-width: none;
+}
+
+.data-scrollbar::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+}
+
+/* Pastikan tombol toggle selalu di atas */
+.sidebar-toggle {
+  position: relative;
+  z-index: 10;
+}
+
+  .alert-warning {
             background-color: #fff3cd !important;
             color: #856404 !important;
             border-color: #ffeeba !important;

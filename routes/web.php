@@ -15,6 +15,7 @@ use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\SoftwareController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PerbaikanController;
+use App\Http\Controllers\MaintenanceController;
 use App\Http\Controllers\PenginstalanController;
 use App\Http\Controllers\LogActivitiesController;
 use App\Http\Controllers\ForgotPasswordController;
@@ -130,6 +131,10 @@ Route::middleware(['auth', 'role:dosen'])->group(function () {
 });
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
+
+    Route::get('/maintenance', [MaintenanceController::class, 'index'])->name('maintenance');
+    Route::post('/maintenance/start', [MaintenanceController::class, 'start'])->name('admin.maintenance.start');
+    Route::post('/maintenance/stop', [MaintenanceController::class, 'stop'])->name('admin.maintenance.stop');
 
     Route::post('/contact/{id}/read', [ContactController::class, 'markAsRead'])->name('contact.read');
 

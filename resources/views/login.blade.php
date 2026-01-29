@@ -123,6 +123,13 @@
                                             </ul>
                                         </div>
                                         @endif
+
+                                        @if(session('maintenance_warning'))
+                                        <div class="alert alert-warning">
+                                            {{ session('maintenance_warning') }}
+                                        </div>
+                                        @endif
+
                                         <div class="row">
                                             <div class="col-lg-12">
                                                 <div class="form-group">

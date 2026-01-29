@@ -98,32 +98,34 @@ class PenggunaController extends Controller
         $nm = $request->foto;
         $namaFile = $nm->getClientOriginalName();
 
-        $validated = $request->validate([
-            'nama' => 'required|string|max:100',
-            'nim' => 'nullable|string|unique:users,nim',
-            'nip' => 'nullable|string|unique:users,nip',
-            'username' => 'required|string|unique:users,username',
-            'password' => 'required|string|min:4',
-             'no_hp' => 'required|string|unique:users,no_hp|max:15',
-            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'security_question' => 'nullable|string|max:255',
-            'security_answer' => 'nullable|string|max:255',
-            'role_id' => 'required|exists:roles,id',
-        ],[
-            'nama.required' => 'Nama wajib diisi.',
-            'username.required' => 'Username wajib diisi.',
-            'username.unique' => 'Username sudah digunakan.',
-            'password.required' => 'Password wajib diisi.',
-            'password.min' => 'Password minimal 4 karakter.',
-            'no_hp.required' => 'Nomor HP wajib diisi.',
-            'no_hp.unique' => 'Nomor HP sudah digunakan.',  
-            'foto.image' => 'File harus berupa gambar.',
-            'foto.mimes' => 'Format gambar harus jpeg, png, jpg, atau gif.',
-            'foto.max' => 'Ukuran gambar maksimal 2MB.',
-            'role_id.required' => 'Role wajib dipilih.',
-            'role_id.exists' => 'Role tidak valid.',
-        ]
-    );
+        $validated = $request->validate(
+            [
+                'nama' => 'required|string|max:100',
+                'nim' => 'nullable|string|unique:users,nim',
+                'nip' => 'nullable|string|unique:users,nip',
+                'username' => 'required|string|unique:users,username',
+                'password' => 'required|string|min:4',
+                'no_hp' => 'required|string|unique:users,no_hp|max:15',
+                'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'security_question' => 'nullable|string|max:255',
+                'security_answer' => 'nullable|string|max:255',
+                'role_id' => 'required|exists:roles,id',
+            ],
+            [
+                'nama.required' => 'Nama wajib diisi.',
+                'username.required' => 'Username wajib diisi.',
+                'username.unique' => 'Username sudah digunakan.',
+                'password.required' => 'Password wajib diisi.',
+                'password.min' => 'Password minimal 4 karakter.',
+                'no_hp.required' => 'Nomor HP wajib diisi.',
+                'no_hp.unique' => 'Nomor HP sudah digunakan.',
+                'foto.image' => 'File harus berupa gambar.',
+                'foto.mimes' => 'Format gambar harus jpeg, png, jpg, atau gif.',
+                'foto.max' => 'Ukuran gambar maksimal 2MB.',
+                'role_id.required' => 'Role wajib dipilih.',
+                'role_id.exists' => 'Role tidak valid.',
+            ]
+        );
         $plainSecurityAnswer = $validated['security_answer'];
 
 
@@ -179,10 +181,10 @@ class PenggunaController extends Controller
 
             $tanggal = Carbon::now('Asia/Jakarta')->format('d F Y');
 
-           $msg = "Halo {$user->nama}, akun anda berhasil dibuat oleh pihak Teknisi.\n\n"
+            $msg = "Halo {$user->nama}, akun anda berhasil dibuat oleh pihak Teknisi.\n\n"
                 . "Berikut data akun anda:\n"
                 . "Username: {$user->username}\n"
-              . "Role: {$user->role->status}\n"
+                . "Role: {$user->role->status}\n"
                 . "Pertanyaan Keamanan: {$user->security_question}\n"
                 . "Jawaban Keamanan: {$plainSecurityAnswer}\n\n"
                 . "QR Code akun anda (klik link berikut):\n"
@@ -268,7 +270,7 @@ class PenggunaController extends Controller
             'password' => 'required|string|min:4',
             'security_question' => 'required|string',
             'security_answer' => 'required|string',
-             'no_hp' => 'required|string|unique:users,no_hp|max:15',
+            'no_hp' => 'required|string|unique:users,no_hp|max:15',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ], [
             'nama.required' => 'Nama wajib diisi.',
@@ -328,10 +330,10 @@ class PenggunaController extends Controller
         if ($user->no_hp) {
             $tanggal = now('Asia/Jakarta')->format('d F Y');
 
-           $msg = "Halo {$user->nama}, akun anda berhasil dibuat oleh pihak Teknisi.\n\n"
+            $msg = "Halo {$user->nama}, akun anda berhasil dibuat oleh pihak Teknisi.\n\n"
                 . "Berikut data akun anda:\n"
                 . "Username: {$user->username}\n"
-             . "Role: {$user->role->status}\n"
+                . "Role: {$user->role->status}\n"
                 . "Pertanyaan Keamanan: {$user->security_question}\n"
                 . "Jawaban Keamanan: {$plainSecurityAnswer}\n\n"
                 . "QR Code akun anda (klik link berikut):\n"
@@ -417,7 +419,7 @@ class PenggunaController extends Controller
             'password' => 'required|string|min:4',
             'security_question' => 'required|string',
             'security_answer' => 'required|string',
-             'no_hp' => 'required|string|unique:users,no_hp|max:15',
+            'no_hp' => 'required|string|unique:users,no_hp|max:15',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ], [
             'nama.required' => 'Nama wajib diisi.',
@@ -481,7 +483,7 @@ class PenggunaController extends Controller
             $msg = "Halo {$user->nama}, akun anda berhasil dibuat oleh pihak Teknisi.\n\n"
                 . "Berikut data akun anda:\n"
                 . "Username: {$user->username}\n"
-             . "Role: {$user->role->status}\n"
+                . "Role: {$user->role->status}\n"
                 . "Pertanyaan Keamanan: {$user->security_question}\n"
                 . "Jawaban Keamanan: {$plainSecurityAnswer}\n\n"
                 . "QR Code akun anda (klik link berikut):\n"
@@ -620,7 +622,7 @@ class PenggunaController extends Controller
                     }
                 }
 
-              
+
 
 
                 // nim: hanya cek jika ada nilai (jangan pakai distinct ketika null)

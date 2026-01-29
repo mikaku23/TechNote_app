@@ -42,7 +42,7 @@
     </li>
     <li class="nav-item static-item" style="margin-bottom:0;">
         <a class=" nav-link static-item disabled" href="#" tabindex="-1">
-            <span class="default-icon">Layanan</span>
+            <span class="default-icon">Services</span>
         </a>
     </li>
 
@@ -100,8 +100,27 @@
             <span class="item-name">Rekap</span>
         </a>
     </li>
+
+    <li class="nav-item">
+        <a class="nav-link {{ ($menu ?? '') == 'rank' ? 'active' : '' }}" aria-current="page" href="{{ route('rank.index') }}">
+            <i class="icon">
+                <svg width="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="icon-20">
+                    <path opacity="0.4" d="M4 20h16a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1z" fill="currentColor" />
+                    <path d="M7 12l3-4 4 5 4-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+                    <circle cx="8" cy="8" r="1" fill="currentColor" />
+                </svg>
+            </i>
+            <span class="item-name">Score Rank</span>
+        </a>
+    </li>
     <li>
         <hr class="hr-horizontal">
+    </li>
+
+    <li class="nav-item static-item" style="margin-bottom:0;">
+        <a class=" nav-link static-item disabled" href="#" tabindex="-1">
+            <span class="default-icon">Secure</span>
+        </a>
     </li>
 
     <li class="nav-item">
@@ -130,16 +149,19 @@
         </a>
     </li>
     <li class="nav-item">
-        <a class="nav-link {{ ($menu ?? '') == 'rank' ? 'active' : '' }}" aria-current="page" href="{{ route('rank.index') }}">
+        <a class="nav-link {{ ($menu ?? '') == 'maintenance' ? 'active' : '' }}" aria-current="page" href="{{ route('maintenance') }}">
             <i class="icon">
                 <svg width="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="icon-20">
-                    <path opacity="0.4" d="M4 20h16a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1z" fill="currentColor" />
-                    <path d="M7 12l3-4 4 5 4-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
-                    <circle cx="8" cy="8" r="1" fill="currentColor" />
+                    <path opacity="0.4" d="M12 2L4 6v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V6l-8-4z" fill="currentColor" />
+                    <path d="M10 17l-3-3 1.41-1.41L10 14.17l5.59-5.59L17 10l-7 7z" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="currentColor" />
                 </svg>
             </i>
-            <span class="item-name">Score Rank</span>
+            <span class="item-name">Sistem</span>
         </a>
+    </li>
+
+    <li>
+        <hr class="hr-horizontal">
     </li>
 
 
